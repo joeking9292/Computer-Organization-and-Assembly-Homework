@@ -3,29 +3,29 @@ Lab2.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         00000000  00800100  00800100  0000017c  2**0
+  0 .data         00000000  00800100  00800100  000001c4  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  1 .text         00000128  00000000  00000000  00000054  2**1
+  1 .text         00000170  00000000  00000000  00000054  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .comment      00000030  00000000  00000000  0000017c  2**0
+  2 .comment      00000030  00000000  00000000  000001c4  2**0
                   CONTENTS, READONLY
-  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  000001ac  2**2
+  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  000001f4  2**2
                   CONTENTS, READONLY
-  4 .debug_aranges 00000020  00000000  00000000  000001e8  2**0
+  4 .debug_aranges 00000020  00000000  00000000  00000230  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   00000976  00000000  00000000  00000208  2**0
+  5 .debug_info   00000a21  00000000  00000000  00000250  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 00000800  00000000  00000000  00000b7e  2**0
+  6 .debug_abbrev 00000800  00000000  00000000  00000c71  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   000002f7  00000000  00000000  0000137e  2**0
+  7 .debug_line   00000339  00000000  00000000  00001471  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  00000024  00000000  00000000  00001678  2**2
+  8 .debug_frame  00000024  00000000  00000000  000017ac  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    0000041c  00000000  00000000  0000169c  2**0
+  9 .debug_str    0000041c  00000000  00000000  000017d0  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    00000120  00000000  00000000  00001ab8  2**0
+ 10 .debug_loc    000001f8  00000000  00000000  00001bec  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 00000010  00000000  00000000  00001bd8  2**0
+ 11 .debug_ranges 00000010  00000000  00000000  00001de4  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -110,7 +110,7 @@ Disassembly of section .text:
   94:	de bf       	out	0x3e, r29	; 62
   96:	cd bf       	out	0x3d, r28	; 61
   98:	02 d0       	rcall	.+4      	; 0x9e <main>
-  9a:	44 c0       	rjmp	.+136    	; 0x124 <_exit>
+  9a:	68 c0       	rjmp	.+208    	; 0x16c <_exit>
 
 0000009c <__bad_interrupt>:
   9c:	b1 cf       	rjmp	.-158    	; 0x0 <__vectors>
@@ -121,119 +121,168 @@ Disassembly of section .text:
 
 int main(void)
 {
-	DDRB = 0b11110000;
+	DDRB  = 0b11110000;
   9e:	80 ef       	ldi	r24, 0xF0	; 240
   a0:	87 bb       	out	0x17, r24	; 23
 	PORTB = 0b11110000;
   a2:	88 bb       	out	0x18, r24	; 24
+	DDRD  = 0b00000000;
+  a4:	11 ba       	out	0x11, r1	; 17
+	PORTD = 0b11111111;
+  a6:	8f ef       	ldi	r24, 0xFF	; 255
+  a8:	82 bb       	out	0x12, r24	; 18
 
 	while (1) // loop forever
 	{
-		PORTB = 0b01100000; //Tekbot move forward
-  a4:	90 e6       	ldi	r25, 0x60	; 96
-		_delay_ms(500); //wait for 500ms
-		
-		if ((PIND == 0b11111100) || (PIND == 0b11111101)) { // If both whiskers hit or left whisker hit
+		PORTB = 0b01100000;			//Tekbot move forward
+  aa:	90 e6       	ldi	r25, 0x60	; 96
+		else if (PIND == 0b11111110) {
+			PORTB = 0b01100000;		//Tekbot move forward
+			_delay_ms(1000);		//wait for 1 s
 			PORTB = 0b00000000;     // move backward
-			_delay_ms(1000);         // wait for 500 ms
+			_delay_ms(1000);        // wait for 1 s
 			PORTB = 0b01000000;     // turn right
-  a6:	20 e4       	ldi	r18, 0x40	; 64
-		}
-		
-		else if (PIND == 0b11111110) { // If right whisker is hit
+  ac:	30 e4       	ldi	r19, 0x40	; 64
+		if (PIND == 0b11111101) {
+			PORTB = 0b01100000;		//Tekbot move forward
+			_delay_ms(1000);		//wait for 0.5 s
 			PORTB = 0b00000000;     // move backward
-			_delay_ms(1000);         // wait for 500 ms
+			_delay_ms(1000);        // wait for 1 s
 			PORTB = 0b00100000;     // turn left
-  a8:	30 e2       	ldi	r19, 0x20	; 32
-	DDRB = 0b11110000;
-	PORTB = 0b11110000;
+  ae:	20 e2       	ldi	r18, 0x20	; 32
+	DDRD  = 0b00000000;
+	PORTD = 0b11111111;
 
 	while (1) // loop forever
 	{
-		PORTB = 0b01100000; //Tekbot move forward
-  aa:	98 bb       	out	0x18, r25	; 24
+		PORTB = 0b01100000;			//Tekbot move forward
+  b0:	98 bb       	out	0x18, r25	; 24
+		
+		// If left whisker hit, turn left
+		if (PIND == 0b11111101) {
+  b2:	80 b3       	in	r24, 0x10	; 16
+  b4:	8d 3f       	cpi	r24, 0xFD	; 253
+  b6:	f9 f4       	brne	.+62     	; 0xf6 <main+0x58>
+			PORTB = 0b01100000;		//Tekbot move forward
+  b8:	98 bb       	out	0x18, r25	; 24
 	#else
 		//round up by default
 		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
 	#endif
 
 	__builtin_avr_delay_cycles(__ticks_dc);
-  ac:	4f ef       	ldi	r20, 0xFF	; 255
-  ae:	59 e6       	ldi	r21, 0x69	; 105
-  b0:	88 e1       	ldi	r24, 0x18	; 24
-  b2:	41 50       	subi	r20, 0x01	; 1
-  b4:	50 40       	sbci	r21, 0x00	; 0
-  b6:	80 40       	sbci	r24, 0x00	; 0
-  b8:	e1 f7       	brne	.-8      	; 0xb2 <main+0x14>
-  ba:	00 c0       	rjmp	.+0      	; 0xbc <main+0x1e>
-  bc:	00 00       	nop
-		_delay_ms(500); //wait for 500ms
-		
-		if ((PIND == 0b11111100) || (PIND == 0b11111101)) { // If both whiskers hit or left whisker hit
-  be:	80 b3       	in	r24, 0x10	; 16
-  c0:	8c 3f       	cpi	r24, 0xFC	; 252
-  c2:	19 f0       	breq	.+6      	; 0xca <main+0x2c>
-  c4:	80 b3       	in	r24, 0x10	; 16
-  c6:	8d 3f       	cpi	r24, 0xFD	; 253
-  c8:	a9 f4       	brne	.+42     	; 0xf4 <main+0x56>
+  ba:	4f ef       	ldi	r20, 0xFF	; 255
+  bc:	53 ed       	ldi	r21, 0xD3	; 211
+  be:	80 e3       	ldi	r24, 0x30	; 48
+  c0:	41 50       	subi	r20, 0x01	; 1
+  c2:	50 40       	sbci	r21, 0x00	; 0
+  c4:	80 40       	sbci	r24, 0x00	; 0
+  c6:	e1 f7       	brne	.-8      	; 0xc0 <main+0x22>
+  c8:	00 c0       	rjmp	.+0      	; 0xca <main+0x2c>
+  ca:	00 00       	nop
+			_delay_ms(1000);		//wait for 0.5 s
 			PORTB = 0b00000000;     // move backward
-  ca:	18 ba       	out	0x18, r1	; 24
-  cc:	4f ef       	ldi	r20, 0xFF	; 255
-  ce:	53 ed       	ldi	r21, 0xD3	; 211
-  d0:	80 e3       	ldi	r24, 0x30	; 48
-  d2:	41 50       	subi	r20, 0x01	; 1
-  d4:	50 40       	sbci	r21, 0x00	; 0
-  d6:	80 40       	sbci	r24, 0x00	; 0
-  d8:	e1 f7       	brne	.-8      	; 0xd2 <main+0x34>
-  da:	00 c0       	rjmp	.+0      	; 0xdc <main+0x3e>
-  dc:	00 00       	nop
-			_delay_ms(1000);         // wait for 500 ms
-			PORTB = 0b01000000;     // turn right
-  de:	28 bb       	out	0x18, r18	; 24
-  e0:	4f ef       	ldi	r20, 0xFF	; 255
-  e2:	53 ed       	ldi	r21, 0xD3	; 211
-  e4:	80 e3       	ldi	r24, 0x30	; 48
-  e6:	41 50       	subi	r20, 0x01	; 1
-  e8:	50 40       	sbci	r21, 0x00	; 0
-  ea:	80 40       	sbci	r24, 0x00	; 0
-  ec:	e1 f7       	brne	.-8      	; 0xe6 <main+0x48>
-  ee:	00 c0       	rjmp	.+0      	; 0xf0 <main+0x52>
-  f0:	00 00       	nop
-  f2:	db cf       	rjmp	.-74     	; 0xaa <main+0xc>
+  cc:	18 ba       	out	0x18, r1	; 24
+  ce:	4f ef       	ldi	r20, 0xFF	; 255
+  d0:	53 ed       	ldi	r21, 0xD3	; 211
+  d2:	80 e3       	ldi	r24, 0x30	; 48
+  d4:	41 50       	subi	r20, 0x01	; 1
+  d6:	50 40       	sbci	r21, 0x00	; 0
+  d8:	80 40       	sbci	r24, 0x00	; 0
+  da:	e1 f7       	brne	.-8      	; 0xd4 <main+0x36>
+  dc:	00 c0       	rjmp	.+0      	; 0xde <main+0x40>
+  de:	00 00       	nop
 			_delay_ms(1000);        // wait for 1 s
-		}
-		
-		else if (PIND == 0b11111110) { // If right whisker is hit
-  f4:	80 b3       	in	r24, 0x10	; 16
-  f6:	8e 3f       	cpi	r24, 0xFE	; 254
-  f8:	c1 f6       	brne	.-80     	; 0xaa <main+0xc>
-			PORTB = 0b00000000;     // move backward
-  fa:	18 ba       	out	0x18, r1	; 24
-  fc:	4f ef       	ldi	r20, 0xFF	; 255
-  fe:	53 ed       	ldi	r21, 0xD3	; 211
- 100:	80 e3       	ldi	r24, 0x30	; 48
- 102:	41 50       	subi	r20, 0x01	; 1
- 104:	50 40       	sbci	r21, 0x00	; 0
- 106:	80 40       	sbci	r24, 0x00	; 0
- 108:	e1 f7       	brne	.-8      	; 0x102 <main+0x64>
- 10a:	00 c0       	rjmp	.+0      	; 0x10c <main+0x6e>
- 10c:	00 00       	nop
-			_delay_ms(1000);         // wait for 500 ms
 			PORTB = 0b00100000;     // turn left
- 10e:	38 bb       	out	0x18, r19	; 24
- 110:	4f ef       	ldi	r20, 0xFF	; 255
- 112:	53 ed       	ldi	r21, 0xD3	; 211
- 114:	80 e3       	ldi	r24, 0x30	; 48
- 116:	41 50       	subi	r20, 0x01	; 1
- 118:	50 40       	sbci	r21, 0x00	; 0
- 11a:	80 40       	sbci	r24, 0x00	; 0
- 11c:	e1 f7       	brne	.-8      	; 0x116 <main+0x78>
- 11e:	00 c0       	rjmp	.+0      	; 0x120 <main+0x82>
- 120:	00 00       	nop
- 122:	c3 cf       	rjmp	.-122    	; 0xaa <main+0xc>
+  e0:	28 bb       	out	0x18, r18	; 24
+  e2:	4f ef       	ldi	r20, 0xFF	; 255
+  e4:	59 e6       	ldi	r21, 0x69	; 105
+  e6:	88 e1       	ldi	r24, 0x18	; 24
+  e8:	41 50       	subi	r20, 0x01	; 1
+  ea:	50 40       	sbci	r21, 0x00	; 0
+  ec:	80 40       	sbci	r24, 0x00	; 0
+  ee:	e1 f7       	brne	.-8      	; 0xe8 <main+0x4a>
+  f0:	00 c0       	rjmp	.+0      	; 0xf2 <main+0x54>
+  f2:	00 00       	nop
+  f4:	dd cf       	rjmp	.-70     	; 0xb0 <main+0x12>
+			_delay_ms(500);         // wait for 0.5 s
+		}
+		// If right whisker is hit, turn right
+		else if (PIND == 0b11111110) {
+  f6:	80 b3       	in	r24, 0x10	; 16
+  f8:	8e 3f       	cpi	r24, 0xFE	; 254
+  fa:	f9 f4       	brne	.+62     	; 0x13a <main+0x9c>
+			PORTB = 0b01100000;		//Tekbot move forward
+  fc:	98 bb       	out	0x18, r25	; 24
+  fe:	4f ef       	ldi	r20, 0xFF	; 255
+ 100:	53 ed       	ldi	r21, 0xD3	; 211
+ 102:	80 e3       	ldi	r24, 0x30	; 48
+ 104:	41 50       	subi	r20, 0x01	; 1
+ 106:	50 40       	sbci	r21, 0x00	; 0
+ 108:	80 40       	sbci	r24, 0x00	; 0
+ 10a:	e1 f7       	brne	.-8      	; 0x104 <main+0x66>
+ 10c:	00 c0       	rjmp	.+0      	; 0x10e <main+0x70>
+ 10e:	00 00       	nop
+			_delay_ms(1000);		//wait for 1 s
+			PORTB = 0b00000000;     // move backward
+ 110:	18 ba       	out	0x18, r1	; 24
+ 112:	4f ef       	ldi	r20, 0xFF	; 255
+ 114:	53 ed       	ldi	r21, 0xD3	; 211
+ 116:	80 e3       	ldi	r24, 0x30	; 48
+ 118:	41 50       	subi	r20, 0x01	; 1
+ 11a:	50 40       	sbci	r21, 0x00	; 0
+ 11c:	80 40       	sbci	r24, 0x00	; 0
+ 11e:	e1 f7       	brne	.-8      	; 0x118 <main+0x7a>
+ 120:	00 c0       	rjmp	.+0      	; 0x122 <main+0x84>
+ 122:	00 00       	nop
+			_delay_ms(1000);        // wait for 1 s
+			PORTB = 0b01000000;     // turn right
+ 124:	38 bb       	out	0x18, r19	; 24
+ 126:	4f ef       	ldi	r20, 0xFF	; 255
+ 128:	59 e6       	ldi	r21, 0x69	; 105
+ 12a:	88 e1       	ldi	r24, 0x18	; 24
+ 12c:	41 50       	subi	r20, 0x01	; 1
+ 12e:	50 40       	sbci	r21, 0x00	; 0
+ 130:	80 40       	sbci	r24, 0x00	; 0
+ 132:	e1 f7       	brne	.-8      	; 0x12c <main+0x8e>
+ 134:	00 c0       	rjmp	.+0      	; 0x136 <main+0x98>
+ 136:	00 00       	nop
+ 138:	bb cf       	rjmp	.-138    	; 0xb0 <main+0x12>
+			_delay_ms(500);         // wait for 0.5 s
+		}
+		//If both whiskers are hit, move forward
+		else if (PIND == 0b11111100) {
+ 13a:	80 b3       	in	r24, 0x10	; 16
+ 13c:	8c 3f       	cpi	r24, 0xFC	; 252
+ 13e:	09 f0       	breq	.+2      	; 0x142 <main+0xa4>
+ 140:	b7 cf       	rjmp	.-146    	; 0xb0 <main+0x12>
+			PORTB = 0b01100000;		//Tekbot move forward
+ 142:	98 bb       	out	0x18, r25	; 24
+ 144:	4f ef       	ldi	r20, 0xFF	; 255
+ 146:	53 ed       	ldi	r21, 0xD3	; 211
+ 148:	80 e3       	ldi	r24, 0x30	; 48
+ 14a:	41 50       	subi	r20, 0x01	; 1
+ 14c:	50 40       	sbci	r21, 0x00	; 0
+ 14e:	80 40       	sbci	r24, 0x00	; 0
+ 150:	e1 f7       	brne	.-8      	; 0x14a <main+0xac>
+ 152:	00 c0       	rjmp	.+0      	; 0x154 <main+0xb6>
+ 154:	00 00       	nop
+			_delay_ms(1000);		//wait for 1 s
+			PORTB = 0b00000000;     // move backward
+ 156:	18 ba       	out	0x18, r1	; 24
+ 158:	4f ef       	ldi	r20, 0xFF	; 255
+ 15a:	53 ed       	ldi	r21, 0xD3	; 211
+ 15c:	80 e3       	ldi	r24, 0x30	; 48
+ 15e:	41 50       	subi	r20, 0x01	; 1
+ 160:	50 40       	sbci	r21, 0x00	; 0
+ 162:	80 40       	sbci	r24, 0x00	; 0
+ 164:	e1 f7       	brne	.-8      	; 0x15e <main+0xc0>
+ 166:	00 c0       	rjmp	.+0      	; 0x168 <main+0xca>
+ 168:	00 00       	nop
+ 16a:	a2 cf       	rjmp	.-188    	; 0xb0 <main+0x12>
 
-00000124 <_exit>:
- 124:	f8 94       	cli
+0000016c <_exit>:
+ 16c:	f8 94       	cli
 
-00000126 <__stop_program>:
- 126:	ff cf       	rjmp	.-2      	; 0x126 <__stop_program>
+0000016e <__stop_program>:
+ 16e:	ff cf       	rjmp	.-2      	; 0x16e <__stop_program>
