@@ -1,5 +1,5 @@
 /*
- * Lab2.c
+ * Joseph_Noonan_Lab2_challengecode.c
  *
  * Created: 1/14/2020 12:03:09 PM
  * Author : Joseph Noonan and Matthew Levis
@@ -38,7 +38,7 @@ int main(void)
 		// If left whisker hit, turn left
 		if (PIND == 0b11111101) {
 			PORTB = 0b01100000;		//Tekbot move forward
-			_delay_ms(1000);		//wait for 0.5 s
+			_delay_ms(1000);		//wait for 1 s
 			PORTB = 0b00000000;     // move backward
 			_delay_ms(1000);        // wait for 1 s
 			PORTB = 0b00100000;     // turn left

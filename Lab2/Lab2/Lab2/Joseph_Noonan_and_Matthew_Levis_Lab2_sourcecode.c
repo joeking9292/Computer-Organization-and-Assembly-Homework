@@ -1,8 +1,8 @@
 /*
- * Lab2.c
+ * Joseph_Noonan_and_Matthew_Levis_Lab2_sourcecode.c
  *
  * Created: 1/14/2020 12:03:09 PM
- * Author : Joseph Noonan
+ * Author : Joseph Noonan and Matthew Levis
  */ 
 
 /*
@@ -28,6 +28,8 @@ int main(void)
 {
 	DDRB = 0b11110000;
 	PORTB = 0b11110000;
+	DDRD  = 0b00000000;
+	PORTD = 0b11111111;
 
 	while (1) // loop forever
 	{
