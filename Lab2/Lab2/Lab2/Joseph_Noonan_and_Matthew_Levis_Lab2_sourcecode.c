@@ -42,7 +42,7 @@ int main(void)
 		}
 		
 		// If right whisker is hit
-		else if (PIND == 0b) {
+		else if (PIND == 0b11111110) {
 			PORTB = 0b00000000;     // move backward
 			_delay_ms(1000);        // wait for 500 ms
 			PORTB = 0b00100000;     // turn left
