@@ -22,6 +22,7 @@
 .def	mpr = r16				; Multipurpose register is
 								; required for LCD Driver
 .def	count = r19
+.def	firstLine = $0100		; 
 
 ;***********************************************************
 ;*	Start of Code Segment
@@ -58,7 +59,6 @@ INIT:							; The initialization routine
 		; Move strings from Program Memory to Data Memory
 		ldi		count, 14
 		ldi		ZL, JOE_BEG<<1
-		ldi		ZH, JOE_BEG<<1
 		lpm		mpr, z+
 		sts		$0100, mpr
 
