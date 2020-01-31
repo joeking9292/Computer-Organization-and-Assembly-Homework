@@ -1,8 +1,8 @@
 /*
- * Lab2.c
+ * Joseph_Noonan_Lab2_challengecode.c
  *
  * Created: 1/14/2020 12:03:09 PM
- * Author : Joseph Noonan
+ * Author : Joseph Noonan and Matthew Levis
  */ 
 
 /*
@@ -26,26 +26,38 @@ Port D, Pin 0 -> Input -> Right Whisker
 
 int main(void)
 {
-	DDRB = 0b11110000;
+	DDRB  = 0b11110000;
 	PORTB = 0b11110000;
+	DDRD  = 0b00000000;
+	PORTD = 0b11111111;
 
 	while (1) // loop forever
 	{
 		PORTB = 0b01100000;			//Tekbot move forward
 		
-		// If both whiskers hit or left whisker hit
-		if ((PIND == 0b11111100) || (PIND == 0b11111101)) {
+		// If left whisker hit, turn left
+		if (PIND == 0b11111101) {
+			PORTB = 0b01100000;		//Tekbot move forward
+			_delay_ms(1000);		//wait for 1 s
 			PORTB = 0b00000000;     // move backward
-			_delay_ms(1000);        // wait for 500 ms
-			PORTB = 0b01000000;     // turn right
 			_delay_ms(1000);        // wait for 1 s
-		}
-		
-		// If right whisker is hit
-		else if (PIND == 0b11111110) {
-			PORTB = 0b00000000;     // move backward
-			_delay_ms(1000);        // wait for 500 ms
 			PORTB = 0b00100000;     // turn left
+			_delay_ms(500);         // wait for 0.5 s
+		}
+		// If right whisker is hit, turn right
+		else if (PIND == 0b11111110) {
+			PORTB = 0b01100000;		//Tekbot move forward
+			_delay_ms(1000);		//wait for 1 s
+			PORTB = 0b00000000;     // move backward
+			_delay_ms(1000);        // wait for 1 s
+			PORTB = 0b01000000;     // turn right
+			_delay_ms(500);         // wait for 0.5 s
+		}
+		//If both whiskers are hit, move forward
+		else if (PIND == 0b11111100) {
+			PORTB = 0b01100000;		//Tekbot move forward
+			_delay_ms(1000);		//wait for 1 s
+			PORTB = 0b00000000;     // move backward
 			_delay_ms(1000);        // wait for 1 s
 		}
 	}
