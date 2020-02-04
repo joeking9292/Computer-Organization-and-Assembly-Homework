@@ -20,9 +20,7 @@
 ;*	Internal Register Definitions and Constants
 ;***********************************************************
 .def	mpr = r16				; Multipurpose register is
-								; required for LCD Driver
-.def	count = r19
-.def	firstLine = $0100		; 
+								; required for LCD Driver 
 
 ;***********************************************************
 ;*	Start of Code Segment
@@ -57,10 +55,29 @@ INIT:							; The initialization routine
 		out		PORTD, mpr		; so all Port D outputs are low
 		
 		; Move strings from Program Memory to Data Memory
+		ldi		ZL, low(JOE_BEG<<1)
+		ldi		ZH, high(JOE_BEG<<1)
+		ldi		YL, low(LCDLn1Addr)
+		ldi		YH, high(LCDLn1Addr)
 		ldi		count, 14
-		ldi		ZL, JOE_BEG<<1
-		lpm		mpr, z+
-		sts		$0100, mpr
+
+LOOP:
+		lpm		mpr, Z+
+		st		Y+, mpr
+		dec		count
+		brne	LOOP
+
+		ldi		ZL, low(MATT_BEG<<1)
+		ldi		ZH, high(MATT_BEG<<1)
+		ldi		YL, low(LCDLn2Addr)
+		ldi		YH, high(LCDLn2Addr)
+		ldi		count, 14
+
+LOOP2:
+		lpm		mpr, Z+
+		st		Y+, mpr
+		dec		count
+		brne	LOOP2
 
 		; NOTE that there is no RET or RJMP from INIT, this
 		; is because the next instruction executed is the
@@ -71,24 +88,30 @@ INIT:							; The initialization routine
 ;***********************************************************
 MAIN:							; The Main program
 		; Display the strings on the LCD Display
-		in		r20, PIND
-		cpi		r20, (1<<7)
-		breq	BTN0
+		in		mpr, PIND
+		andi	mpr, (1<<0|1<<1)
+		cpi		mpr, 0b10000000
+IF:		brne	ELIF	
 		rcall	LCDClr
-		rjmp	MAIN
-BTN0:	cpi		r20, (1<<0)
-		brne	BTN1
-		rcall	LCDWrLn1
-		rcall	LCDWrLn2
-		rjmp	MAIN
-BTN1:	cpi		r20, (1<<1)
-		brne	MAIN
+		rjmp	NEXT
+ELIF:	cpi		mpr, 0b00000010
+		brne	ELSE
+		rcall	FUNC
 		rcall	LCDWrLn2
 		rcall	LCDWrLn1
-		rjmp	MAIN			; jump back to main and create an infinite
+		rjmp	NEXT
+ELSE:	cpi		mpr, 0b00000001
+		brne	NEXT
+		rcall	INIT
+		rcall	LCDWrLn1
+		rcall	LCDWrLn2
+		rjmp	NEXT
+NEXT:
+		; jump back to main and create an infinite
 								; while loop.  Generally, every main program is an
 								; infinite while loop, never let the main program
 								; just run off
+		rjmp MAIN
 
 ;***********************************************************
 ;*	Functions and Subroutines
@@ -100,6 +123,32 @@ BTN1:	cpi		r20, (1<<1)
 ;		beginning of your functions
 ;-----------------------------------------------------------
 FUNC:							; Begin a function with a label
+		ldi		ZL, low(MATT_BEG<<1)
+		ldi		ZH, high(MATT_BEG<<1)
+		ldi		YL, low(LCDLn1Addr)
+		ldi		YH, high(LCDLn1Addr)
+		ldi		count, 14
+
+LOOP3:
+		lpm		mpr, Z+
+		st		Y+, mpr
+		dec		count
+		brne	LOOP3
+
+		ldi		ZL, low(JOE_BEG<<1)
+		ldi		ZH, high(JOE_BEG<<1)
+		ldi		YL, low(LCDLn2Addr)
+		ldi		YH, high(LCDLn2Addr)
+		ldi		count, 14
+
+LOOP4:
+		lpm		mpr, Z+
+		st		Y+, mpr
+		dec		count
+		brne	LOOP4
+
+
+
 		; Save variables by pushing them to the stack
 
 		; Execute the function here
@@ -119,11 +168,9 @@ FUNC:							; Begin a function with a label
 ;-----------------------------------------------------------
 JOE_BEG:
 .DB		"Joseph Noonan "		; Declaring data in ProgMem
-JOE_END:
 
 MATT_BEG:
 .DB		"Matthew Levis "		; Declaring data in ProgMem
-MATT_END:
 
 ;***********************************************************
 ;*	Additional Program Includes

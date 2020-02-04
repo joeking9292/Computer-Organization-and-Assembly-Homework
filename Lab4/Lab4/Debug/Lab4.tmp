@@ -23,19 +23,23 @@
   <FILE>Lab4.lss</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <INIT><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.asm</FILE><LINE>42</LINE></INIT>
+  <INIT><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.asm</FILE><LINE>41</LINE></INIT>
   <LCDInit><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\LCDDriver.asm</FILE><LINE>75</LINE></LCDInit>
-  <JOE_BEG><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.asm</FILE><LINE>120</LINE></JOE_BEG>
-  <MAIN><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.asm</FILE><LINE>72</LINE></MAIN>
-  <BTN0><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.asm</FILE><LINE>79</LINE></BTN0>
+  <JOE_BEG><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.asm</FILE><LINE>169</LINE></JOE_BEG>
+  <LOOP><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.asm</FILE><LINE>64</LINE></LOOP>
+  <MATT_BEG><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.asm</FILE><LINE>172</LINE></MATT_BEG>
+  <LOOP2><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.asm</FILE><LINE>76</LINE></LOOP2>
+  <MAIN><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.asm</FILE><LINE>89</LINE></MAIN>
+  <IF><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.asm</FILE><LINE>94</LINE></IF>
+  <ELIF><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.asm</FILE><LINE>97</LINE></ELIF>
   <LCDClr><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\LCDDriver.asm</FILE><LINE>230</LINE></LCDClr>
-  <BTN1><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.asm</FILE><LINE>84</LINE></BTN1>
-  <LCDWrLn1><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\LCDDriver.asm</FILE><LINE>180</LINE></LCDWrLn1>
+  <NEXT><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.asm</FILE><LINE>109</LINE></NEXT>
+  <ELSE><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.asm</FILE><LINE>103</LINE></ELSE>
+  <FUNC><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.asm</FILE><LINE>125</LINE></FUNC>
   <LCDWrLn2><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\LCDDriver.asm</FILE><LINE>205</LINE></LCDWrLn2>
-  <FUNC><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.asm</FILE><LINE>102</LINE></FUNC>
-  <JOE_END><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.asm</FILE><LINE>122</LINE></JOE_END>
-  <MATT_BEG><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.asm</FILE><LINE>124</LINE></MATT_BEG>
-  <MATT_END><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.asm</FILE><LINE>126</LINE></MATT_END>
+  <LCDWrLn1><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\LCDDriver.asm</FILE><LINE>180</LINE></LCDWrLn1>
+  <LOOP3><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.asm</FILE><LINE>132</LINE></LOOP3>
+  <LOOP4><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.asm</FILE><LINE>144</LINE></LOOP4>
   <LCDINIT_L1><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\LCDDriver.asm</FILE><LINE>139</LINE></LCDINIT_L1>
   <LCDWait><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\LCDDriver.asm</FILE><LINE>492</LINE></LCDWait>
   <LCDWriteCmd><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\LCDDriver.asm</FILE><LINE>436</LINE></LCDWriteCmd>
