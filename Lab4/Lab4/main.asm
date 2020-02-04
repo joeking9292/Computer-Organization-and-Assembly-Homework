@@ -88,23 +88,20 @@ LOOP2:
 ;***********************************************************
 MAIN:							; The Main program
 		; Display the strings on the LCD Display
-		in		mpr, PIND
-		andi	mpr, (1<<0|1<<1)
-		cpi		mpr, 0b10000000
+		in		mpr, PIND			; Get input pin D
+		cpi		mpr, 0b01111111		; Check if Clear button is hit
 IF:		brne	ELIF	
-		rcall	LCDClr
+		rcall	LCDClr				; Clear Function
 		rjmp	NEXT
-ELIF:	cpi		mpr, 0b00000010
+ELIF:	cpi		mpr, 0b11111110		; Check if button 0 is hit
 		brne	ELSE
-		rcall	FUNC
-		rcall	LCDWrLn2
-		rcall	LCDWrLn1
+		rcall	PROPER_FORMAT		; Make sure names are in order
+		rcall	LCDWrite			; Write names to screen
 		rjmp	NEXT
-ELSE:	cpi		mpr, 0b00000001
+ELSE:	cpi		mpr, 0b11111101		; Check if button 1 is hit
 		brne	NEXT
-		rcall	INIT
-		rcall	LCDWrLn1
-		rcall	LCDWrLn2
+		rcall	FLIP_FORMAT			; Flip the names in data memory
+		rcall	LCDWrite			; Write names to screen
 		rjmp	NEXT
 NEXT:
 		; jump back to main and create an infinite
@@ -118,43 +115,70 @@ NEXT:
 ;***********************************************************
 
 ;-----------------------------------------------------------
-; Func: Template function header
-; Desc: Cut and paste this and fill in the info at the 
-;		beginning of your functions
+; Func: FLIP_FORMAT
+; Desc: Loads second name onto first line and the first name onto the second line
+;		so that the names will be displayed flipped.
 ;-----------------------------------------------------------
-FUNC:							; Begin a function with a label
+FLIP_FORMAT:
+		; Load second name into Z and data memory location into Y
 		ldi		ZL, low(MATT_BEG<<1)
 		ldi		ZH, high(MATT_BEG<<1)
 		ldi		YL, low(LCDLn1Addr)
 		ldi		YH, high(LCDLn1Addr)
 		ldi		count, 14
 
-LOOP3:
+LOOP3:		; Store second name on line 1
 		lpm		mpr, Z+
 		st		Y+, mpr
 		dec		count
 		brne	LOOP3
 
+		; Load first name into Z and data memory location into Y
 		ldi		ZL, low(JOE_BEG<<1)
 		ldi		ZH, high(JOE_BEG<<1)
 		ldi		YL, low(LCDLn2Addr)
 		ldi		YH, high(LCDLn2Addr)
+		ldi		count, 14		;Reset count
+
+LOOP4:		; Store first name on line 2
+		lpm		mpr, Z+
+		st		Y+, mpr
+		dec		count		; Decrement count
+		brne	LOOP4		; Go to top of loop or exit
+
+		ret						; End a function with RET
+
+;-----------------------------------------------------------
+; Func: PROPER_FORMAT
+; Desc: Loads second name onto first line and the first name onto the second line
+;		so that the names will be displayed flipped.
+;-----------------------------------------------------------
+PROPER_FORMAT:
+		; Load second name into Z and data memory location into Y
+		ldi		ZL, low(JOE_BEG<<1)
+		ldi		ZH, high(JOE_BEG<<1)
+		ldi		YL, low(LCDLn1Addr)
+		ldi		YH, high(LCDLn1Addr)
 		ldi		count, 14
 
-LOOP4:
+LOOP5:		; Store first name on line 1
 		lpm		mpr, Z+
 		st		Y+, mpr
 		dec		count
-		brne	LOOP4
+		brne	LOOP5
 
+		; Load second name into Z and data memory location into Y
+		ldi		ZL, low(MATT_BEG<<1)
+		ldi		ZH, high(MATT_BEG<<1)
+		ldi		YL, low(LCDLn2Addr)
+		ldi		YH, high(LCDLn2Addr)
+		ldi		count, 14		;Reset count
 
-
-		; Save variables by pushing them to the stack
-
-		; Execute the function here
-		
-		; Restore variables by popping them from the stack,
-		; in reverse order
+LOOP6:		; Store second name on line 2
+		lpm		mpr, Z+
+		st		Y+, mpr
+		dec		count		; Decrement count
+		brne	LOOP6		; Go to top of loop or exit
 
 		ret						; End a function with RET
 
