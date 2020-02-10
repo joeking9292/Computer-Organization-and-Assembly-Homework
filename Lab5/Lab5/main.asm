@@ -58,7 +58,7 @@ INIT:							; The initialization routine
 ;-----------------------------------------------------------
 MAIN:							; The Main program
 		; Setup the ADD16 function direct test
-
+		rcall ADD16
 				; Move values 0xFCBA and 0xFFFF in program memory to data memory
 				; memory locations where ADD16 will get its inputs from
 				; (see "Data Memory Allocation" section below)
@@ -71,7 +71,7 @@ MAIN:							; The Main program
 				; Observe result in Memory window
 
 		; Setup the SUB16 function direct test
-
+		rcall SUB16
 				; Move values 0xFCB9 and 0xE420 in program memory to data memory
 				; memory locations where SUB16 will get its inputs from
 
@@ -83,7 +83,7 @@ MAIN:							; The Main program
 				; Observe result in Memory window
 
 		; Setup the MUL24 function direct test
-
+		rcall MUL24
 				; Move values 0xFFFFFF and 0xFFFFFF in program memory to data memory  
 				; memory locations where MUL24 will get its inputs from
 
@@ -96,7 +96,7 @@ MAIN:							; The Main program
 
                 nop ; Check load COMPOUND operands (Set Break point here #7)  
 		; Call the COMPOUND function
-
+		rcall COMPOUND
                 nop ; Check COMPUND result (Set Break point here #8)
 				; Observe final result in Memory window
 
@@ -170,9 +170,48 @@ SUB16:
 ;		result.
 ;-----------------------------------------------------------
 MUL24:
-		; Execute the function here
-		
+		clr		zero
+		; Set Y to beginning address of B
+		ldi		YL, low(addrB)	; Load low byte
+		ldi		YH, high(addrB)	; Load high byte
 
+		; Set Z to begginning address of resulting Product
+		ldi		ZL, low(LAddrP)	; Load low byte
+		ldi		ZH, high(LAddrP); Load high byte
+
+		; Begin outer for loop
+		ldi		oloop, 3		; Load counter
+MUL24_OLOOP:
+		; Set X to beginning address of A
+		ldi		XL, low(addrA)	; Load low byte
+		ldi		XH, high(addrA)	; Load high byte
+
+		; Begin inner for loop
+		ldi		iloop, 3		; Load counter
+MUL24_ILOOP:
+		ld		A, X+			; Get byte of A operand
+		ld		B, Y			; Get byte of B operand
+		mul		A,B				; Multiply A and B
+		ld		A, Z+			; Get a result byte from memory
+		ld		B, Z+			; Get the next result byte from memory
+		add		rlo, A			; rlo <= rlo + A
+		adc		rhi, B			; rhi <= rhi + B + carry
+		ld		A, Z			; Get a third byte from the result
+		adc		A, zero			; Add carry to A
+		st		Z, A			; Store third byte to memory
+		st		-Z, rhi			; Store second byte to memory
+		st		-Z, rlo			; Store first byte to memory
+		adiw	ZH:ZL, 1		; Z <= Z + 1			
+		dec		iloop			; Decrement counter
+		brne	MUL16_ILOOP		; Loop if iLoop != 0
+		; End inner for loop
+
+		sbiw	ZH:ZL, 1		; Z <= Z - 1
+		adiw	YH:YL, 1		; Y <= Y + 1
+		dec		oloop			; Decrement counter
+		brne	MUL16_OLOOP		; Loop if oLoop != 0
+		; End outer for loop
+		 		
 		ret						; End a function with RET
 
 ;-----------------------------------------------------------
@@ -186,15 +225,16 @@ MUL24:
 ;		All result bytes should be cleared before beginning.
 ;-----------------------------------------------------------
 COMPOUND:
+		clr		zero
 
-		; Setup SUB16 with operands D and E
-		; Perform subtraction to calculate D - E
+		; Setup SUB16 with operands F and G
+		; Perform subtraction to calculate F - G
 		
-		; Setup the ADD16 function with SUB16 result and operand F
-		; Perform addition next to calculate (D - E) + F
+		; Setup the ADD16 function with SUB16 result and operand H
+		; Perform addition next to calculate (F - G) + H
 
 		; Setup the MUL24 function with ADD16 result as both operands
-		; Perform multiplication to calculate ((D - E) + F)^2
+		; Perform multiplication to calculate ((F - G)+ H)^2
 
 		ret						; End a function with RET
 
@@ -343,7 +383,32 @@ ADD16_OP2:
 
 .org	$0120				; data memory allocation for results
 ADD16_Result:
-		.byte 3				; allocate three bytes for ADD16 result
+		.byte 3	
+;---------------------------------------------------------------
+.org	$0124
+SUB16_OP1:
+		.byte 2				; allocate two bytes for first operand of ADD16
+SUB16_OP2:
+		.byte 2				; allocate two bytes for second operand of ADD16
+
+.org	$0128
+SUB16_RESULT:
+		.byte 2
+;---------------------------------------------------------------
+.org	$0140
+MUL24_OP1:
+		.byte 3				; allocate two bytes for first operand of ADD16
+MUL24_OP2:
+		.byte 3				; allocate two bytes for second operand of ADD16
+
+.org	$0146
+MUL24_RESULT:
+		.byte 6
+.org	$0152
+MUL24_ADDER:
+		.byte 6
+
+
 
 ;***********************************************************
 ;*	Additional Program Includes
