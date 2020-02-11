@@ -148,6 +148,17 @@ ADD16:
 ;		result.
 ;-----------------------------------------------------------
 SUB16:
+		ldi		XL, low(SUB16_OP1)	; Load low byte of address
+		ldi		XH, high(SUB16_OP1)	; Load high byte of address
+
+		; Load beginning address of second operand into Y
+		ldi		YL, low(SUB16_OP2)
+		ldi		YH, high(SUB16_OP2)
+
+		; Load beginning address of result into Z
+		ldi		ZL, low(SUB16_Result)
+		ldi		ZH, high(SUB16_Result)
+
 		; Execute the function here
 		ld		mpr, X+
 		ld		r20, Y+
@@ -172,19 +183,19 @@ SUB16:
 MUL24:
 		clr		zero
 		; Set Y to beginning address of B
-		ldi		YL, low(addrB)	; Load low byte
-		ldi		YH, high(addrB)	; Load high byte
+		ldi		YL, low(MUL24_OP2)	; Load low byte
+		ldi		YH, high(MUL24_OP2)	; Load high byte
 
 		; Set Z to begginning address of resulting Product
-		ldi		ZL, low(LAddrP)	; Load low byte
-		ldi		ZH, high(LAddrP); Load high byte
+		ldi		ZL, low(MUL24_RESULT)	; Load low byte
+		ldi		ZH, high(MUL24_RESULT); Load high byte
 
 		; Begin outer for loop
 		ldi		oloop, 3		; Load counter
 MUL24_OLOOP:
 		; Set X to beginning address of A
-		ldi		XL, low(addrA)	; Load low byte
-		ldi		XH, high(addrA)	; Load high byte
+		ldi		XL, low(MUL24_OP1)	; Load low byte
+		ldi		XH, high(MUL24_OP1)	; Load high byte
 
 		; Begin inner for loop
 		ldi		iloop, 3		; Load counter
@@ -203,29 +214,122 @@ MUL24_ILOOP:
 		st		-Z, rlo			; Store first byte to memory
 		adiw	ZH:ZL, 1		; Z <= Z + 1			
 		dec		iloop			; Decrement counter
-		brne	MUL16_ILOOP		; Loop if iLoop != 0
+		brne	MUL24_ILOOP		; Loop if iLoop != 0
 		; End inner for loop
 
 		sbiw	ZH:ZL, 1		; Z <= Z - 1
 		adiw	YH:YL, 1		; Y <= Y + 1
 		dec		oloop			; Decrement counter
-		brne	MUL16_OLOOP		; Loop if oLoop != 0
+		brne	MUL24_OLOOP		; Loop if oLoop != 0
 		; End outer for loop
 		 		
 		ret						; End a function with RET
 
 ;-----------------------------------------------------------
 ; Func: COMPOUND
-; Desc: Computes the compound expression ((D - E) + F)^2
+; Desc: Computes the compound expression ((F - G) + H)^2
 ;		by making use of SUB16, ADD16, and MUL24.
 ;
-;		D, E, and F are declared in program memory, and must
+;		F, G, and H are declared in program memory, and must
 ;		be moved into data memory for use as input operands.
 ;
 ;		All result bytes should be cleared before beginning.
 ;-----------------------------------------------------------
 COMPOUND:
 		clr		zero
+
+		ldi		XL, low(OperandF)
+		ldi		XH, high(OperandF)
+		ldi		YL, low(OperandG)
+		ldi		YH, high(OperandG)
+
+		ld		mpr, X+
+		ld		r9, X
+		ld		r20, Y+
+		ld		r21, Y
+
+		ldi		XL, low(SUB16_OP1)
+		ldi		XH, high(SUB16_OP1)
+		ldi		YL, low(SUB16_OP2)
+		ldi		YH, high(SUB16_OP2)
+		
+		st		X+, mpr
+		st		X, r9
+		st		Y+, r20
+		st		Y, r21
+
+		rcall SUB16
+		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+		
+		ldi		XL, low(SUB_RESULT)
+		ldi		XH, high(SUB_RESULT)
+		ldi		YL, low(OperandH)
+		ldi		YH, high(OperandH)
+
+		ld		mpr, X+
+		ld		r9, X
+		ld		r20, Y+
+		ld		r21, Y
+
+		ldi		XL, low(ADD16_OP1)
+		ldi		XH, high(ADD16_OP1)
+		ldi		YL, low(ADD16_OP2)
+		ldi		YH, high(ADD16_OP2)
+
+		st		X+, mpr
+		st		X, r9
+		st		Y+, r20
+		st		Y, r21
+
+		rcall ADD16
+
+		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+		ldi		XL, low(ADD16_RESULT)
+		ldi		XH, high(ADD16_RESULT)
+		ldi		YL, low(MUL24_OP1)
+		ldi		YH, high(MUL24_OP1)
+		ldi		ZL, low(MUL24_OP2)
+		ldi		ZH, high(MUL24_OP2)
+
+		ld		mpr, X+
+		ld		r9, X+
+		ld		r20, X+
+
+		st		Y+, mpr
+		st		Y+, r9
+		st		Y+, r20
+		st		Z+, mpr
+		st		Z+, r9
+		st		Z+, r20
+
+		nop
+
+		rcall MUL24
+
+
+		ldi XL, low(MUL24_RESULT)
+		ldi XH, high(MUL24_RESULT)
+		ldi YL, low (COMPOUND_RESULT)
+		ldi YH, high (COMPOUND_RESULT)
+
+		; GET RESULT FROM MUL24 (X)
+
+		ld mpr, X+
+		ld r9, X+
+		ld r20, X+
+		ld r21, X+
+		ld r22, X+
+		ld r23, X
+
+		st Y+, mpr
+		st Y+, r9
+		st Y+, r20
+		st Y+, r21
+		st Y+, r22
+		st Y, r23
+
+		ret
 
 		; Setup SUB16 with operands F and G
 		; Perform subtraction to calculate F - G
