@@ -2,7 +2,7 @@
 ;*
 ;*	Joseph_Noonan_and_Matthew_Levis_Lab5_sourcecode.asm
 ;*
-;*	The purpose of this program is to add .........................................................
+;*	The purpose of this program is to perform 24-bit multiplication
 ;*
 ;*	This is the file for Lab 5 of ECE 375
 ;*
@@ -47,6 +47,11 @@
 ;-----------------------------------------------------------
 INIT:							; The initialization routine
 		; Initialize Stack Pointer
+		ldi		mpr, low(RAMEND)
+		out		SPL, mpr		; Load SPL with low byte of RAMEND
+		ldi		mpr, high(RAMEND)
+		out		SPH, mpr		; Load SPH with high byte of RAMEND
+
 		; TODO					; Init the 2 stack pointer registers
 
 		clr		zero			; Set the zero register to zero, maintain
@@ -134,12 +139,10 @@ ADD16:
 		ld		mpr, X
 		ld		r20, Y
 		adc		r20, mpr
-		st		Z+, r20,
-		brcc	EXIT
+		st		Z+, r20
+		brcc	EXITADD
 		st		Z, XH
-	EXIT:
-		ret
-		
+	EXITADD:
 		ret						; End a function with RET
 
 ;-----------------------------------------------------------
@@ -167,12 +170,10 @@ SUB16:
 		ld		mpr, X
 		ld		r20, Y
 		sbc		r20, mpr
-		st		Z+, r20,
-		brcc	EXIT
+		st		Z+, r20
+		brcc	EXITSUB
 		st		Z, XH
-	EXIT:
-		ret
-
+	EXITSUB:
 		ret						; End a function with RET
 
 ;-----------------------------------------------------------
@@ -238,6 +239,9 @@ MUL24_ILOOP:
 COMPOUND:
 		clr		zero
 
+		; Setup SUB16 with operands F and G
+		; Perform subtraction to calculate F - G
+
 		ldi		XL, low(OperandF)
 		ldi		XH, high(OperandF)
 		ldi		YL, low(OperandG)
@@ -259,10 +263,13 @@ COMPOUND:
 		st		Y, r21
 
 		rcall SUB16
+
 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-		
-		ldi		XL, low(SUB_RESULT)
-		ldi		XH, high(SUB_RESULT)
+		; Setup the ADD16 function with SUB16 result and operand H
+		; Perform addition next to calculate (F - G) + H
+
+		ldi		XL, low(SUB16_RESULT)
+		ldi		XH, high(SUB16_RESULT)
 		ldi		YL, low(OperandH)
 		ldi		YH, high(OperandH)
 
@@ -284,6 +291,8 @@ COMPOUND:
 		rcall ADD16
 
 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+		; Setup the MUL24 function with ADD16 result as both operands
+		; Perform multiplication to calculate ((F - G)+ H)^2
 
 		ldi		XL, low(ADD16_RESULT)
 		ldi		XH, high(ADD16_RESULT)
@@ -307,6 +316,8 @@ COMPOUND:
 
 		rcall MUL24
 
+		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+		; This part stores the results from the compound operation
 
 		ldi XL, low(MUL24_RESULT)
 		ldi XH, high(MUL24_RESULT)
@@ -328,17 +339,6 @@ COMPOUND:
 		st Y+, r21
 		st Y+, r22
 		st Y, r23
-
-		ret
-
-		; Setup SUB16 with operands F and G
-		; Perform subtraction to calculate F - G
-		
-		; Setup the ADD16 function with SUB16 result and operand H
-		; Perform addition next to calculate (F - G) + H
-
-		; Setup the MUL24 function with ADD16 result as both operands
-		; Perform multiplication to calculate ((F - G)+ H)^2
 
 		ret						; End a function with RET
 
@@ -460,11 +460,11 @@ OperandE:
 	.DW 0xFFFFFF
 ; Compoud operands
 OperandF:
-	.DW	0xFCBA				; test value for operand D
+	.DW	0xFCBA				; test value for operand F
 OperandG:
-	.DW	0x2019				; test value for operand E
+	.DW	0x2019				; test value for operand G
 OperandH:
-	.DW	0x21BB				; test value for operand F
+	.DW	0x21BB				; test value for operand H
 
 ;***********************************************************
 ;*	Data Memory Allocation
@@ -486,31 +486,31 @@ ADD16_OP2:
 		.byte 2				; allocate two bytes for second operand of ADD16
 
 .org	$0120				; data memory allocation for results
-ADD16_Result:
+ADD16_RESULT:
 		.byte 3	
 ;---------------------------------------------------------------
 .org	$0124
 SUB16_OP1:
-		.byte 2				; allocate two bytes for first operand of ADD16
+		.byte 2				; allocate two bytes for first operand of SUB16
 SUB16_OP2:
-		.byte 2				; allocate two bytes for second operand of ADD16
+		.byte 2				; allocate two bytes for second operand of SUB16
 
 .org	$0128
 SUB16_RESULT:
-		.byte 2
+		.byte 2				; allocate two bytes for SUB16 result
 ;---------------------------------------------------------------
 .org	$0140
 MUL24_OP1:
-		.byte 3				; allocate two bytes for first operand of ADD16
+		.byte 3				; allocate two bytes for first operand of MUL24
 MUL24_OP2:
-		.byte 3				; allocate two bytes for second operand of ADD16
+		.byte 3				; allocate two bytes for second operand of MUL24
 
 .org	$0146
 MUL24_RESULT:
-		.byte 6
+		.byte 6				; allocate two bytes for MUL24 result
 .org	$0152
-MUL24_ADDER:
-		.byte 6
+COMPOUND_RESULT:
+		.byte 6				; allocate two bytes for Compounds result
 
 
 
