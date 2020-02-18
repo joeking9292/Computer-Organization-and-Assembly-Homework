@@ -13,6 +13,7 @@
  </INCLUDED_FILES>
  <OBJECT_FILES>
   <FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\Debug\Lab5.obj</FILE>
+
  </OBJECT_FILES>
  <HEX_FILES>
   <FILE>Lab5.hex</FILE>
@@ -58,5 +59,6 @@
   <OperandC><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>449</LINE></OperandC>
   <OperandD><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>451</LINE></OperandD>
   <OperandE><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>454</LINE></OperandE>
+
  </LABELS>
 </ASSEMBLER_INFO>

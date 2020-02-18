@@ -11,9 +11,9 @@
     <OutputFileExtension>.obj</OutputFileExtension>
     <OutputDirectory>$(MSBuildProjectDirectory)\$(Configuration)</OutputDirectory>
     <Language>ASSEMBLY</Language>
-    <AssemblyName>Lab5</AssemblyName>
-    <Name>Lab5</Name>
-    <RootNamespace>Lab5</RootNamespace>
+    <AssemblyName>Lab6</AssemblyName>
+    <Name>Lab6</Name>
+    <RootNamespace>Lab6</RootNamespace>
     <ToolchainFlavour>Native</ToolchainFlavour>
     <EntryFile>$(MSBuildProjectDirectory)\main.asm</EntryFile>
     <KeepTimersRunning>true</KeepTimersRunning>
@@ -65,6 +65,7 @@
         <avrasm.assembler.general.IncludeFile>m128def.inc</avrasm.assembler.general.IncludeFile>
       </AvrAssembler>
     </ToolchainSettings>
+    <OutputType>Executable</OutputType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>

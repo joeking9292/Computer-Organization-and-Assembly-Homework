@@ -47,6 +47,11 @@
 ;-----------------------------------------------------------
 INIT:							; The initialization routine
 		; Initialize Stack Pointer
+		ldi		mpr, low(RAMEND)
+		out		SPL, mpr		; Load SPL with low byte of RAMEND
+		ldi		mpr, high(RAMEND)
+		out		SPH, mpr		; Load SPH with high byte of RAMEND
+
 		; TODO					; Init the 2 stack pointer registers
 
 		clr		zero			; Set the zero register to zero, maintain
@@ -481,7 +486,7 @@ ADD16_OP2:
 		.byte 2				; allocate two bytes for second operand of ADD16
 
 .org	$0120				; data memory allocation for results
-ADD16_Result:
+ADD16_RESULT:
 		.byte 3	
 ;---------------------------------------------------------------
 .org	$0124
