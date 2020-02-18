@@ -24,26 +24,27 @@
  </OUTPUT_FILES>
  <LABELS>
   <INIT><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\main.asm</FILE><LINE>80</LINE></INIT>
-  <HandleRightW><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\main.asm</FILE><LINE>138</LINE></HandleRightW>
-  <HandleLeftW><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\main.asm</FILE><LINE>176</LINE></HandleLeftW>
-  <ClearRightW><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\main.asm</FILE><LINE>214</LINE></ClearRightW>
-  <ClearLeftW><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\main.asm</FILE><LINE>239</LINE></ClearLeftW>
+  <HandleRightW><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\main.asm</FILE><LINE>144</LINE></HandleRightW>
+  <HandleLeftW><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\main.asm</FILE><LINE>189</LINE></HandleLeftW>
+  <ClearRightW><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\main.asm</FILE><LINE>233</LINE></ClearRightW>
+  <ClearLeftW><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\main.asm</FILE><LINE>261</LINE></ClearLeftW>
   <LCDInit><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\LCDDriver.asm</FILE><LINE>75</LINE></LCDInit>
-  <MAIN><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\main.asm</FILE><LINE>122</LINE></MAIN>
-  <WaitLoop><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\main.asm</FILE><LINE>265</LINE></WaitLoop>
-  <LCDWrite><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\LCDDriver.asm</FILE><LINE>170</LINE></LCDWrite>
+  <MAIN><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\main.asm</FILE><LINE>128</LINE></MAIN>
+  <Bin2ASCII><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\LCDDriver.asm</FILE><LINE>339</LINE></Bin2ASCII>
+  <LCDWrln1><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\LCDDriver.asm</FILE><LINE>180</LINE></LCDWrln1>
+  <WaitLoop><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\main.asm</FILE><LINE>291</LINE></WaitLoop>
+  <LCDWrln2><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\LCDDriver.asm</FILE><LINE>205</LINE></LCDWrln2>
   <LCDClrLn1><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\LCDDriver.asm</FILE><LINE>240</LINE></LCDClrLn1>
   <LCDClrLn2><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\LCDDriver.asm</FILE><LINE>265</LINE></LCDClrLn2>
-  <OLoop><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\main.asm</FILE><LINE>266</LINE></OLoop>
-  <MLoop><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\main.asm</FILE><LINE>268</LINE></MLoop>
-  <ILoop><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\main.asm</FILE><LINE>270</LINE></ILoop>
-  <FUNC><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\main.asm</FILE><LINE>286</LINE></FUNC>
+  <OLoop><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\main.asm</FILE><LINE>292</LINE></OLoop>
+  <MLoop><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\main.asm</FILE><LINE>294</LINE></MLoop>
+  <ILoop><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\main.asm</FILE><LINE>296</LINE></ILoop>
+  <FUNC><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\main.asm</FILE><LINE>312</LINE></FUNC>
   <LCDINIT_L1><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\LCDDriver.asm</FILE><LINE>139</LINE></LCDINIT_L1>
   <LCDWait><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\LCDDriver.asm</FILE><LINE>492</LINE></LCDWait>
   <LCDWriteCmd><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\LCDDriver.asm</FILE><LINE>436</LINE></LCDWriteCmd>
   <LCDClr><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\LCDDriver.asm</FILE><LINE>230</LINE></LCDClr>
-  <LCDWrLn1><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\LCDDriver.asm</FILE><LINE>180</LINE></LCDWrLn1>
-  <LCDWrLn2><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\LCDDriver.asm</FILE><LINE>205</LINE></LCDWrLn2>
+  <LCDWrite><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\LCDDriver.asm</FILE><LINE>170</LINE></LCDWrite>
   <LCDSetLine><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\LCDDriver.asm</FILE><LINE>388</LINE></LCDSetLine>
   <LCDWriteLine><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\LCDDriver.asm</FILE><LINE>423</LINE></LCDWriteLine>
   <LCDClrLine><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\LCDDriver.asm</FILE><LINE>404</LINE></LCDClrLine>
@@ -52,7 +53,6 @@
   <LCDWriteByte_1><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\LCDDriver.asm</FILE><LINE>313</LINE></LCDWriteByte_1>
   <LCDWriteByte_2><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\LCDDriver.asm</FILE><LINE>318</LINE></LCDWriteByte_2>
   <LCDWriteChar><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\LCDDriver.asm</FILE><LINE>457</LINE></LCDWriteChar>
-  <Bin2ASCII><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\LCDDriver.asm</FILE><LINE>339</LINE></Bin2ASCII>
   <B2A_1><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\LCDDriver.asm</FILE><LINE>352</LINE></B2A_1>
   <B2A_3><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\LCDDriver.asm</FILE><LINE>360</LINE></B2A_3>
   <B2A_2><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab6\Lab6\LCDDriver.asm</FILE><LINE>357</LINE></B2A_2>

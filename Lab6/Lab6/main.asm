@@ -23,8 +23,8 @@
 .def	LeftCount = r1			; Left whisker counter
 .def	RightCount = r2		; Right whisker counter
 .def	waitcnt = r25
-.def ilcnt = r23				; Inner Loop Counter
-.def olcnt = r24				; Outer Loop Counter
+.def	ilcnt = r23				; Inner Loop Counter
+.def	olcnt = r24				; Outer Loop Counter
 .equ	WTime = 100 ; Time to wait in wait loop
 .equ	WskrR = 0 ; Right Whisker Input Bit
 .equ	WskrL = 1 ; Left Whisker Input Bit
@@ -83,33 +83,39 @@ INIT:							; The initialization routine
 		out		SPL, mpr		; Load SPL with low byte of RAMEND
 		ldi		mpr, high(RAMEND)
 		out		SPH, mpr		; Load SPH with high byte of RAMEND
-		
+
 		; Initialize LCD Display
 		rcall	LCDInit
 		
-		ldi mpr, (1<<EngEnL)|(1<<EngEnR)|(1<<EngDirR)|(1<<EngDirL)
+		ldi mpr, $FF
 		out DDRB, mpr ; Set Port B Directional Register for output
+
+
 		; Initialize Port D for inputs
-		ldi mpr, (0<<WskrL)|(0<<WskrR)
+		ldi mpr, $00
 		out DDRD, mpr ; Set Port D Directional Register for input
-		ldi mpr, (1<<WskrL)|(1<<WskrR)
+		ldi mpr, $FF
 		out PORTD, mpr ; Activate pull-up resistors
 		; Initialize TekBot Forward Movement
-		ldi mpr, MovFwd ; Load Move Forward Command
+
+		
+		ldi mpr, 0b00000000 ; Load Move Forward Command
+		out PINB, mpr ; Send command to motors		ldi mpr, MovFwd ; Load Move Forward Command
 		out PORTB, mpr ; Send command to motors
 
 		; Initialize external interrupts
 			; Set the Interrupt Sense Control to falling edge 
 
 
-		ldi		mpr, (1<<ISC01) | (0<<ISC00) | (1<<ISC11) | (0<<ISC10) | (1<<ISC21) | (0<<ISC20) | (1<<ISC31) | (0<<ISC30)
+		ldi		mpr, 0b10101010 ;(1<<ISC01) | (0<<ISC00) | (1<<ISC11) | (0<<ISC10) | (1<<ISC21) | (0<<ISC20) | (1<<ISC31) | (0<<ISC30)
 		sts		EICRA, mpr		; set INT0-3 to trigger on falling edge
 
 		; Configure the External Interrupt Mask
-		ldi		mpr,  (1<<INT0) | (1<<INT1) | (1<<INT2) | (1<<INT3)
-		sts		EIMSK, mpr
+		ldi		mpr, 0b00001111    ;(1<<INT0) | (1<<INT1) | (1<<INT2) | (1<<INT3)
+		out		EIMSK, mpr
 		
-
+		clr	r1
+		clr r2
 
 
 		; Turn on interrupts
@@ -138,34 +144,41 @@ MAIN:							; The Main program
 HandleRightW:
 
 	push	mpr
+	push	XL
+	push	XH
 	push	waitcnt
 	in		mpr, SREG
 	push	mpr
+	
+	ldi		XL, low(LCDLn1Addr)
+	ldi		XH, high(LCDLn1Addr)
+
+	inc		RightCount
+	mov		mpr, RightCount
+	
+	rcall Bin2ASCII
+	rcall	LCDWrln1
 
 	; move backwards for a second
 	ldi mpr, MovBck
 	out PORTB, mpr
 	ldi waitcnt, WTime
 	rcall WaitLoop
-
+	
 	; turn left for a second
 	ldi mpr, TurnL ; Load Turn Left Command
 	out PORTB, mpr ; Send command to port
 	ldi waitcnt, WTime ; Wait for 1 second
 	rcall WaitLoop ; Call wait function
 
-
-	ldi		YL, low(LCDLn1Addr)
-	ldi		YH, high(LCDLn1Addr)
-
-	inc		RightCount
-	st		Y, RightCount
-	
-	rcall	LCDWrite
+	ldi mpr, 0xFF				; Clear the interrupt register
+	out EIFR, mpr				; to prevent stacked interrupts
 
 	pop mpr
 	out SREG, mpr
 	pop waitcnt
+	pop XH
+	pop XL
 	pop mpr
 
 
@@ -176,10 +189,20 @@ HandleRightW:
 HandleLeftW:
 
 	push	mpr
+	push	XL
+	push	XH
 	push	waitcnt
 	in		mpr, SREG
 	push	mpr
 
+	ldi		XL, low(LCDLn2Addr)
+	ldi		XH, high(LCDLn2Addr)
+
+	inc		LeftCount
+	mov		mpr, LeftCount
+
+	rcall Bin2ASCII
+	rcall	LCDWrln2
 
 	; move backwards for a second
 	ldi mpr, MovBck
@@ -187,24 +210,20 @@ HandleLeftW:
 	ldi waitcnt, WTime
 	rcall WaitLoop
 
-
 	; turn right for a second
 	ldi mpr, TurnR ; Load Turn Left Command
 	out PORTB, mpr ; Send command to port
 	ldi waitcnt, WTime ; Wait for 1 second
 	rcall WaitLoop ; Call wait function
 
-	ldi		YL, low(LCDLn2Addr)
-	ldi		YH, high(LCDLn2Addr)
-
-	inc		LeftCount
-	st		Y, LeftCount
-
-	rcall	LCDWrite
+	ldi mpr, 0xFF				; Clear the interrupt register
+	out EIFR, mpr				; to prevent stacked interrupts
 
 	pop mpr
 	out SREG, mpr
 	pop waitcnt
+	pop	XH
+	pop XL
 	pop mpr
 
 	ret
@@ -214,22 +233,25 @@ HandleLeftW:
 ClearRightW:
 
 	push	mpr
+	push	XL
+	push	XH
 	push	waitcnt
 	in		mpr, SREG
 	push	mpr
-
-	ldi		YL, low(LCDLn1Addr)
-	ldi		YH, high(LCDLn2Addr)
-
+	
 	clr		RightCount
-	st		Y, RightCount
+	ldi		XL, low(LCDLn1Addr)
+	ldi		XH, high(LCDLn1Addr)
+
+	mov		mpr, RightCount
 	
 	rcall	LCDClrLn1
-
 
 	pop mpr
 	out SREG, mpr
 	pop waitcnt
+	pop XH
+	pop XL
 	pop mpr
 
 	ret
@@ -239,21 +261,25 @@ ClearRightW:
 ClearLeftW:
 
 	push	mpr
+	push	XL
+	push	XH
 	push	waitcnt
 	in		mpr, SREG
 	push	mpr
-
-	ldi		YL, low(LCDLn1Addr)
-	ldi		YH, high(LCDLn2Addr)
-
+	
 	clr		LeftCount
-	st		Y, LeftCount
+	ldi		XL, low(LCDLn2Addr)
+	ldi		XH, high(LCDLn2Addr)
+
+	mov		mpr, LeftCount
 	
 	rcall	LCDClrLn2
 
 	pop mpr
 	out SREG, mpr
 	pop waitcnt
+	pop XH
+	pop XL
 	pop mpr
 
 	ret
