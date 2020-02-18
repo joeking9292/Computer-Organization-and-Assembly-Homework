@@ -1,14 +1,10 @@
 
-AVRASM ver. 2.2.7  C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.asm Tue Feb 04 12:08:15 2020
+AVRASM ver. 2.2.7  C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm Tue Feb 11 10:56:49 2020
 
-[builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc\m128def.inc'
-C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.asm(17): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc\m128def.inc'
-C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.asm(202): Including file 'C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\LCDDriver.asm'
-[builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc\m128def.inc'
-C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.asm(17): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc\m128def.inc'
-C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.asm(202): Including file 'C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\LCDDriver.asm'
-
->>>>>>> a6b5a6477089ac793ccad1b664acc978002cf1c1
+[builtin](2): Including file 'H:/ECE375\Atmel\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc\m128def.inc'
+C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm(16): Including file 'H:/ECE375\Atmel\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc\m128def.inc'
+[builtin](2): Including file 'H:/ECE375\Atmel\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc\m128def.inc'
+C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm(16): Including file 'H:/ECE375\Atmel\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc\m128def.inc'
                                  
                                  ;***********************************************************
                                  
@@ -1230,17 +1226,16 @@ C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.as
                                  ; ***** END OF FILE ******************************************************
                                  
                                  ;*
-                                 ;*	Joseph_Noonan_and_Matthew_Levis_Lab4_sourcecode.asm
+                                 ;*	Joseph_Noonan_and_Matthew_Levis_Lab5_sourcecode.asm
                                  ;*
-                                 ;*	This is the file for Lab 4 of ECE 375 which handles
-                                 ;*  displaying the names of Jospeh Noonan and Matthew Levis
-                                 ;*  to the screen on the AVR Board.
-                                 ;*  The names can also be filled or cleared from the screen.
+                                 ;*	The purpose of this program is to perform 24-bit multiplication
+                                 ;*
+                                 ;*	This is the file for Lab 5 of ECE 375
                                  ;*
                                  ;***********************************************************
                                  ;*
-                                 ;*	 Author: Joseph Noonan and Matthew Levis
-                                 ;*	   Date: 1/28/20
+                                 ;*	 Authors: Joseph Noonan, Matthew Levis
+                                 ;*	    Date: 02/04/2020
                                  ;*
                                  ;***********************************************************
                                  
@@ -1292,756 +1287,500 @@ C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.as
                                  ;***********************************************************
                                  ;*	Internal Register Definitions and Constants
                                  ;***********************************************************
-                                 .def	mpr = r16				; Multipurpose register is
-                                 								; required for LCD Driver 
+                                 .def	mpr = r16				; Multipurpose register 
+                                 .def	rlo = r0				; Low byte of MUL result
+                                 .def	rhi = r1				; High byte of MUL result
+                                 .def	zero = r2				; Zero register, set to zero in INIT, useful for calculations
+                                 .def	A = r3					; A variable
+                                 .def	B = r4					; Another variable
+                                 
+                                 .def	oloop = r17				; Outer Loop Counter
+                                 .def	iloop = r18				; Inner Loop Counter
+                                 
                                  
                                  ;***********************************************************
                                  ;*	Start of Code Segment
                                  ;***********************************************************
                                  .cseg							; Beginning of code segment
                                  
-                                 ;***********************************************************
-                                 ;*	Interrupt Vectors
-                                 ;***********************************************************
+                                 ;-----------------------------------------------------------
+                                 ; Interrupt Vectors
+                                 ;-----------------------------------------------------------
                                  .org	$0000					; Beginning of IVs
-000000 c045                      		rjmp INIT				; Reset interrupt
+000000 c045                      		rjmp 	INIT			; Reset interrupt
                                  
                                  .org	$0046					; End of Interrupt Vectors
                                  
-                                 ;***********************************************************
-                                 ;*	Program Initialization
-                                 ;***********************************************************
+                                 ;-----------------------------------------------------------
+                                 ; Program Initialization
+                                 ;-----------------------------------------------------------
                                  INIT:							; The initialization routine
                                  		; Initialize Stack Pointer
-                                 		
-                                 		
-                                 		; Initialize LCD Display
-000046 d05a                      		RCALL LCDInit
+                                 		; TODO					; Init the 2 stack pointer registers
                                  
-                                 		; Initialize Port D for Input
-000047 e040                      		ldi		r20, $00		; Set Port D Data Direction Register
-000048 bb01                      		out		DDRD, mpr		; for output
-000049 ef4f                      		ldi		r20, $FF		; Initialize Port D Data Register
-00004a bb02                      		out		PORTD, mpr		; so all Port D outputs are low
-                                 		
-                                 		; Move strings from Program Memory to Data Memory
-00004b e2e6                      		ldi		ZL, low(JOE_BEG<<1)
-00004c e0f1                      		ldi		ZH, high(JOE_BEG<<1)
-00004d e0c0                      		ldi		YL, low(LCDLn1Addr)
-00004e e0d1                      		ldi		YH, high(LCDLn1Addr)
-00004f e02e                      		ldi		count, 14
+000046 2422                      		clr		zero			; Set the zero register to zero, maintain
+                                 								; these semantics, meaning, don't
+                                 								; load anything else into it.
                                  
-                                 LOOP:
-000050 9105                      		lpm		mpr, Z+
-000051 9309                      		st		Y+, mpr
-000052 952a                      		dec		count
-000053 f7e1                      		brne	LOOP
-                                 
-000054 e3e4                      		ldi		ZL, low(MATT_BEG<<1)
-000055 e0f1                      		ldi		ZH, high(MATT_BEG<<1)
-000056 e1c0                      		ldi		YL, low(LCDLn2Addr)
-000057 e0d1                      		ldi		YH, high(LCDLn2Addr)
-000058 e02e                      		ldi		count, 14
-                                 
-                                 LOOP2:
-000059 9105                      		lpm		mpr, Z+
-00005a 9309                      		st		Y+, mpr
-00005b 952a                      		dec		count
-00005c f7e1                      		brne	LOOP2
-                                 
-                                 		; NOTE that there is no RET or RJMP from INIT, this
-                                 		; is because the next instruction executed is the
-                                 		; first instruction of the main program
-                                 
-                                 ;***********************************************************
-                                 ;*	Main Program
-                                 ;***********************************************************
+                                 ;-----------------------------------------------------------
+                                 ; Main Program
+                                 ;-----------------------------------------------------------
                                  MAIN:							; The Main program
-                                 		; Display the strings on the LCD Display
-00005d b300                      		in		mpr, PIND			; Get input pin D
-00005e 370f                      		cpi		mpr, 0b01111111		; Check if Clear button is hit
-00005f f411                      IF:		brne	ELIF	
-000060 d0a2                      		rcall	LCDClr				; Clear Function
-000061 c00a                      		rjmp	NEXT
-000062 3f0e                      ELIF:	cpi		mpr, 0b11111110		; Check if button 0 is hit
-000063 f419                      		brne	ELSE
-000064 d01b                      		rcall	PROPER_FORMAT		; Make sure names are in order
-000065 d07a                      		rcall	LCDWrite			; Write names to screen
-000066 c005                      		rjmp	NEXT
-000067 3f0d                      ELSE:	cpi		mpr, 0b11111101		; Check if button 1 is hit
-000068 f419                      		brne	NEXT
-000069 d003                      		rcall	FLIP_FORMAT			; Flip the names in data memory
-00006a d075                      		rcall	LCDWrite			; Write names to screen
-00006b c000                      		rjmp	NEXT
-                                 NEXT:
-                                 		; jump back to main and create an infinite
-                                 								; while loop.  Generally, every main program is an
-                                 								; infinite while loop, never let the main program
-                                 								; just run off
-00006c cff0                      		rjmp MAIN
+                                 		; Setup the ADD16 function direct test
+000047 d00c                      		rcall ADD16
+                                 				; Move values 0xFCBA and 0xFFFF in program memory to data memory
+                                 				; memory locations where ADD16 will get its inputs from
+                                 				; (see "Data Memory Allocation" section below)
+                                 
+000048 0000                                      nop ; Check load ADD16 operands (Set Break point here #1)  
+                                 				; Call ADD16 function to test its correctness
+                                 				; (calculate FCBA + FFFF)
+                                 
+000049 0000                                      nop ; Check ADD16 result (Set Break point here #2)
+                                 				; Observe result in Memory window
+                                 
+                                 		; Setup the SUB16 function direct test
+00004a d01a                      		rcall SUB16
+                                 				; Move values 0xFCB9 and 0xE420 in program memory to data memory
+                                 				; memory locations where SUB16 will get its inputs from
+                                 
+00004b 0000                                      nop ; Check load SUB16 operands (Set Break point here #3)  
+                                 				; Call SUB16 function to test its correctness
+                                 				; (calculate FCB9 - E420)
+                                 
+00004c 0000                                      nop ; Check SUB16 result (Set Break point here #4)
+                                 				; Observe result in Memory window
+                                 
+                                 		; Setup the MUL24 function direct test
+00004d d028                      		rcall MUL24
+                                 				; Move values 0xFFFFFF and 0xFFFFFF in program memory to data memory  
+                                 				; memory locations where MUL24 will get its inputs from
+                                 
+00004e 0000                                      nop ; Check load MUL24 operands (Set Break point here #5)  
+                                 				; Call MUL24 function to test its correctness
+                                 				; (calculate FFFFFF * FFFFFF)
+                                 
+00004f 0000                                      nop ; Check MUL24 result (Set Break point here #6)
+                                 				; Observe result in Memory window
+                                 
+000050 0000                                      nop ; Check load COMPOUND operands (Set Break point here #7)  
+                                 		; Call the COMPOUND function
+000051 d041                      		rcall COMPOUND
+000052 0000                                      nop ; Check COMPUND result (Set Break point here #8)
+                                 				; Observe final result in Memory window
+                                 
+000053 cfff                      DONE:	rjmp	DONE			; Create an infinite while loop to signify the 
+                                 								; end of the program.
                                  
                                  ;***********************************************************
                                  ;*	Functions and Subroutines
                                  ;***********************************************************
                                  
                                  ;-----------------------------------------------------------
-                                 ; Func: FLIP_FORMAT
-                                 ; Desc: Loads second name onto first line and the first name onto the second line
-                                 ;		so that the names will be displayed flipped.
+                                 ; Func: ADD16
+                                 ; Desc: Adds two 16-bit numbers and generates a 24-bit number
+                                 ;		where the high byte of the result contains the carry
+                                 ;		out bit.
                                  ;-----------------------------------------------------------
-                                 FLIP_FORMAT:
-                                 		; Load second name into Z and data memory location into Y
-00006d e3e4                      		ldi		ZL, low(MATT_BEG<<1)
-00006e e0f1                      		ldi		ZH, high(MATT_BEG<<1)
-00006f e0c0                      		ldi		YL, low(LCDLn1Addr)
-000070 e0d1                      		ldi		YH, high(LCDLn1Addr)
-000071 e02e                      		ldi		count, 14
+                                 ADD16:
+                                 		; Load beginning address of first operand into X
+000054 e1a0                      		ldi		XL, low(ADD16_OP1)	; Load low byte of address
+000055 e0b1                      		ldi		XH, high(ADD16_OP1)	; Load high byte of address
                                  
-                                 LOOP3:		; Store second name on line 1
-000072 9105                      		lpm		mpr, Z+
-000073 9309                      		st		Y+, mpr
-000074 952a                      		dec		count
-000075 f7e1                      		brne	LOOP3
+                                 		; Load beginning address of second operand into Y
+000056 e1c2                      		ldi		YL, low(ADD16_OP2)
+000057 e0d1                      		ldi		YH, high(ADD16_OP2)
                                  
-                                 		; Load first name into Z and data memory location into Y
-000076 e2e6                      		ldi		ZL, low(JOE_BEG<<1)
-000077 e0f1                      		ldi		ZH, high(JOE_BEG<<1)
-000078 e1c0                      		ldi		YL, low(LCDLn2Addr)
-000079 e0d1                      		ldi		YH, high(LCDLn2Addr)
-00007a e02e                      		ldi		count, 14		;Reset count
+                                 		; Load beginning address of result into Z
+000058 e2e0                      		ldi		ZL, low(ADD16_Result)
+000059 e0f1                      		ldi		ZH, high(ADD16_Result)
                                  
-                                 LOOP4:		; Store first name on line 2
-00007b 9105                      		lpm		mpr, Z+
-00007c 9309                      		st		Y+, mpr
-00007d 952a                      		dec		count		; Decrement count
-00007e f7e1                      		brne	LOOP4		; Go to top of loop or exit
-                                 
-00007f 9508                      		ret						; End a function with RET
+                                 		; Execute the function
+00005a 910d                      		ld		mpr, X+
+00005b 9149                      		ld		r20, Y+
+00005c 0f40                      		add		r20, mpr
+00005d 9341                      		st		Z+, r20
+00005e 910c                      		ld		mpr, X
+00005f 8148                      		ld		r20, Y
+000060 1f40                      		adc		r20, mpr
+000061 9341                      		st		Z+, r20
+000062 f408                      		brcc	EXITADD
+000063 83b0                      		st		Z, XH
+                                 	EXITADD:
+000064 9508                      		ret						; End a function with RET
                                  
                                  ;-----------------------------------------------------------
-                                 ; Func: PROPER_FORMAT
-                                 ; Desc: Loads second name onto first line and the first name onto the second line
-                                 ;		so that the names will be displayed flipped.
+                                 ; Func: SUB16
+                                 ; Desc: Subtracts two 16-bit numbers and generates a 16-bit
+                                 ;		result.
                                  ;-----------------------------------------------------------
-                                 PROPER_FORMAT:
-                                 		; Load second name into Z and data memory location into Y
-000080 e2e6                      		ldi		ZL, low(JOE_BEG<<1)
-000081 e0f1                      		ldi		ZH, high(JOE_BEG<<1)
-000082 e0c0                      		ldi		YL, low(LCDLn1Addr)
-000083 e0d1                      		ldi		YH, high(LCDLn1Addr)
-000084 e02e                      		ldi		count, 14
+                                 SUB16:
+000065 e2a4                      		ldi		XL, low(SUB16_OP1)	; Load low byte of address
+000066 e0b1                      		ldi		XH, high(SUB16_OP1)	; Load high byte of address
                                  
-                                 LOOP5:		; Store first name on line 1
-000085 9105                      		lpm		mpr, Z+
-000086 9309                      		st		Y+, mpr
-000087 952a                      		dec		count
-000088 f7e1                      		brne	LOOP5
+                                 		; Load beginning address of second operand into Y
+000067 e2c6                      		ldi		YL, low(SUB16_OP2)
+000068 e0d1                      		ldi		YH, high(SUB16_OP2)
                                  
-                                 		; Load second name into Z and data memory location into Y
-000089 e3e4                      		ldi		ZL, low(MATT_BEG<<1)
-00008a e0f1                      		ldi		ZH, high(MATT_BEG<<1)
-00008b e1c0                      		ldi		YL, low(LCDLn2Addr)
-00008c e0d1                      		ldi		YH, high(LCDLn2Addr)
-00008d e02e                      		ldi		count, 14		;Reset count
+                                 		; Load beginning address of result into Z
+000069 e2e8                      		ldi		ZL, low(SUB16_Result)
+00006a e0f1                      		ldi		ZH, high(SUB16_Result)
                                  
-                                 LOOP6:		; Store second name on line 2
-00008e 9105                      		lpm		mpr, Z+
-00008f 9309                      		st		Y+, mpr
-000090 952a                      		dec		count		; Decrement count
-000091 f7e1                      		brne	LOOP6		; Go to top of loop or exit
+                                 		; Execute the function here
+00006b 910d                      		ld		mpr, X+
+00006c 9149                      		ld		r20, Y+
+00006d 1b40                      		sub		r20, mpr
+00006e 9341                      		st		Z+, r20
+00006f 910c                      		ld		mpr, X
+000070 8148                      		ld		r20, Y
+000071 0b40                      		sbc		r20, mpr
+000072 9341                      		st		Z+, r20
+000073 f408                      		brcc	EXITSUB
+000074 83b0                      		st		Z, XH
+                                 	EXITSUB:
+000075 9508                      		ret						; End a function with RET
                                  
+                                 ;-----------------------------------------------------------
+                                 ; Func: MUL24
+                                 ; Desc: Multiplies two 24-bit numbers and generates a 48-bit 
+                                 ;		result.
+                                 ;-----------------------------------------------------------
+                                 MUL24:
+000076 2422                      		clr		zero
+                                 		; Set Y to beginning address of B
+000077 e4c3                      		ldi		YL, low(MUL24_OP2)	; Load low byte
+000078 e0d1                      		ldi		YH, high(MUL24_OP2)	; Load high byte
+                                 
+                                 		; Set Z to begginning address of resulting Product
+000079 e4e6                      		ldi		ZL, low(MUL24_RESULT)	; Load low byte
+00007a e0f1                      		ldi		ZH, high(MUL24_RESULT); Load high byte
+                                 
+                                 		; Begin outer for loop
+00007b e013                      		ldi		oloop, 3		; Load counter
+                                 MUL24_OLOOP:
+                                 		; Set X to beginning address of A
+00007c e4a0                      		ldi		XL, low(MUL24_OP1)	; Load low byte
+00007d e0b1                      		ldi		XH, high(MUL24_OP1)	; Load high byte
+                                 
+                                 		; Begin inner for loop
+00007e e023                      		ldi		iloop, 3		; Load counter
+                                 MUL24_ILOOP:
+00007f 903d                      		ld		A, X+			; Get byte of A operand
+000080 8048                      		ld		B, Y			; Get byte of B operand
+000081 9c34                      		mul		A,B				; Multiply A and B
+000082 9031                      		ld		A, Z+			; Get a result byte from memory
+000083 9041                      		ld		B, Z+			; Get the next result byte from memory
+000084 0c03                      		add		rlo, A			; rlo <= rlo + A
+000085 1c14                      		adc		rhi, B			; rhi <= rhi + B + carry
+000086 8030                      		ld		A, Z			; Get a third byte from the result
+000087 1c32                      		adc		A, zero			; Add carry to A
+000088 8230                      		st		Z, A			; Store third byte to memory
+000089 9212                      		st		-Z, rhi			; Store second byte to memory
+00008a 9202                      		st		-Z, rlo			; Store first byte to memory
+00008b 9631                      		adiw	ZH:ZL, 1		; Z <= Z + 1			
+00008c 952a                      		dec		iloop			; Decrement counter
+00008d f789                      		brne	MUL24_ILOOP		; Loop if iLoop != 0
+                                 		; End inner for loop
+                                 
+00008e 9731                      		sbiw	ZH:ZL, 1		; Z <= Z - 1
+00008f 9621                      		adiw	YH:YL, 1		; Y <= Y + 1
+000090 951a                      		dec		oloop			; Decrement counter
+000091 f751                      		brne	MUL24_OLOOP		; Loop if oLoop != 0
+                                 		; End outer for loop
+                                 		 		
 000092 9508                      		ret						; End a function with RET
+                                 
+                                 ;-----------------------------------------------------------
+                                 ; Func: COMPOUND
+                                 ; Desc: Computes the compound expression ((F - G) + H)^2
+                                 ;		by making use of SUB16, ADD16, and MUL24.
+                                 ;
+                                 ;		F, G, and H are declared in program memory, and must
+                                 ;		be moved into data memory for use as input operands.
+                                 ;
+                                 ;		All result bytes should be cleared before beginning.
+                                 ;-----------------------------------------------------------
+                                 COMPOUND:
+000093 2422                      		clr		zero
+                                 
+                                 		; Setup SUB16 with operands F and G
+                                 		; Perform subtraction to calculate F - G
+                                 
+000094 e1a5                      		ldi		XL, low(OperandF)
+000095 e0b1                      		ldi		XH, high(OperandF)
+000096 e1c6                      		ldi		YL, low(OperandG)
+000097 e0d1                      		ldi		YH, high(OperandG)
+                                 
+000098 910d                      		ld		mpr, X+
+000099 909c                      		ld		r9, X
+00009a 9149                      		ld		r20, Y+
+00009b 8158                      		ld		r21, Y
+                                 
+00009c e2a4                      		ldi		XL, low(SUB16_OP1)
+00009d e0b1                      		ldi		XH, high(SUB16_OP1)
+00009e e2c6                      		ldi		YL, low(SUB16_OP2)
+00009f e0d1                      		ldi		YH, high(SUB16_OP2)
+                                 		
+0000a0 930d                      		st		X+, mpr
+0000a1 929c                      		st		X, r9
+0000a2 9349                      		st		Y+, r20
+0000a3 8358                      		st		Y, r21
+                                 
+0000a4 dfc0                      		rcall SUB16
+                                 
+                                 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                                 		; Setup the ADD16 function with SUB16 result and operand H
+                                 		; Perform addition next to calculate (F - G) + H
+                                 
+0000a5 e2a8                      		ldi		XL, low(SUB16_RESULT)
+0000a6 e0b1                      		ldi		XH, high(SUB16_RESULT)
+0000a7 e1c7                      		ldi		YL, low(OperandH)
+0000a8 e0d1                      		ldi		YH, high(OperandH)
+                                 
+0000a9 910d                      		ld		mpr, X+
+0000aa 909c                      		ld		r9, X
+0000ab 9149                      		ld		r20, Y+
+0000ac 8158                      		ld		r21, Y
+                                 
+0000ad e1a0                      		ldi		XL, low(ADD16_OP1)
+0000ae e0b1                      		ldi		XH, high(ADD16_OP1)
+0000af e1c2                      		ldi		YL, low(ADD16_OP2)
+0000b0 e0d1                      		ldi		YH, high(ADD16_OP2)
+                                 
+0000b1 930d                      		st		X+, mpr
+0000b2 929c                      		st		X, r9
+0000b3 9349                      		st		Y+, r20
+0000b4 8358                      		st		Y, r21
+                                 
+0000b5 df9e                      		rcall ADD16
+                                 
+                                 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                                 		; Setup the MUL24 function with ADD16 result as both operands
+                                 		; Perform multiplication to calculate ((F - G)+ H)^2
+                                 
+0000b6 e2a0                      		ldi		XL, low(ADD16_RESULT)
+0000b7 e0b1                      		ldi		XH, high(ADD16_RESULT)
+0000b8 e4c0                      		ldi		YL, low(MUL24_OP1)
+0000b9 e0d1                      		ldi		YH, high(MUL24_OP1)
+0000ba e4e3                      		ldi		ZL, low(MUL24_OP2)
+0000bb e0f1                      		ldi		ZH, high(MUL24_OP2)
+                                 
+0000bc 910d                      		ld		mpr, X+
+0000bd 909d                      		ld		r9, X+
+0000be 914d                      		ld		r20, X+
+                                 
+0000bf 9309                      		st		Y+, mpr
+0000c0 9299                      		st		Y+, r9
+0000c1 9349                      		st		Y+, r20
+0000c2 9301                      		st		Z+, mpr
+0000c3 9291                      		st		Z+, r9
+0000c4 9341                      		st		Z+, r20
+                                 
+0000c5 0000                      		nop
+                                 
+0000c6 dfaf                      		rcall MUL24
+                                 
+                                 		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                                 		; This part stores the results from the compound operation
+                                 
+0000c7 e4a6                      		ldi XL, low(MUL24_RESULT)
+0000c8 e0b1                      		ldi XH, high(MUL24_RESULT)
+0000c9 e5c2                      		ldi YL, low (COMPOUND_RESULT)
+0000ca e0d1                      		ldi YH, high (COMPOUND_RESULT)
+                                 
+                                 		; GET RESULT FROM MUL24 (X)
+                                 
+0000cb 910d                      		ld mpr, X+
+0000cc 909d                      		ld r9, X+
+0000cd 914d                      		ld r20, X+
+0000ce 915d                      		ld r21, X+
+0000cf 916d                      		ld r22, X+
+0000d0 917c                      		ld r23, X
+                                 
+0000d1 9309                      		st Y+, mpr
+0000d2 9299                      		st Y+, r9
+0000d3 9349                      		st Y+, r20
+0000d4 9359                      		st Y+, r21
+0000d5 9369                      		st Y+, r22
+0000d6 8378                      		st Y, r23
+                                 
+0000d7 9508                      		ret						; End a function with RET
+                                 
+                                 ;-----------------------------------------------------------
+                                 ; Func: MUL16
+                                 ; Desc: An example function that multiplies two 16-bit numbers
+                                 ;			A - Operand A is gathered from address $0101:$0100
+                                 ;			B - Operand B is gathered from address $0103:$0102
+                                 ;			Res - Result is stored in address 
+                                 ;					$0107:$0106:$0105:$0104
+                                 ;		You will need to make sure that Res is cleared before
+                                 ;		calling this function.
+                                 ;-----------------------------------------------------------
+                                 MUL16:
+0000d8 923f                      		push 	A				; Save A register
+0000d9 924f                      		push	B				; Save B register
+0000da 921f                      		push	rhi				; Save rhi register
+0000db 920f                      		push	rlo				; Save rlo register
+0000dc 922f                      		push	zero			; Save zero register
+0000dd 93bf                      		push	XH				; Save X-ptr
+0000de 93af                      		push	XL
+0000df 93df                      		push	YH				; Save Y-ptr
+0000e0 93cf                      		push	YL				
+0000e1 93ff                      		push	ZH				; Save Z-ptr
+0000e2 93ef                      		push	ZL
+0000e3 931f                      		push	oloop			; Save counters
+0000e4 932f                      		push	iloop				
+                                 
+0000e5 2422                      		clr		zero			; Maintain zero semantics
+                                 
+                                 		; Set Y to beginning address of B
+0000e6 e0c2                      		ldi		YL, low(addrB)	; Load low byte
+0000e7 e0d1                      		ldi		YH, high(addrB)	; Load high byte
+                                 
+                                 		; Set Z to begginning address of resulting Product
+0000e8 e0e4                      		ldi		ZL, low(LAddrP)	; Load low byte
+0000e9 e0f1                      		ldi		ZH, high(LAddrP); Load high byte
+                                 
+                                 		; Begin outer for loop
+0000ea e012                      		ldi		oloop, 2		; Load counter
+                                 MUL16_OLOOP:
+                                 		; Set X to beginning address of A
+0000eb e0a0                      		ldi		XL, low(addrA)	; Load low byte
+0000ec e0b1                      		ldi		XH, high(addrA)	; Load high byte
+                                 
+                                 		; Begin inner for loop
+0000ed e022                      		ldi		iloop, 2		; Load counter
+                                 MUL16_ILOOP:
+0000ee 903d                      		ld		A, X+			; Get byte of A operand
+0000ef 8048                      		ld		B, Y			; Get byte of B operand
+0000f0 9c34                      		mul		A,B				; Multiply A and B
+0000f1 9031                      		ld		A, Z+			; Get a result byte from memory
+0000f2 9041                      		ld		B, Z+			; Get the next result byte from memory
+0000f3 0c03                      		add		rlo, A			; rlo <= rlo + A
+0000f4 1c14                      		adc		rhi, B			; rhi <= rhi + B + carry
+0000f5 8030                      		ld		A, Z			; Get a third byte from the result
+0000f6 1c32                      		adc		A, zero			; Add carry to A
+0000f7 8230                      		st		Z, A			; Store third byte to memory
+0000f8 9212                      		st		-Z, rhi			; Store second byte to memory
+0000f9 9202                      		st		-Z, rlo			; Store first byte to memory
+0000fa 9631                      		adiw	ZH:ZL, 1		; Z <= Z + 1			
+0000fb 952a                      		dec		iloop			; Decrement counter
+0000fc f789                      		brne	MUL16_ILOOP		; Loop if iLoop != 0
+                                 		; End inner for loop
+                                 
+0000fd 9731                      		sbiw	ZH:ZL, 1		; Z <= Z - 1
+0000fe 9621                      		adiw	YH:YL, 1		; Y <= Y + 1
+0000ff 951a                      		dec		oloop			; Decrement counter
+000100 f751                      		brne	MUL16_OLOOP		; Loop if oLoop != 0
+                                 		; End outer for loop
+                                 		 		
+000101 912f                      		pop		iloop			; Restore all registers in reverves order
+000102 911f                      		pop		oloop
+000103 91ef                      		pop		ZL				
+000104 91ff                      		pop		ZH
+000105 91cf                      		pop		YL
+000106 91df                      		pop		YH
+000107 91af                      		pop		XL
+000108 91bf                      		pop		XH
+000109 902f                      		pop		zero
+00010a 900f                      		pop		rlo
+00010b 901f                      		pop		rhi
+00010c 904f                      		pop		B
+00010d 903f                      		pop		A
+00010e 9508                      		ret						; End a function with RET
+                                 
+                                 ;-----------------------------------------------------------
+                                 ; Func: Template function header
+                                 ; Desc: Cut and paste this and fill in the info at the 
+                                 ;		beginning of your functions
+                                 ;-----------------------------------------------------------
+                                 FUNC:							; Begin a function with a label
+                                 		; Save variable by pushing them to the stack
+                                 
+                                 		; Execute the function here
+                                 		
+                                 		; Restore variable by popping them from the stack in reverse order
+00010f 9508                      		ret						; End a function with RET
+                                 
                                  
                                  ;***********************************************************
                                  ;*	Stored Program Data
                                  ;***********************************************************
                                  
-                                 ;-----------------------------------------------------------
-                                 ; An example of storing a string. Note the labels before and
-                                 ; after the .DB directive; these can help to access the data
-                                 ;-----------------------------------------------------------
-                                 JOE_BEG:
-000093 6f4a
-000094 6573
-000095 6870
-000096 4e20
-000097 6f6f
-000098 616e
-000099 206e                      .DB		"Joseph Noonan "		; Declaring data in ProgMem
+                                 ; Enter any stored data you might need here
                                  
-                                 MATT_BEG:
-00009a 614d
-00009b 7474
-00009c 6568
-00009d 2077
-00009e 654c
-00009f 6976
-0000a0 2073                      .DB		"Matthew Levis "		; Declaring data in ProgMem
+                                 ; ADD16 operands
+                                 OperandA:
+000110 fcba                      	.DW	0xFCBA
+                                 OperandB:
+000111 ffff                      	.DW 0xFFFF
+                                 ; SUB16 operands
+                                 OperandC:
+000112 fcb9                      	.DW 0xFCB9
+                                 OperandD:
+000113 e420                      	.DW 0xE420
+                                 ; MUL24 operands
+                                 OperandE:
+000114 ffff                      	.DW 0xFFFFFF
+                                 ; Compoud operands
+                                 OperandF:
+000115 fcba                      	.DW	0xFCBA				; test value for operand F
+                                 OperandG:
+000116 2019                      	.DW	0x2019				; test value for operand G
+                                 OperandH:
+000117 21bb                      	.DW	0x21BB				; test value for operand H
+                                 
+                                 ;***********************************************************
+                                 ;*	Data Memory Allocation
+                                 ;***********************************************************
+                                 
+                                 .dseg
+                                 .org	$0100				; data memory allocation for MUL16 example
+000100                           addrA:	.byte 2
+000102                           addrB:	.byte 2
+000104                           LAddrP:	.byte 4
+                                 
+                                 ; Below is an example of data memory allocation for ADD16.
+                                 ; Consider using something similar for SUB16 and MUL24.
+                                 
+                                 .org	$0110				; data memory allocation for operands
+                                 ADD16_OP1:
+000110                           		.byte 2				; allocate two bytes for first operand of ADD16
+                                 ADD16_OP2:
+000112                           		.byte 2				; allocate two bytes for second operand of ADD16
+                                 
+                                 .org	$0120				; data memory allocation for results
+                                 ADD16_Result:
+000120                           		.byte 3	
+                                 ;---------------------------------------------------------------
+                                 .org	$0124
+                                 SUB16_OP1:
+000124                           		.byte 2				; allocate two bytes for first operand of SUB16
+                                 SUB16_OP2:
+000126                           		.byte 2				; allocate two bytes for second operand of SUB16
+                                 
+                                 .org	$0128
+                                 SUB16_RESULT:
+000128                           		.byte 2				; allocate two bytes for SUB16 result
+                                 ;---------------------------------------------------------------
+                                 .org	$0140
+                                 MUL24_OP1:
+000140                           		.byte 3				; allocate two bytes for first operand of MUL24
+                                 MUL24_OP2:
+000143                           		.byte 3				; allocate two bytes for second operand of MUL24
+                                 
+                                 .org	$0146
+                                 MUL24_RESULT:
+000146                           		.byte 6				; allocate two bytes for MUL24 result
+                                 .org	$0152
+                                 COMPOUND_RESULT:
+000152                           		.byte 6				; allocate two bytes for Compounds result
+                                 
+                                 
                                  
                                  ;***********************************************************
                                  ;*	Additional Program Includes
                                  ;***********************************************************
-                                 .include "LCDDriver.asm"		; Include the LCD Driver
-                                 
-                                 ;*
-                                 ;*	LCDDriver.asm	-	V2.0
-                                 ;*
-                                 ;*	Contains the neccessary functions to display text to a
-                                 ;*	2 x 16 character LCD Display.  Additional functions
-                                 ;*	include a conversion routine from an unsigned 8-bit
-                                 ;*	binary number to and ASCII text string.
-                                 ;*
-                                 ;*	Version 2.0 - Added support for accessing the LCD 
-                                 ;*		Display via the serial port. See version 1.0 for 
-                                 ;*		accessing a memory mapped LCD display.
-                                 ;*
-                                 ;***********************************************************
-                                 ;*
-                                 ;*	 Author: David Zier
-                                 ;*	   Date: March 17, 2003
-                                 ;*	Company: TekBots(TM), Oregon State University - EECS
-                                 ;*	Version: 2.0
-                                 ;*
-                                 ;***********************************************************
-                                 ;*	Rev	Date	Name		Description
-                                 ;*----------------------------------------------------------
-                                 ;*	-	8/20/02	Zier		Initial Creation of Version 1.0
-                                 ;*	A	3/7/03	Zier		V2.0 - Updated for USART LCD
-                                 ;*
-                                 ;*
-                                 ;***********************************************************
-                                 
-                                 ;***********************************************************
-                                 ;*	Internal Register Definitions and Constants
-                                 ;*		NOTE: A register MUST be named 'mpr' in the Main Code
-                                 ;*			It is recomended to use register r16.
-                                 ;*		WARNING: Register r17-r22 are reserved and cannot be
-                                 ;*			renamed outside of the LCD Driver functions. Doing
-                                 ;*			so will damage the functionality of the LCD Driver
-                                 ;***********************************************************
-                                 .def	wait = r17				; Wait Loop Register
-                                 .def	count = r18				; Character Counter
-                                 .def	line = r19				; Line Select Register
-                                 .def	type = r20				; LCD data type: Command or Text
-                                 .def	q = r21					; Quotient for div10
-                                 .def	r = r22					; Remander for div10
-                                 
-                                 .equ	LCDLine1 = $80			; LCD Line 1 select command
-                                 .equ	LCDLine2 = $c0			; LCD Line 2 select command
-                                 .equ	LCDClear = $01			; LCD Clear Command
-                                 .equ	LCDHome = $02			; LCD Set Cursor Home Command
-                                 .equ	LCDPulse = $08			; LCD Pulse signal, used to simulate 
-                                 								; write signal
-                                 
-                                 .equ	LCDCmd = $00			; Constant used to write a command 
-                                 .equ	LCDTxt = $01			; Constant used to write a text character
-                                 
-                                 .equ	LCDMaxCnt = 16			; Maximum number of characters per line
-                                 .equ	LCDLn1Addr = $0100		; Beginning address for Line 1 data
-                                 .equ	LCDLn2Addr = $0110		; Beginning address for Line 2 data
-                                 
-                                 ;-----------------------------------------------------------
-                                 ;***********************************************************
-                                 ;*	Public LCD Driver Suboutines and Functions
-                                 ;*		These functions and subroutines can be called safely 
-                                 ;*		from within any program
-                                 ;***********************************************************
-                                 ;-----------------------------------------------------------
-                                 
-                                 
-                                 ;*******************************************************
-                                 ;* SubRt: 	LCDInit
-                                 ;* Desc: 	Initialize the Serial Port and the Hitachi 
-                                 ;*			Display 8 Bit inc DD-RAM 
-                                 ;*			Pointer with no features
-                                 ;*			- 2 LInes with 16 characters
-                                 ;*******************************************************
-                                 LCDInit:
-0000a1 930f                      		push	mpr				; Save the state of machine
-0000a2 b70f                      		in		mpr, SREG		; Save the SREG
-0000a3 930f                      		push	mpr				;
-0000a4 931f                      		push	wait			; Save wait
-                                 
-                                 		; Setup the Communication Ports
-                                 		; Port B: Output
-                                 		; Port D: Input w/ internal pullup resistors
-                                 		; Port F: Output on Pin 3
-0000a5 e000                      		ldi		mpr, $00		; Initialize Port B for outputs
-0000a6 bb08                      		out		PORTB, mpr		; Port B outputs high
-0000a7 ef0f                      		ldi		mpr, $ff		; except for any overrides
-0000a8 bb07                      		out		DDRB, mpr		;
-0000a9 e000                      		ldi		mpr, $00		; Initialize Port D for inputs
-0000aa bb02                      		out		PORTD, mpr		; with Tri-State
-0000ab e000                      		ldi		mpr, $00		; except for any overrides
-0000ac bb01                      		out		DDRD, mpr		;
-0000ad e000                      		ldi		mpr, $00		; Initialize Port F Pin 3 to
-0000ae 9300 0062                 		sts		PORTF, mpr		; output inorder to twiddle the
-0000b0 e008                      		ldi		mpr, (1<<DDF3)	; LCD interface
-0000b1 9300 0061                 		sts		DDRF, mpr		; Must NOT override this port
-                                 
-                                 		; Setup the Serial Functionality
-                                 		; SPI Type: Master
-                                 		; SPI Clock Rate: 2*1000.000 kHz
-                                 		; SPI Clock Phase: Cycle Half
-                                 		; SPI Clock Polarity: Low
-                                 		; SPI Data Order: MSB First
-0000b3 e500                      		ldi		mpr, (1<<SPE|1<<MSTR)
-0000b4 b90d                      		out		SPCR, mpr		; Set Serial Port Control Register
-0000b5 e001                      		ldi		mpr, (1<<SPI2X)
-0000b6 b90e                      		out		SPSR, mpr		; Set Serial Port Status Register
-                                 
-                                 		; Setup External SRAM configuration
-                                 		; $0460 - $7FFF / $8000 - $FFFF
-                                 		; Lower page wait state(s): None
-                                 		; Uppoer page wait state(s): 2r/w
-0000b7 e800                      		ldi		mpr, (1<<SRE)	; 
-0000b8 bf05                      		out		MCUCR, mpr		; Initialize MCUCR
-0000b9 e402                      		ldi		mpr, (1<<SRL2|1<<SRW11)
-0000ba 9300 006d                 		sts		XMCRA, mpr		; Initialize XMCRA
-0000bc e800                      		ldi		mpr, (1<<XMBK)	;
-0000bd 9300 006c                 		sts		XMCRB, mpr		; Initialize XMCRB
-                                 		
-                                 		; Initialize USART0
-                                 		; Communication Parameter: 8 bit, 1 stop, No Parity
-                                 		; USART0 Rx: On
-                                 		; USART0 Tx: On
-                                 		; USART0 Mode: Asynchronous
-                                 		; USART0 Baudrate: 9600
-0000bf e000                      		ldi		mpr, $00		;
-0000c0 b90b                      		out		UCSR0A, mpr		; Init UCSR0A
-0000c1 e108                      		ldi		mpr, (1<<RXEN0|1<<TXEN0)
-0000c2 b90a                      		out		UCSR0B, mpr		; Init UCSR0B
-0000c3 e006                      		ldi		mpr, (1<<UCSZ01|1<<UCSZ00)
-0000c4 9300 0095                 		sts		UCSR0C, mpr		; Init UCSR0C
-0000c6 e000                      		ldi		mpr, $00		;
-0000c7 9300 0090                 		sts		UBRR0H, mpr		; Init UBRR0H
-0000c9 e607                      		ldi		mpr, $67		;
-0000ca b909                      		out		UBRR0L, mpr		; Init UBRR0L
-                                 
-                                 		; Initialize the LCD Display
-0000cb e006                      		ldi		mpr, 6			;
-                                 LCDINIT_L1:
-0000cc ef1a                      		ldi		wait, 250		; 15ms of Display
-0000cd d0bf                      		rcall	LCDWait			; Bootup wait
-0000ce 950a                      		dec		mpr				;
-0000cf f7e1                      		brne	LCDINIT_L1		;
-                                 
-0000d0 e308                      		ldi		mpr, $38		; Display Mode set
-0000d1 d097                      		rcall 	LCDWriteCmd		; 
-0000d2 e008                      		ldi		mpr, $08		; Display Off
-0000d3 d095                      		rcall	LCDWriteCmd		;
-0000d4 e001                      		ldi		mpr, $01		; Display Clear
-0000d5 d093                      		rcall	LCDWriteCmd		;
-0000d6 e006                      		ldi		mpr, $06		; Entry mode set
-0000d7 d091                      		rcall	LCDWriteCmd		;
-0000d8 e00c                      		ldi		mpr, $0c		; Display on
-0000d9 d08f                      		rcall	LCDWriteCmd		;
-0000da d028                      		rcall	LCDClr			; Clear display
-                                 
-0000db 911f                      		pop		wait			; Restore wait
-0000dc 910f                      		pop		mpr				; Restore SREG
-0000dd bf0f                      		out		SREG, mpr		;
-0000de 910f                      		pop		mpr				; Restore mpr
-0000df 9508                      		ret						; Return from subroutine
-                                 
-                                 ;*******************************************************
-                                 ;* Func:	LCDWrite
-                                 ;* Desc:	Generic Write Function that writes both lines
-                                 ;*			of text out to the LCD
-                                 ;*			- Line 1 data is in address space $0100-$010F
-                                 ;*			- Line 2 data is in address space $0110-$010F
-                                 ;*******************************************************
-                                 LCDWrite:
-0000e0 d002                      		rcall LCDWrLn1			; Write Line 1
-0000e1 d011                      		rcall LCDWrLn2			; Write Line 2
-0000e2 9508                      		ret 					; Return from function
-                                 
-                                 ;*******************************************************
-                                 ;* Func:	LCDWrLn1
-                                 ;* Desc:	This function will write the first line of 
-                                 ;*			data to the first line of the LCD Display
-                                 ;*******************************************************
-                                 LCDWrLn1:
-0000e3 930f                      		push 	mpr				; Save mpr
-0000e4 93ef                      		push	ZL				; Save Z pointer
-0000e5 93ff                      		push	ZH				;
-0000e6 932f                      		push	count			; Save the count register
-0000e7 933f                      		push	line			; Save the line register
-                                 								
-0000e8 e0e0                      		ldi		ZL, low(LCDLn1Addr)
-0000e9 e0f1                      		ldi		ZH, high(LCDLn1Addr)		 
-0000ea e830                      		ldi		line, LCDLine1	; Set LCD line to Line 1
-0000eb d06b                      		rcall	LCDSetLine		; Restart at the beginning of line 1
-0000ec d076                      		rcall	LCDWriteLine	; Write the line of text
-                                 
-0000ed 913f                      		pop		line
-0000ee 912f                      		pop		count			; Restore the counter
-0000ef 91ff                      		pop		ZH				; Restore Z pointer
-0000f0 91ef                      		pop		ZL				;
-0000f1 910f                      		pop 	mpr				; Restore mpr
-0000f2 9508                      		ret						; Return from function
-                                 
-                                 ;*******************************************************
-                                 ;* Func:	LCDWrLn2
-                                 ;* Desc:	This function will write the second line of 
-                                 ;*			data to the second line of the LCD Display
-                                 ;*******************************************************
-                                 LCDWrLn2:
-0000f3 930f                      		push 	mpr				; Save mpr
-0000f4 93ef                      		push	ZL				; Save Z pointer
-0000f5 93ff                      		push	ZH				;
-0000f6 932f                      		push	count			; Save the count register
-0000f7 933f                      		push	line			; Save the line register
-                                 								
-0000f8 e1e0                      		ldi		ZL, low(LCDLn2Addr)
-0000f9 e0f1                      		ldi		ZH, high(LCDLn2Addr)		 
-0000fa ec30                      		ldi		line, LCDLine2	; Set LCD line to Line 2
-0000fb d05b                      		rcall	LCDSetLine		; Restart at the beginning of line 2
-0000fc d066                      		rcall	LCDWriteLine	; Write the line of text
-                                 
-0000fd 913f                      		pop		line
-0000fe 912f                      		pop		count			; Restore the counter
-0000ff 91ff                      		pop		ZH				; Restore Z pointer
-000100 91ef                      		pop		ZL				;
-000101 910f                      		pop 	mpr				; Restore mpr
-000102 9508                      		ret						; Return from function
-                                 
-                                 ;*******************************************************
-                                 ;* Func:	LCDClr
-                                 ;* Desc:	Generic Clear Subroutine that clears both 
-                                 ;*			lines of the LCD and Data Memory storage area
-                                 ;*******************************************************
-                                 LCDClr:
-000103 d002                      		rcall	LCDClrLn1		; Clear Line 1
-000104 d011                      		rcall	LCDClrLn2		; Clear Line 2
-000105 9508                      		ret						; Return from Subroutine
-                                 
-                                 ;*******************************************************
-                                 ;* Func:	LCDClrLn1
-                                 ;* Desc:	This subroutine will clear the first line of 
-                                 ;*			the data and the first line of the LCD Display
-                                 ;*******************************************************
-                                 LCDClrLn1:
-000106 930f                      		push	mpr				; Save mpr
-000107 933f                      		push	line			; Save line register
-000108 932f                      		push	count			; Save the count register
-000109 93ef                      		push	ZL				; Save Z pointer
-00010a 93ff                      		push	ZH				;
-                                 	
-00010b e830                      		ldi		line, LCDline1	; Set Access to Line 1 of LCD
-00010c d04a                      		rcall	LCDSetLine		; Set Z pointer to address of line 1 data
-00010d e0e0                      		ldi		ZL, low(LCDLn1Addr)
-00010e e0f1                      		ldi		ZH, high(LCDLn1Addr)
-00010f d04c                      		rcall	LCDClrLine		; Call the Clear Line function
-                                 
-000110 91ff                      		pop		ZH				; Restore Z pointer
-000111 91ef                      		pop		ZL				;
-000112 912f                      		pop		count			; Restore the count register
-000113 913f                      		pop		line			; Restore line register
-000114 910f                      		pop		mpr				; Restore mpr
-000115 9508                      		ret						; Return from Subroutine
-                                 
-                                 ;*******************************************************
-                                 ;* Func:	LCDClrLn2
-                                 ;* Desc:	This subroutine will clear the second line of 
-                                 ;*			the data and the second line of the LCD Display
-                                 ;*******************************************************
-                                 LCDClrLn2:
-000116 930f                      		push	mpr				; Save mpr
-000117 933f                      		push	line			; Save line register
-000118 932f                      		push	count			; Save the count register
-000119 93ef                      		push	ZL				; Save Z pointer
-00011a 93ff                      		push	ZH				;
-                                 	
-00011b ec30                      		ldi		line, LCDline2	; Set Access to Line 2 of LCD
-00011c d03a                      		rcall	LCDSetLine		; Set Z pointer to address of line 2 data
-00011d e1e0                      		ldi		ZL, low(LCDLn2Addr)
-00011e e0f1                      		ldi		ZH, high(LCDLn2Addr)
-00011f d03c                      		rcall	LCDClrLine		; Call the Clear Line function
-                                 
-000120 91ff                      		pop		ZH				; Restore Z pointer
-000121 91ef                      		pop		ZL				;
-000122 912f                      		pop		count			; Restore the count register
-000123 913f                      		pop		line			; Restore line register
-000124 910f                      		pop		mpr				; Restore mpr
-000125 9508                      		ret						; Return from Subroutine
-                                 
-                                 ;*******************************************************
-                                 ;* Func:	LCDWriteByte
-                                 ;* Desc:	This is a complex and low level function that
-                                 ;*			allows any program to write any ASCII character
-                                 ;*			(Byte) anywhere in the LCD Display.  There
-                                 ;*			are several things that need to be initialized
-                                 ;*			before this function is called:
-                                 ;*		count - Holds the index value of the line to where
-                                 ;*				the char is written, 0-15(39).  i.e. if 
-                                 ;*				count has the value of 3, then the char is
-                                 ;*				going to be written to the third element of
-                                 ;*				the line.
-                                 ;*		line  - Holds the line number that the char is going
-                                 ;*				to be written to, (1 or 2).
-                                 ;*		mpr	  - Contains the value of the ASCII character to 
-                                 ;*				be written (0-255)
-                                 ;*********************************************************
-                                 LCDWriteByte:
-000126 930f                      		push	mpr				; Save the mpr
-000127 933f                      		push	line			; Save the line
-000128 932f                      		push	count			; Save the count
-                                 								; Preform sanity checks on count and line
-000129 3228                      		cpi		count, 40		; Make sure count is within range
-00012a f450                      		brsh	LCDWriteByte_3	; Do nothing and exit function
-00012b 3031                      		cpi		line, 1			; If (line == 1)
-00012c f411                      		brne	LCDWriteByte_1	; 
-00012d e830                      		ldi		line, LCDLine1	; Load line 1 base LCD Address
-00012e c003                      		rjmp	LCDWriteByte_2	; Continue on with function
-                                 LCDWriteByte_1:					
-00012f 3032                      		cpi		line, 2			; If (line == 2)
-000130 f421                      		brne	LCDWriteByte_3	; Do nothing and exit function
-000131 ec30                      		ldi		line, LCDLine2	; Load line 2 base LCD Address
-                                 
-                                 LCDWriteByte_2:					; Write char to LCD
-000132 0f32                      		add		line, count		; Set the correct LCD address
-000133 d023                      		rcall	LCDSetLine		; Set the line address to LCD
-000134 d042                      		rcall	LCDWriteChar	; Write Char to LCD Display		
-                                 		
-                                 LCDWriteByte_3:					; Exit Function
-000135 912f                      		pop		count			; Restore the count
-000136 913f                      		pop		line			; Restore the line
-000137 910f                      		pop		mpr				; Restore the mpr
-000138 9508                      		ret						; Return from function
-                                 		 
-                                 ;*******************************************************
-                                 ;* Func:	Bin2ASCII
-                                 ;* Desc:	Converts a binary number into an ASCII 
-                                 ;*			text string equivalent. 
-                                 ;*			- The binary number needs to be in the mpr
-                                 ;*			- The Start Address of where the text will
-                                 ;*			 	be placed needs to be in the X Register
-                                 ;*			- The count of the characters created are 
-                                 ;*				added to the count register
-                                 ;*******************************************************
-                                 Bin2ASCII:
-000139 930f                      		push	mpr				; save mpr
-00013a 936f                      		push	r				; save r
-00013b 935f                      		push	q				; save q
-00013c 93bf                      		push	XH				; save X-pointer
-00013d 93af                      		push	XL				;
-                                 
-                                 		; Determine the range of mpr
-00013e 3604                      		cpi		mpr, 100		; is mpr >= 100
-00013f f018                      		brlo	B2A_1			; goto next check
-000140 e023                      		ldi		count, 3		; Three chars are written
-000141 9613                      		adiw	XL, 3			; Increment X 3 address spaces
-000142 c007                      		rjmp	B2A_3			; Continue with program
-000143 300a                      B2A_1:	cpi		mpr, 10			; is mpr >= 10
-000144 f018                      		brlo	B2A_2			; Continue with program
-000145 e022                      		ldi		count, 2		; Two chars are written
-000146 9612                      		adiw	XL, 2			; Increment X 2 address spaces
-000147 c002                      		rjmp	B2A_3			; Continue with program
-000148 9611                      B2A_2:	adiw	XL, 1			; Increment X 1 address space
-000149 e021                      		ldi		count, 1 		; One char is written
-                                 
-                                 B2A_3:	;Do-While statement that converts Binary to ASCII
-00014a d04a                      		rcall	div10			; Call the div10 function
-00014b e300                      		ldi		mpr, '0'		; Set the base ASCII integer value
-00014c 0f06                      		add		mpr, r			; Create the ASCII integer value
-00014d 930e                      		st		-X, mpr			; Load ASCII value to memory
-00014e 2f05                      		mov		mpr, q			; Set mpr to quotiant value
-00014f 3000                      		cpi		mpr, 0			; does mpr == 0
-000150 f7c9                      		brne	B2A_3			; do while (mpr != 0)
-                                 
-000151 91af                      		pop		XL				; restore X-pointer
-000152 91bf                      		pop		XH				;
-000153 915f                      		pop 	q				; restore q
-000154 916f                      		pop		r				; restore r
-000155 910f                      		pop		mpr				; restore mpr
-000156 9508                      		ret						; return from function
-                                 
-                                 ;-------------------------------------------------------
-                                 ;*******************************************************
-                                 ;* Private LCD Driver Functions and Subroutines
-                                 ;*	NOTE: It is not recommended to call these functions
-                                 ;*	      or subroutines, only call the Public ones.
-                                 ;*******************************************************
-                                 ;-------------------------------------------------------
-                                 
-                                 ;*******************************************************
-                                 ;* Func:	LCDSetLine
-                                 ;* Desc:	Change line to be written to 
-                                 ;*******************************************************
-                                 LCDSetLine:
-000157 930f                      		push	mpr				; Save mpr
-000158 2f03                      		mov		mpr,line		; Copy Command Data to mpr
-000159 d00f                      		rcall	LCDWriteCmd		; Write the Command
-00015a 910f                      		pop		mpr				; Restore the mpr
-00015b 9508                      		ret						; Return from function
-                                 
-                                 ;*******************************************************
-                                 ;* Func:	LCDClrLine
-                                 ;* Desc:	Manually clears a single line within an LCD
-                                 ;*			Display and Data Memory by writing 16 
-                                 ;*			consecutive ASCII spaces $20 to both the LCD 
-                                 ;*			and the memory.  The line to be cleared must
-                                 ;*			first be set in the LCD and the Z pointer is
-                                 ;*			pointing the first element in Data Memory
-                                 ;*******************************************************
-                                 LCDClrLine:
-00015c e200                      		ldi		mpr, ' '		; The space char to be written
-00015d e120                      		ldi		count, LCDMaxCnt; The character count
-                                 LCDClrLine_1:
-00015e 9301                      		st		Z+, mpr			; Clear data memory element
-00015f d017                      		rcall	LCDWriteChar	; Clear LCD memory element
-000160 952a                      		dec		count			; Decrement the count
-000161 f7e1                      		brne	LCDClrLine_1	; Continue untill all elements are cleared
-000162 9508                      		ret						; Return from function
-                                 
-                                 ;*******************************************************
-                                 ;* Func:	LCDWriteLine
-                                 ;* Desc:	Writes a line of text to the LCD Display.
-                                 ;*			This routine takes a data element pointed to
-                                 ;*			by the Z-pointer and copies it to the LCD 
-                                 ;*			Display for the duration of the line.  The
-                                 ;*			line the Z-pointer must be set prior to the 
-                                 ;*			function call.
-                                 ;*******************************************************
-                                 LCDWriteLine:
-000163 e120                      		ldi		count, LCDMaxCnt; The character count
-                                 LCDWriteLine_1:
-000164 9101                      		ld		mpr, Z+			; Get the data element
-000165 d011                      		rcall	LCDWriteChar	; Write element to LCD Display
-000166 952a                      		dec		count			; Decrement the count
-000167 f7e1                      		brne	LCDWriteLine_1	; Continue untill all elements are written
-000168 9508                      		ret						; Return from function
-                                 
-                                 ;*******************************************************
-                                 ;* Func:	LCDWriteCmd
-                                 ;* Desc:	Write command that is in the mpr to LCD 
-                                 ;*******************************************************
-                                 LCDWriteCmd:
-000169 934f                      		push	type			; Save type register
-00016a 931f                      		push	wait			; Save wait register
-00016b e040                      		ldi		type, LCDCmd	; Set type to Command data
-00016c d013                      		rcall	LCDWriteData	; Write data to LCD
-00016d 930f                      		push	mpr				; Save mpr register
-00016e e002                      		ldi		mpr, 2			; Wait approx. 4.1 ms
-                                 LCDWC_L1:
-00016f ec1d                      		ldi		wait, 205		; Wait 2050 us
-000170 d01c                      		rcall	LCDWait			;
-000171 950a                      		dec		mpr				; The wait loop cont.
-000172 f7e1                      		brne	LCDWC_L1		;
-000173 910f                      		pop		mpr				; Restore mpr
-000174 911f                      		pop		wait			; Restore wait register
-000175 914f                      		pop		type			; Restore type register
-000176 9508                      		ret						; Return from function
-                                 
-                                 ;*******************************************************
-                                 ;* Func:	LCDWriteChar
-                                 ;* Desc:	Write character data that is in the mpr
-                                 ;*******************************************************
-                                 LCDWriteChar:
-000177 934f                      		push	type			; Save type register
-000178 931f                      		push	wait			; Save the wait register
-000179 e041                      		ldi		type, LCDTxt	; Set type to Text data
-00017a d005                      		rcall	LCDWriteData	; Write data to LCD
-00017b e110                      		ldi		wait, 16		; Delay 160 us
-00017c d010                      		rcall	LCDWait			;
-00017d 911f                      		pop		wait			; Restore wait register
-00017e 914f                      		pop		type			; Restore type register
-00017f 9508                      		ret						; Return from function
-                                 
-                                 ;*******************************************************
-                                 ;* Func:	LCDWriteData
-                                 ;* Desc:	Write data or command to LCD 
-                                 ;*******************************************************
-                                 LCDWriteData:
-000180 b94f                      		out		SPDR, type		; Send type to SP
-000181 e012                      		ldi		wait, 2			; Wait 2 us
-000182 d00a                      		rcall	LCDWait			; Call Wait function
-000183 b90f                      		out		SPDR,mpr		; Send data to serial port
-000184 e012                      		ldi		wait, 2			; Wait 2 us
-000185 d007                      		rcall	LCDWait			; Call Wait function
-000186 e018                      		ldi		wait, LCDPulse	; Use wait temporarially to 
-000187 9310 0062                 		sts		PORTF, wait		; to send write pulse to LCD
-000189 e010                      		ldi		wait, $00		;
-00018a 9310 0062                 		sts		PORTF, wait		;
-00018c 9508                      		ret						; Return from function
-                                 
-                                 ;*******************************************************
-                                 ;* Func:	LCDWait
-                                 ;* Desc:	A wait loop that is 10 + 159*wait cycles or
-                                 ;*			roughly wait*10us.  Just initialize wait
-                                 ;*			for the specific amount of time in 10us 
-                                 ;*			intervals.
-                                 ;*******************************************************
-00018d 930f                      LCDWait:push	mpr				; Save mpr
-00018e e409                      LCDW_L1:ldi		mpr, $49		; Load with a 10us value
-00018f 950a                      LCDW_L2:dec		mpr				; Inner Wait Loop
-000190 f7f1                      		brne	LCDW_L2
-000191 951a                      		dec		wait			; Outer Wait Loop
-000192 f7d9                      		brne	LCDW_L1
-000193 910f                      		pop		mpr				; Restore mpr
-000194 9508                      		ret						; Return from Wait Function
-                                 
-                                 ;*******************************************************
-                                 ;*	Bin2ASCII routines that can be used as a psuedo-
-                                 ;*			printf function to convert an 8-bit binary
-                                 ;*			number into the unigned decimal ASCII text
-                                 ;*******************************************************
-                                 
-                                 ;***********************************************************
-                                 ;* Func:	div10
-                                 ;* Desc:	Divides the value in the mpr by 10 and 
-                                 ;*			puts the remander in the 'r' register and
-                                 ;*			and the quotiant in the 'q' register.
-                                 ;*	DO NOT modify this function, trust me, it does
-                                 ;*	divide by 10 :)  ~DZ		
-                                 ;***********************************************************
-                                 div10:
-000195 920f                      		push	r0				; Save register
-                                 
-                                 		; q = mpr / 10 = mpr * 0.000110011001101b
-000196 2f50                      		mov		q, mpr			; q = mpr * 1.0b
-000197 9556                      		lsr		q				; q >> 2
-000198 9556                      		lsr		q				; q = mpr * 0.01b
-000199 0f50                      		add		q, mpr			; q = (q + mpr) >> 1
-00019a 9556                      		lsr		q				; q = mpr * 0.101b
-00019b 0f50                      		add		q, mpr			; q = (q + mpr) >> 3
-00019c 9556                      		lsr		q
-00019d 9556                      		lsr		q
-00019e 9556                      		lsr		q				; q = mpr * 0.001101b
-00019f 0f50                      		add		q, mpr			; q = (q + mpr) >> 1
-0001a0 9556                      		lsr		q				; q = mpr * 0.1001101b
-0001a1 0f50                      		add		q, mpr			; q = (q + mpr) >> 3
-0001a2 9556                      		lsr		q				
-0001a3 9556                      		lsr		q
-0001a4 9556                      		lsr		q				; q = mpr * 0.0011001101b
-0001a5 0f50                      		add		q, mpr			; q = (q + mpr) >> 1
-0001a6 9556                      		lsr		q				; q = mpr * 0.10011001101b
-0001a7 0f50                      		add		q, mpr			; q = (q + mpr) >> 4
-0001a8 9556                      		lsr		q
-0001a9 9556                      		lsr		q
-0001aa 9556                      		lsr		q
-0001ab 9556                      		lsr		q				; q = mpr * 0.000110011001101b
-                                 
-                                 		; compute the remainder as r = i - 10 * q
-                                 		; calculate r = q * 10 = q * 1010b
-0001ac 2f65                      		mov		r, q			; r = q * 1
-0001ad 0f66                      		lsl		r				; r << 2
-0001ae 0f66                      		lsl		r				; r = q * 100b
-0001af 0f65                      		add		r, q			; r = (r + q) << 1
-0001b0 0f66                      		lsl		r				; r = q * 1010b
-0001b1 2e06                      		mov		r0, r			; r0 = 10 * q
-0001b2 2f60                      		mov		r, mpr			; r = mpr
-0001b3 1960                      		sub		r, r0			; r = mpr - 10 * q
-                                 
-                                 		; Fix any errors that occur
-0001b4 306a                      div10_1:cpi		r, 10			; Compare with 10
-0001b5 f018                      		brlo	div10_2			; do nothing if r < 10
-0001b6 9553                      		inc		q				; fix qoutient
-0001b7 506a                      		subi	r, 10			; fix remainder
-0001b8 cffb                      		rjmp	div10_1			; Continue until error is corrected
-                                 
-0001b9 900f                      div10_2:pop		r0				; Restore registers
 
 
 RESOURCE USE INFORMATION
@@ -2059,41 +1798,41 @@ counted separately from r26..r31 here.
 .dseg memory usage only counts static data declared with .byte
 
 "ATmega128" register use summary:
-x  :   1 y  :   6 z  :   8 r0 :   4 r1 :   0 r2 :   0 r3 :   0 r4 :   0 
-r5 :   0 r6 :   0 r7 :   0 r8 :   0 r9 :   0 r10:   0 r11:   0 r12:   0 
-r13:   0 r14:   0 r15:   0 r16: 105 r17:  16 r18:  31 r19:  20 r20:   9 
-r21:  28 r22:  13 r23:   0 r24:   0 r25:   0 r26:   5 r27:   2 r28:   6 
-r29:   6 r30:  18 r31:  18 
-Registers used: 17 out of 35 (48.6%)
+x  :  23 y  :  23 z  :  21 r0 :   6 r1 :   6 r2 :   8 r3 :  16 r4 :  10 
+r5 :   0 r6 :   0 r7 :   0 r8 :   0 r9 :   9 r10:   0 r11:   0 r12:   0 
+r13:   0 r14:   0 r15:   0 r16:  17 r17:   6 r18:   6 r19:   0 r20:  21 
+r21:   6 r22:   2 r23:   2 r24:   0 r25:   0 r26:  12 r27:  14 r28:  14 
+r29:  14 r30:  11 r31:  11 
+Registers used: 22 out of 35 (62.9%)
 
 "ATmega128" instruction use summary:
-.lds  :   0 .sts  :   0 adc   :   0 add   :   9 adiw  :   3 and   :   0 
+.lds  :   0 .sts  :   0 adc   :   5 add   :   3 adiw  :   4 and   :   0 
 andi  :   0 asr   :   0 bclr  :   0 bld   :   0 brbc  :   0 brbs  :   0 
-brcc  :   0 brcs  :   0 break :   0 breq  :   0 brge  :   0 brhc  :   0 
-brhs  :   0 brid  :   0 brie  :   0 brlo  :   3 brlt  :   0 brmi  :   0 
-brne  :  18 brpl  :   0 brsh  :   1 brtc  :   0 brts  :   0 brvc  :   0 
+brcc  :   2 brcs  :   0 break :   0 breq  :   0 brge  :   0 brhc  :   0 
+brhs  :   0 brid  :   0 brie  :   0 brlo  :   0 brlt  :   0 brmi  :   0 
+brne  :   4 brpl  :   0 brsh  :   0 brtc  :   0 brts  :   0 brvc  :   0 
 brvs  :   0 bset  :   0 bst   :   0 call  :   0 cbi   :   0 cbr   :   0 
-clc   :   0 clh   :   0 cli   :   0 cln   :   0 clr   :   0 cls   :   0 
+clc   :   0 clh   :   0 cli   :   0 cln   :   0 clr   :   4 cls   :   0 
 clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   0 cpc   :   0 
-cpi   :  10 cpse  :   0 dec   :  12 elpm  :   0 eor   :   0 fmul  :   0 
-fmuls :   0 fmulsu:   0 icall :   0 ijmp  :   0 in    :   2 inc   :   1 
-jmp   :   0 ld    :   1 ldd   :   0 ldi   :  86 lds   :   0 lpm   :   6 
-lsl   :   3 lsr   :  15 mov   :   6 movw  :   0 mul   :   0 muls  :   0 
-mulsu :   0 neg   :   0 nop   :   0 or    :   0 ori   :   0 out   :  15 
-pop   :  39 push  :  39 rcall :  37 ret   :  19 reti  :   0 rjmp  :   9 
-rol   :   0 ror   :   0 sbc   :   0 sbci  :   0 sbi   :   0 sbic  :   0 
-sbis  :   0 sbiw  :   0 sbr   :   0 sbrc  :   0 sbrs  :   0 sec   :   0 
+cpi   :   0 cpse  :   0 dec   :   4 elpm  :   0 eor   :   0 fmul  :   0 
+fmuls :   0 fmulsu:   0 icall :   0 ijmp  :   0 in    :   0 inc   :   0 
+jmp   :   0 ld    :  35 ldd   :   0 ldi   :  54 lds   :   0 lpm   :   0 
+lsl   :   0 lsr   :   0 mov   :   0 movw  :   0 mul   :   2 muls  :   0 
+mulsu :   0 neg   :   0 nop   :   9 or    :   0 ori   :   0 out   :   0 
+pop   :  13 push  :  13 rcall :   7 ret   :   6 reti  :   0 rjmp  :   2 
+rol   :   0 ror   :   0 sbc   :   1 sbci  :   0 sbi   :   0 sbic  :   0 
+sbis  :   0 sbiw  :   2 sbr   :   0 sbrc  :   0 sbrs  :   0 sec   :   0 
 seh   :   0 sei   :   0 sen   :   0 ser   :   0 ses   :   0 set   :   0 
-sev   :   0 sez   :   0 sleep :   0 spm   :   0 st    :   8 std   :   0 
-sts   :   8 sub   :   1 subi  :   1 swap  :   0 tst   :   0 wdr   :   0 
+sev   :   0 sez   :   0 sleep :   0 spm   :   0 st    :  32 std   :   0 
+sts   :   0 sub   :   1 subi  :   0 swap  :   0 tst   :   0 wdr   :   0 
 
-Instructions used: 25 out of 114 (21.9%)
+Instructions used: 20 out of 114 (17.5%)
 
 "ATmega128" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x000376    720     28    748  131072   0.6%
-[.dseg] 0x000100 0x000100      0      0      0    4096   0.0%
+[.cseg] 0x000000 0x000230    406     16    422  131072   0.3%
+[.dseg] 0x000100 0x000158      0     39     39    4096   1.0%
 [.eseg] 0x000000 0x000000      0      0      0    4096   0.0%
 
 Assembly complete, 0 errors, 0 warnings
