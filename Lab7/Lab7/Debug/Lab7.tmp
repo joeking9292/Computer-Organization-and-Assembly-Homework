@@ -1,0 +1,33 @@
+<ASSEMBLER_INFO>
+ <VERSION>2.2.7</VERSION>
+ <DEVICE>"ATmega128"</DEVICE>
+ <WORKING_DIR>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab7\Lab7\Debug</WORKING_DIR>
+ <INCLUDE_PATH>
+  <DIR>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc</DIR>
+  <DIR>C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avrassembler\Include</DIR>
+  <DIR></DIR>
+ </INCLUDE_PATH>
+ <SOURCE_FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab7\Lab7\main.asm</SOURCE_FILE>
+ <INCLUDED_FILES>
+  <FILE>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc\m128def.inc</FILE>
+ </INCLUDED_FILES>
+ <OBJECT_FILES>
+  <FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab7\Lab7\Debug\Lab7.obj</FILE>
+ </OBJECT_FILES>
+ <HEX_FILES>
+  <FILE>Lab7.hex</FILE>
+ </HEX_FILES>
+ <OUTPUT_FILES>
+  <FILE>Lab7.map</FILE>
+  <FILE>Lab7.lss</FILE>
+ </OUTPUT_FILES>
+ <LABELS>
+  <INIT><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab7\Lab7\main.asm</FILE><LINE>64</LINE></INIT>
+  <SPEED_MIN><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab7\Lab7\main.asm</FILE><LINE>238</LINE></SPEED_MIN>
+  <SPEED_MAX><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab7\Lab7\main.asm</FILE><LINE>212</LINE></SPEED_MAX>
+  <SPEED_DOWN><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab7\Lab7\main.asm</FILE><LINE>183</LINE></SPEED_DOWN>
+  <SPEED_UP><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab7\Lab7\main.asm</FILE><LINE>152</LINE></SPEED_UP>
+  <MAIN><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab7\Lab7\main.asm</FILE><LINE>123</LINE></MAIN>
+  <FUNC><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab7\Lab7\main.asm</FILE><LINE>142</LINE></FUNC>
+ </LABELS>
+</ASSEMBLER_INFO>
