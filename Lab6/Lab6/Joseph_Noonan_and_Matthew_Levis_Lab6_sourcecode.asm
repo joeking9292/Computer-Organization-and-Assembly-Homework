@@ -1,6 +1,6 @@
 ;***********************************************************
 ;*
-;*	Name: Joseph_Noonan_and_Matthew_Levis
+;*	Name: Joseph_Noonan_and_Matthew_Levis_Lab6_sourcecode.asm
 ;*
 ;*	This program will allow the bump bot to count how many times
 ;*  an interrupt is hit and display it to the screen.
