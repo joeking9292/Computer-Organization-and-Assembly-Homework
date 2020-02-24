@@ -40,7 +40,10 @@
 ;***********************************************************
 INIT:							; The initialization routine
 		; Initialize Stack Pointer
-		
+		ldi		mpr, low(RAMEND)
+		out		SPL, mpr		; Load SPL with low byte of RAMEND
+		ldi		mpr, high(RAMEND)
+		out		SPH, mpr		; Load SPH with high byte of RAMEND
 		
 		; Initialize LCD Display
 		RCALL LCDInit

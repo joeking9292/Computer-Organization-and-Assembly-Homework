@@ -1,5 +1,4 @@
 
-
 AVRASM ver. 2.2.7  C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.asm Tue Feb 04 12:08:15 2020
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc\m128def.inc'
@@ -9,6 +8,7 @@ C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.as
 C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.asm(17): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc\m128def.inc'
 C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.asm(202): Including file 'C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\LCDDriver.asm'
 
+>>>>>>> a6b5a6477089ac793ccad1b664acc978002cf1c1
                                  
                                  ;***********************************************************
                                  
@@ -1313,44 +1313,41 @@ C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.as
                                  ;***********************************************************
                                  INIT:							; The initialization routine
                                  		; Initialize Stack Pointer
-000046 ef0f                      		ldi		mpr, low(RAMEND)
-000047 bf0d                      		out		SPL, mpr		; Load SPL with low byte of RAMEND
-000048 e100                      		ldi		mpr, high(RAMEND)
-000049 bf0e                      		out		SPH, mpr		; Load SPH with high byte of RAMEND
+                                 		
                                  		
                                  		; Initialize LCD Display
-00004a d05a                      		RCALL LCDInit
+000046 d05a                      		RCALL LCDInit
                                  
                                  		; Initialize Port D for Input
-00004b e040                      		ldi		r20, $00		; Set Port D Data Direction Register
-00004c bb01                      		out		DDRD, mpr		; for output
-00004d ef4f                      		ldi		r20, $FF		; Initialize Port D Data Register
-00004e bb02                      		out		PORTD, mpr		; so all Port D outputs are low
+000047 e040                      		ldi		r20, $00		; Set Port D Data Direction Register
+000048 bb01                      		out		DDRD, mpr		; for output
+000049 ef4f                      		ldi		r20, $FF		; Initialize Port D Data Register
+00004a bb02                      		out		PORTD, mpr		; so all Port D outputs are low
                                  		
                                  		; Move strings from Program Memory to Data Memory
-00004f e2ee                      		ldi		ZL, low(JOE_BEG<<1)
-000050 e0f1                      		ldi		ZH, high(JOE_BEG<<1)
-000051 e0c0                      		ldi		YL, low(LCDLn1Addr)
-000052 e0d1                      		ldi		YH, high(LCDLn1Addr)
-000053 e02e                      		ldi		count, 14
+00004b e2e6                      		ldi		ZL, low(JOE_BEG<<1)
+00004c e0f1                      		ldi		ZH, high(JOE_BEG<<1)
+00004d e0c0                      		ldi		YL, low(LCDLn1Addr)
+00004e e0d1                      		ldi		YH, high(LCDLn1Addr)
+00004f e02e                      		ldi		count, 14
                                  
                                  LOOP:
-000054 9105                      		lpm		mpr, Z+
-000055 9309                      		st		Y+, mpr
-000056 952a                      		dec		count
-000057 f7e1                      		brne	LOOP
+000050 9105                      		lpm		mpr, Z+
+000051 9309                      		st		Y+, mpr
+000052 952a                      		dec		count
+000053 f7e1                      		brne	LOOP
                                  
-000058 e3ec                      		ldi		ZL, low(MATT_BEG<<1)
-000059 e0f1                      		ldi		ZH, high(MATT_BEG<<1)
-00005a e1c0                      		ldi		YL, low(LCDLn2Addr)
-00005b e0d1                      		ldi		YH, high(LCDLn2Addr)
-00005c e02e                      		ldi		count, 14
+000054 e3e4                      		ldi		ZL, low(MATT_BEG<<1)
+000055 e0f1                      		ldi		ZH, high(MATT_BEG<<1)
+000056 e1c0                      		ldi		YL, low(LCDLn2Addr)
+000057 e0d1                      		ldi		YH, high(LCDLn2Addr)
+000058 e02e                      		ldi		count, 14
                                  
                                  LOOP2:
-00005d 9105                      		lpm		mpr, Z+
-00005e 9309                      		st		Y+, mpr
-00005f 952a                      		dec		count
-000060 f7e1                      		brne	LOOP2
+000059 9105                      		lpm		mpr, Z+
+00005a 9309                      		st		Y+, mpr
+00005b 952a                      		dec		count
+00005c f7e1                      		brne	LOOP2
                                  
                                  		; NOTE that there is no RET or RJMP from INIT, this
                                  		; is because the next instruction executed is the
@@ -1361,27 +1358,27 @@ C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.as
                                  ;***********************************************************
                                  MAIN:							; The Main program
                                  		; Display the strings on the LCD Display
-000061 b300                      		in		mpr, PIND			; Get input pin D
-000062 370f                      		cpi		mpr, 0b01111111		; Check if Clear button is hit
-000063 f411                      IF:		brne	ELIF	
-000064 d0a2                      		rcall	LCDClr				; Clear Function
-000065 c00a                      		rjmp	NEXT
-000066 3f0e                      ELIF:	cpi		mpr, 0b11111110		; Check if button 0 is hit
-000067 f419                      		brne	ELSE
-000068 d01b                      		rcall	PROPER_FORMAT		; Make sure names are in order
-000069 d07a                      		rcall	LCDWrite			; Write names to screen
-00006a c005                      		rjmp	NEXT
-00006b 3f0d                      ELSE:	cpi		mpr, 0b11111101		; Check if button 1 is hit
-00006c f419                      		brne	NEXT
-00006d d003                      		rcall	FLIP_FORMAT			; Flip the names in data memory
-00006e d075                      		rcall	LCDWrite			; Write names to screen
-00006f c000                      		rjmp	NEXT
+00005d b300                      		in		mpr, PIND			; Get input pin D
+00005e 370f                      		cpi		mpr, 0b01111111		; Check if Clear button is hit
+00005f f411                      IF:		brne	ELIF	
+000060 d0a2                      		rcall	LCDClr				; Clear Function
+000061 c00a                      		rjmp	NEXT
+000062 3f0e                      ELIF:	cpi		mpr, 0b11111110		; Check if button 0 is hit
+000063 f419                      		brne	ELSE
+000064 d01b                      		rcall	PROPER_FORMAT		; Make sure names are in order
+000065 d07a                      		rcall	LCDWrite			; Write names to screen
+000066 c005                      		rjmp	NEXT
+000067 3f0d                      ELSE:	cpi		mpr, 0b11111101		; Check if button 1 is hit
+000068 f419                      		brne	NEXT
+000069 d003                      		rcall	FLIP_FORMAT			; Flip the names in data memory
+00006a d075                      		rcall	LCDWrite			; Write names to screen
+00006b c000                      		rjmp	NEXT
                                  NEXT:
                                  		; jump back to main and create an infinite
                                  								; while loop.  Generally, every main program is an
                                  								; infinite while loop, never let the main program
                                  								; just run off
-000070 cff0                      		rjmp MAIN
+00006c cff0                      		rjmp MAIN
                                  
                                  ;***********************************************************
                                  ;*	Functions and Subroutines
@@ -1394,32 +1391,32 @@ C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.as
                                  ;-----------------------------------------------------------
                                  FLIP_FORMAT:
                                  		; Load second name into Z and data memory location into Y
-000071 e3ec                      		ldi		ZL, low(MATT_BEG<<1)
-000072 e0f1                      		ldi		ZH, high(MATT_BEG<<1)
-000073 e0c0                      		ldi		YL, low(LCDLn1Addr)
-000074 e0d1                      		ldi		YH, high(LCDLn1Addr)
-000075 e02e                      		ldi		count, 14
+00006d e3e4                      		ldi		ZL, low(MATT_BEG<<1)
+00006e e0f1                      		ldi		ZH, high(MATT_BEG<<1)
+00006f e0c0                      		ldi		YL, low(LCDLn1Addr)
+000070 e0d1                      		ldi		YH, high(LCDLn1Addr)
+000071 e02e                      		ldi		count, 14
                                  
                                  LOOP3:		; Store second name on line 1
-000076 9105                      		lpm		mpr, Z+
-000077 9309                      		st		Y+, mpr
-000078 952a                      		dec		count
-000079 f7e1                      		brne	LOOP3
+000072 9105                      		lpm		mpr, Z+
+000073 9309                      		st		Y+, mpr
+000074 952a                      		dec		count
+000075 f7e1                      		brne	LOOP3
                                  
                                  		; Load first name into Z and data memory location into Y
-00007a e2ee                      		ldi		ZL, low(JOE_BEG<<1)
-00007b e0f1                      		ldi		ZH, high(JOE_BEG<<1)
-00007c e1c0                      		ldi		YL, low(LCDLn2Addr)
-00007d e0d1                      		ldi		YH, high(LCDLn2Addr)
-00007e e02e                      		ldi		count, 14		;Reset count
+000076 e2e6                      		ldi		ZL, low(JOE_BEG<<1)
+000077 e0f1                      		ldi		ZH, high(JOE_BEG<<1)
+000078 e1c0                      		ldi		YL, low(LCDLn2Addr)
+000079 e0d1                      		ldi		YH, high(LCDLn2Addr)
+00007a e02e                      		ldi		count, 14		;Reset count
                                  
                                  LOOP4:		; Store first name on line 2
-00007f 9105                      		lpm		mpr, Z+
-000080 9309                      		st		Y+, mpr
-000081 952a                      		dec		count		; Decrement count
-000082 f7e1                      		brne	LOOP4		; Go to top of loop or exit
+00007b 9105                      		lpm		mpr, Z+
+00007c 9309                      		st		Y+, mpr
+00007d 952a                      		dec		count		; Decrement count
+00007e f7e1                      		brne	LOOP4		; Go to top of loop or exit
                                  
-000083 9508                      		ret						; End a function with RET
+00007f 9508                      		ret						; End a function with RET
                                  
                                  ;-----------------------------------------------------------
                                  ; Func: PROPER_FORMAT
@@ -1428,32 +1425,32 @@ C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.as
                                  ;-----------------------------------------------------------
                                  PROPER_FORMAT:
                                  		; Load second name into Z and data memory location into Y
-000084 e2ee                      		ldi		ZL, low(JOE_BEG<<1)
-000085 e0f1                      		ldi		ZH, high(JOE_BEG<<1)
-000086 e0c0                      		ldi		YL, low(LCDLn1Addr)
-000087 e0d1                      		ldi		YH, high(LCDLn1Addr)
-000088 e02e                      		ldi		count, 14
+000080 e2e6                      		ldi		ZL, low(JOE_BEG<<1)
+000081 e0f1                      		ldi		ZH, high(JOE_BEG<<1)
+000082 e0c0                      		ldi		YL, low(LCDLn1Addr)
+000083 e0d1                      		ldi		YH, high(LCDLn1Addr)
+000084 e02e                      		ldi		count, 14
                                  
                                  LOOP5:		; Store first name on line 1
-000089 9105                      		lpm		mpr, Z+
-00008a 9309                      		st		Y+, mpr
-00008b 952a                      		dec		count
-00008c f7e1                      		brne	LOOP5
+000085 9105                      		lpm		mpr, Z+
+000086 9309                      		st		Y+, mpr
+000087 952a                      		dec		count
+000088 f7e1                      		brne	LOOP5
                                  
                                  		; Load second name into Z and data memory location into Y
-00008d e3ec                      		ldi		ZL, low(MATT_BEG<<1)
-00008e e0f1                      		ldi		ZH, high(MATT_BEG<<1)
-00008f e1c0                      		ldi		YL, low(LCDLn2Addr)
-000090 e0d1                      		ldi		YH, high(LCDLn2Addr)
-000091 e02e                      		ldi		count, 14		;Reset count
+000089 e3e4                      		ldi		ZL, low(MATT_BEG<<1)
+00008a e0f1                      		ldi		ZH, high(MATT_BEG<<1)
+00008b e1c0                      		ldi		YL, low(LCDLn2Addr)
+00008c e0d1                      		ldi		YH, high(LCDLn2Addr)
+00008d e02e                      		ldi		count, 14		;Reset count
                                  
                                  LOOP6:		; Store second name on line 2
-000092 9105                      		lpm		mpr, Z+
-000093 9309                      		st		Y+, mpr
-000094 952a                      		dec		count		; Decrement count
-000095 f7e1                      		brne	LOOP6		; Go to top of loop or exit
+00008e 9105                      		lpm		mpr, Z+
+00008f 9309                      		st		Y+, mpr
+000090 952a                      		dec		count		; Decrement count
+000091 f7e1                      		brne	LOOP6		; Go to top of loop or exit
                                  
-000096 9508                      		ret						; End a function with RET
+000092 9508                      		ret						; End a function with RET
                                  
                                  ;***********************************************************
                                  ;*	Stored Program Data
@@ -1464,22 +1461,22 @@ C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.as
                                  ; after the .DB directive; these can help to access the data
                                  ;-----------------------------------------------------------
                                  JOE_BEG:
-000097 6f4a
-000098 6573
-000099 6870
-00009a 4e20
-00009b 6f6f
-00009c 616e
-00009d 206e                      .DB		"Joseph Noonan "		; Declaring data in ProgMem
+000093 6f4a
+000094 6573
+000095 6870
+000096 4e20
+000097 6f6f
+000098 616e
+000099 206e                      .DB		"Joseph Noonan "		; Declaring data in ProgMem
                                  
                                  MATT_BEG:
-00009e 614d
-00009f 7474
-0000a0 6568
-0000a1 2077
-0000a2 654c
-0000a3 6976
-0000a4 2073                      .DB		"Matthew Levis "		; Declaring data in ProgMem
+00009a 614d
+00009b 7474
+00009c 6568
+00009d 2077
+00009e 654c
+00009f 6976
+0000a0 2073                      .DB		"Matthew Levis "		; Declaring data in ProgMem
                                  
                                  ;***********************************************************
                                  ;*	Additional Program Includes
@@ -1560,27 +1557,27 @@ C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.as
                                  ;*			- 2 LInes with 16 characters
                                  ;*******************************************************
                                  LCDInit:
-0000a5 930f                      		push	mpr				; Save the state of machine
-0000a6 b70f                      		in		mpr, SREG		; Save the SREG
-0000a7 930f                      		push	mpr				;
-0000a8 931f                      		push	wait			; Save wait
+0000a1 930f                      		push	mpr				; Save the state of machine
+0000a2 b70f                      		in		mpr, SREG		; Save the SREG
+0000a3 930f                      		push	mpr				;
+0000a4 931f                      		push	wait			; Save wait
                                  
                                  		; Setup the Communication Ports
                                  		; Port B: Output
                                  		; Port D: Input w/ internal pullup resistors
                                  		; Port F: Output on Pin 3
-0000a9 e000                      		ldi		mpr, $00		; Initialize Port B for outputs
-0000aa bb08                      		out		PORTB, mpr		; Port B outputs high
-0000ab ef0f                      		ldi		mpr, $ff		; except for any overrides
-0000ac bb07                      		out		DDRB, mpr		;
-0000ad e000                      		ldi		mpr, $00		; Initialize Port D for inputs
-0000ae bb02                      		out		PORTD, mpr		; with Tri-State
-0000af e000                      		ldi		mpr, $00		; except for any overrides
-0000b0 bb01                      		out		DDRD, mpr		;
-0000b1 e000                      		ldi		mpr, $00		; Initialize Port F Pin 3 to
-0000b2 9300 0062                 		sts		PORTF, mpr		; output inorder to twiddle the
-0000b4 e008                      		ldi		mpr, (1<<DDF3)	; LCD interface
-0000b5 9300 0061                 		sts		DDRF, mpr		; Must NOT override this port
+0000a5 e000                      		ldi		mpr, $00		; Initialize Port B for outputs
+0000a6 bb08                      		out		PORTB, mpr		; Port B outputs high
+0000a7 ef0f                      		ldi		mpr, $ff		; except for any overrides
+0000a8 bb07                      		out		DDRB, mpr		;
+0000a9 e000                      		ldi		mpr, $00		; Initialize Port D for inputs
+0000aa bb02                      		out		PORTD, mpr		; with Tri-State
+0000ab e000                      		ldi		mpr, $00		; except for any overrides
+0000ac bb01                      		out		DDRD, mpr		;
+0000ad e000                      		ldi		mpr, $00		; Initialize Port F Pin 3 to
+0000ae 9300 0062                 		sts		PORTF, mpr		; output inorder to twiddle the
+0000b0 e008                      		ldi		mpr, (1<<DDF3)	; LCD interface
+0000b1 9300 0061                 		sts		DDRF, mpr		; Must NOT override this port
                                  
                                  		; Setup the Serial Functionality
                                  		; SPI Type: Master
@@ -1588,21 +1585,21 @@ C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.as
                                  		; SPI Clock Phase: Cycle Half
                                  		; SPI Clock Polarity: Low
                                  		; SPI Data Order: MSB First
-0000b7 e500                      		ldi		mpr, (1<<SPE|1<<MSTR)
-0000b8 b90d                      		out		SPCR, mpr		; Set Serial Port Control Register
-0000b9 e001                      		ldi		mpr, (1<<SPI2X)
-0000ba b90e                      		out		SPSR, mpr		; Set Serial Port Status Register
+0000b3 e500                      		ldi		mpr, (1<<SPE|1<<MSTR)
+0000b4 b90d                      		out		SPCR, mpr		; Set Serial Port Control Register
+0000b5 e001                      		ldi		mpr, (1<<SPI2X)
+0000b6 b90e                      		out		SPSR, mpr		; Set Serial Port Status Register
                                  
                                  		; Setup External SRAM configuration
                                  		; $0460 - $7FFF / $8000 - $FFFF
                                  		; Lower page wait state(s): None
                                  		; Uppoer page wait state(s): 2r/w
-0000bb e800                      		ldi		mpr, (1<<SRE)	; 
-0000bc bf05                      		out		MCUCR, mpr		; Initialize MCUCR
-0000bd e402                      		ldi		mpr, (1<<SRL2|1<<SRW11)
-0000be 9300 006d                 		sts		XMCRA, mpr		; Initialize XMCRA
-0000c0 e800                      		ldi		mpr, (1<<XMBK)	;
-0000c1 9300 006c                 		sts		XMCRB, mpr		; Initialize XMCRB
+0000b7 e800                      		ldi		mpr, (1<<SRE)	; 
+0000b8 bf05                      		out		MCUCR, mpr		; Initialize MCUCR
+0000b9 e402                      		ldi		mpr, (1<<SRL2|1<<SRW11)
+0000ba 9300 006d                 		sts		XMCRA, mpr		; Initialize XMCRA
+0000bc e800                      		ldi		mpr, (1<<XMBK)	;
+0000bd 9300 006c                 		sts		XMCRB, mpr		; Initialize XMCRB
                                  		
                                  		; Initialize USART0
                                  		; Communication Parameter: 8 bit, 1 stop, No Parity
@@ -1610,42 +1607,42 @@ C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.as
                                  		; USART0 Tx: On
                                  		; USART0 Mode: Asynchronous
                                  		; USART0 Baudrate: 9600
-0000c3 e000                      		ldi		mpr, $00		;
-0000c4 b90b                      		out		UCSR0A, mpr		; Init UCSR0A
-0000c5 e108                      		ldi		mpr, (1<<RXEN0|1<<TXEN0)
-0000c6 b90a                      		out		UCSR0B, mpr		; Init UCSR0B
-0000c7 e006                      		ldi		mpr, (1<<UCSZ01|1<<UCSZ00)
-0000c8 9300 0095                 		sts		UCSR0C, mpr		; Init UCSR0C
-0000ca e000                      		ldi		mpr, $00		;
-0000cb 9300 0090                 		sts		UBRR0H, mpr		; Init UBRR0H
-0000cd e607                      		ldi		mpr, $67		;
-0000ce b909                      		out		UBRR0L, mpr		; Init UBRR0L
+0000bf e000                      		ldi		mpr, $00		;
+0000c0 b90b                      		out		UCSR0A, mpr		; Init UCSR0A
+0000c1 e108                      		ldi		mpr, (1<<RXEN0|1<<TXEN0)
+0000c2 b90a                      		out		UCSR0B, mpr		; Init UCSR0B
+0000c3 e006                      		ldi		mpr, (1<<UCSZ01|1<<UCSZ00)
+0000c4 9300 0095                 		sts		UCSR0C, mpr		; Init UCSR0C
+0000c6 e000                      		ldi		mpr, $00		;
+0000c7 9300 0090                 		sts		UBRR0H, mpr		; Init UBRR0H
+0000c9 e607                      		ldi		mpr, $67		;
+0000ca b909                      		out		UBRR0L, mpr		; Init UBRR0L
                                  
                                  		; Initialize the LCD Display
-0000cf e006                      		ldi		mpr, 6			;
+0000cb e006                      		ldi		mpr, 6			;
                                  LCDINIT_L1:
-0000d0 ef1a                      		ldi		wait, 250		; 15ms of Display
-0000d1 d0bf                      		rcall	LCDWait			; Bootup wait
-0000d2 950a                      		dec		mpr				;
-0000d3 f7e1                      		brne	LCDINIT_L1		;
+0000cc ef1a                      		ldi		wait, 250		; 15ms of Display
+0000cd d0bf                      		rcall	LCDWait			; Bootup wait
+0000ce 950a                      		dec		mpr				;
+0000cf f7e1                      		brne	LCDINIT_L1		;
                                  
-0000d4 e308                      		ldi		mpr, $38		; Display Mode set
-0000d5 d097                      		rcall 	LCDWriteCmd		; 
-0000d6 e008                      		ldi		mpr, $08		; Display Off
-0000d7 d095                      		rcall	LCDWriteCmd		;
-0000d8 e001                      		ldi		mpr, $01		; Display Clear
-0000d9 d093                      		rcall	LCDWriteCmd		;
-0000da e006                      		ldi		mpr, $06		; Entry mode set
-0000db d091                      		rcall	LCDWriteCmd		;
-0000dc e00c                      		ldi		mpr, $0c		; Display on
-0000dd d08f                      		rcall	LCDWriteCmd		;
-0000de d028                      		rcall	LCDClr			; Clear display
+0000d0 e308                      		ldi		mpr, $38		; Display Mode set
+0000d1 d097                      		rcall 	LCDWriteCmd		; 
+0000d2 e008                      		ldi		mpr, $08		; Display Off
+0000d3 d095                      		rcall	LCDWriteCmd		;
+0000d4 e001                      		ldi		mpr, $01		; Display Clear
+0000d5 d093                      		rcall	LCDWriteCmd		;
+0000d6 e006                      		ldi		mpr, $06		; Entry mode set
+0000d7 d091                      		rcall	LCDWriteCmd		;
+0000d8 e00c                      		ldi		mpr, $0c		; Display on
+0000d9 d08f                      		rcall	LCDWriteCmd		;
+0000da d028                      		rcall	LCDClr			; Clear display
                                  
-0000df 911f                      		pop		wait			; Restore wait
-0000e0 910f                      		pop		mpr				; Restore SREG
-0000e1 bf0f                      		out		SREG, mpr		;
-0000e2 910f                      		pop		mpr				; Restore mpr
-0000e3 9508                      		ret						; Return from subroutine
+0000db 911f                      		pop		wait			; Restore wait
+0000dc 910f                      		pop		mpr				; Restore SREG
+0000dd bf0f                      		out		SREG, mpr		;
+0000de 910f                      		pop		mpr				; Restore mpr
+0000df 9508                      		ret						; Return from subroutine
                                  
                                  ;*******************************************************
                                  ;* Func:	LCDWrite
@@ -1655,9 +1652,9 @@ C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.as
                                  ;*			- Line 2 data is in address space $0110-$010F
                                  ;*******************************************************
                                  LCDWrite:
-0000e4 d002                      		rcall LCDWrLn1			; Write Line 1
-0000e5 d011                      		rcall LCDWrLn2			; Write Line 2
-0000e6 9508                      		ret 					; Return from function
+0000e0 d002                      		rcall LCDWrLn1			; Write Line 1
+0000e1 d011                      		rcall LCDWrLn2			; Write Line 2
+0000e2 9508                      		ret 					; Return from function
                                  
                                  ;*******************************************************
                                  ;* Func:	LCDWrLn1
@@ -1665,24 +1662,24 @@ C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.as
                                  ;*			data to the first line of the LCD Display
                                  ;*******************************************************
                                  LCDWrLn1:
-0000e7 930f                      		push 	mpr				; Save mpr
-0000e8 93ef                      		push	ZL				; Save Z pointer
-0000e9 93ff                      		push	ZH				;
-0000ea 932f                      		push	count			; Save the count register
-0000eb 933f                      		push	line			; Save the line register
+0000e3 930f                      		push 	mpr				; Save mpr
+0000e4 93ef                      		push	ZL				; Save Z pointer
+0000e5 93ff                      		push	ZH				;
+0000e6 932f                      		push	count			; Save the count register
+0000e7 933f                      		push	line			; Save the line register
                                  								
-0000ec e0e0                      		ldi		ZL, low(LCDLn1Addr)
-0000ed e0f1                      		ldi		ZH, high(LCDLn1Addr)		 
-0000ee e830                      		ldi		line, LCDLine1	; Set LCD line to Line 1
-0000ef d06b                      		rcall	LCDSetLine		; Restart at the beginning of line 1
-0000f0 d076                      		rcall	LCDWriteLine	; Write the line of text
+0000e8 e0e0                      		ldi		ZL, low(LCDLn1Addr)
+0000e9 e0f1                      		ldi		ZH, high(LCDLn1Addr)		 
+0000ea e830                      		ldi		line, LCDLine1	; Set LCD line to Line 1
+0000eb d06b                      		rcall	LCDSetLine		; Restart at the beginning of line 1
+0000ec d076                      		rcall	LCDWriteLine	; Write the line of text
                                  
-0000f1 913f                      		pop		line
-0000f2 912f                      		pop		count			; Restore the counter
-0000f3 91ff                      		pop		ZH				; Restore Z pointer
-0000f4 91ef                      		pop		ZL				;
-0000f5 910f                      		pop 	mpr				; Restore mpr
-0000f6 9508                      		ret						; Return from function
+0000ed 913f                      		pop		line
+0000ee 912f                      		pop		count			; Restore the counter
+0000ef 91ff                      		pop		ZH				; Restore Z pointer
+0000f0 91ef                      		pop		ZL				;
+0000f1 910f                      		pop 	mpr				; Restore mpr
+0000f2 9508                      		ret						; Return from function
                                  
                                  ;*******************************************************
                                  ;* Func:	LCDWrLn2
@@ -1690,24 +1687,24 @@ C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.as
                                  ;*			data to the second line of the LCD Display
                                  ;*******************************************************
                                  LCDWrLn2:
-0000f7 930f                      		push 	mpr				; Save mpr
-0000f8 93ef                      		push	ZL				; Save Z pointer
-0000f9 93ff                      		push	ZH				;
-0000fa 932f                      		push	count			; Save the count register
-0000fb 933f                      		push	line			; Save the line register
+0000f3 930f                      		push 	mpr				; Save mpr
+0000f4 93ef                      		push	ZL				; Save Z pointer
+0000f5 93ff                      		push	ZH				;
+0000f6 932f                      		push	count			; Save the count register
+0000f7 933f                      		push	line			; Save the line register
                                  								
-0000fc e1e0                      		ldi		ZL, low(LCDLn2Addr)
-0000fd e0f1                      		ldi		ZH, high(LCDLn2Addr)		 
-0000fe ec30                      		ldi		line, LCDLine2	; Set LCD line to Line 2
-0000ff d05b                      		rcall	LCDSetLine		; Restart at the beginning of line 2
-000100 d066                      		rcall	LCDWriteLine	; Write the line of text
+0000f8 e1e0                      		ldi		ZL, low(LCDLn2Addr)
+0000f9 e0f1                      		ldi		ZH, high(LCDLn2Addr)		 
+0000fa ec30                      		ldi		line, LCDLine2	; Set LCD line to Line 2
+0000fb d05b                      		rcall	LCDSetLine		; Restart at the beginning of line 2
+0000fc d066                      		rcall	LCDWriteLine	; Write the line of text
                                  
-000101 913f                      		pop		line
-000102 912f                      		pop		count			; Restore the counter
-000103 91ff                      		pop		ZH				; Restore Z pointer
-000104 91ef                      		pop		ZL				;
-000105 910f                      		pop 	mpr				; Restore mpr
-000106 9508                      		ret						; Return from function
+0000fd 913f                      		pop		line
+0000fe 912f                      		pop		count			; Restore the counter
+0000ff 91ff                      		pop		ZH				; Restore Z pointer
+000100 91ef                      		pop		ZL				;
+000101 910f                      		pop 	mpr				; Restore mpr
+000102 9508                      		ret						; Return from function
                                  
                                  ;*******************************************************
                                  ;* Func:	LCDClr
@@ -1715,9 +1712,9 @@ C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.as
                                  ;*			lines of the LCD and Data Memory storage area
                                  ;*******************************************************
                                  LCDClr:
-000107 d002                      		rcall	LCDClrLn1		; Clear Line 1
-000108 d011                      		rcall	LCDClrLn2		; Clear Line 2
-000109 9508                      		ret						; Return from Subroutine
+000103 d002                      		rcall	LCDClrLn1		; Clear Line 1
+000104 d011                      		rcall	LCDClrLn2		; Clear Line 2
+000105 9508                      		ret						; Return from Subroutine
                                  
                                  ;*******************************************************
                                  ;* Func:	LCDClrLn1
@@ -1725,24 +1722,24 @@ C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.as
                                  ;*			the data and the first line of the LCD Display
                                  ;*******************************************************
                                  LCDClrLn1:
-00010a 930f                      		push	mpr				; Save mpr
-00010b 933f                      		push	line			; Save line register
-00010c 932f                      		push	count			; Save the count register
-00010d 93ef                      		push	ZL				; Save Z pointer
-00010e 93ff                      		push	ZH				;
+000106 930f                      		push	mpr				; Save mpr
+000107 933f                      		push	line			; Save line register
+000108 932f                      		push	count			; Save the count register
+000109 93ef                      		push	ZL				; Save Z pointer
+00010a 93ff                      		push	ZH				;
                                  	
-00010f e830                      		ldi		line, LCDline1	; Set Access to Line 1 of LCD
-000110 d04a                      		rcall	LCDSetLine		; Set Z pointer to address of line 1 data
-000111 e0e0                      		ldi		ZL, low(LCDLn1Addr)
-000112 e0f1                      		ldi		ZH, high(LCDLn1Addr)
-000113 d04c                      		rcall	LCDClrLine		; Call the Clear Line function
+00010b e830                      		ldi		line, LCDline1	; Set Access to Line 1 of LCD
+00010c d04a                      		rcall	LCDSetLine		; Set Z pointer to address of line 1 data
+00010d e0e0                      		ldi		ZL, low(LCDLn1Addr)
+00010e e0f1                      		ldi		ZH, high(LCDLn1Addr)
+00010f d04c                      		rcall	LCDClrLine		; Call the Clear Line function
                                  
-000114 91ff                      		pop		ZH				; Restore Z pointer
-000115 91ef                      		pop		ZL				;
-000116 912f                      		pop		count			; Restore the count register
-000117 913f                      		pop		line			; Restore line register
-000118 910f                      		pop		mpr				; Restore mpr
-000119 9508                      		ret						; Return from Subroutine
+000110 91ff                      		pop		ZH				; Restore Z pointer
+000111 91ef                      		pop		ZL				;
+000112 912f                      		pop		count			; Restore the count register
+000113 913f                      		pop		line			; Restore line register
+000114 910f                      		pop		mpr				; Restore mpr
+000115 9508                      		ret						; Return from Subroutine
                                  
                                  ;*******************************************************
                                  ;* Func:	LCDClrLn2
@@ -1750,24 +1747,24 @@ C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.as
                                  ;*			the data and the second line of the LCD Display
                                  ;*******************************************************
                                  LCDClrLn2:
-00011a 930f                      		push	mpr				; Save mpr
-00011b 933f                      		push	line			; Save line register
-00011c 932f                      		push	count			; Save the count register
-00011d 93ef                      		push	ZL				; Save Z pointer
-00011e 93ff                      		push	ZH				;
+000116 930f                      		push	mpr				; Save mpr
+000117 933f                      		push	line			; Save line register
+000118 932f                      		push	count			; Save the count register
+000119 93ef                      		push	ZL				; Save Z pointer
+00011a 93ff                      		push	ZH				;
                                  	
-00011f ec30                      		ldi		line, LCDline2	; Set Access to Line 2 of LCD
-000120 d03a                      		rcall	LCDSetLine		; Set Z pointer to address of line 2 data
-000121 e1e0                      		ldi		ZL, low(LCDLn2Addr)
-000122 e0f1                      		ldi		ZH, high(LCDLn2Addr)
-000123 d03c                      		rcall	LCDClrLine		; Call the Clear Line function
+00011b ec30                      		ldi		line, LCDline2	; Set Access to Line 2 of LCD
+00011c d03a                      		rcall	LCDSetLine		; Set Z pointer to address of line 2 data
+00011d e1e0                      		ldi		ZL, low(LCDLn2Addr)
+00011e e0f1                      		ldi		ZH, high(LCDLn2Addr)
+00011f d03c                      		rcall	LCDClrLine		; Call the Clear Line function
                                  
-000124 91ff                      		pop		ZH				; Restore Z pointer
-000125 91ef                      		pop		ZL				;
-000126 912f                      		pop		count			; Restore the count register
-000127 913f                      		pop		line			; Restore line register
-000128 910f                      		pop		mpr				; Restore mpr
-000129 9508                      		ret						; Return from Subroutine
+000120 91ff                      		pop		ZH				; Restore Z pointer
+000121 91ef                      		pop		ZL				;
+000122 912f                      		pop		count			; Restore the count register
+000123 913f                      		pop		line			; Restore line register
+000124 910f                      		pop		mpr				; Restore mpr
+000125 9508                      		ret						; Return from Subroutine
                                  
                                  ;*******************************************************
                                  ;* Func:	LCDWriteByte
@@ -1787,31 +1784,31 @@ C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.as
                                  ;*				be written (0-255)
                                  ;*********************************************************
                                  LCDWriteByte:
-00012a 930f                      		push	mpr				; Save the mpr
-00012b 933f                      		push	line			; Save the line
-00012c 932f                      		push	count			; Save the count
+000126 930f                      		push	mpr				; Save the mpr
+000127 933f                      		push	line			; Save the line
+000128 932f                      		push	count			; Save the count
                                  								; Preform sanity checks on count and line
-00012d 3228                      		cpi		count, 40		; Make sure count is within range
-00012e f450                      		brsh	LCDWriteByte_3	; Do nothing and exit function
-00012f 3031                      		cpi		line, 1			; If (line == 1)
-000130 f411                      		brne	LCDWriteByte_1	; 
-000131 e830                      		ldi		line, LCDLine1	; Load line 1 base LCD Address
-000132 c003                      		rjmp	LCDWriteByte_2	; Continue on with function
+000129 3228                      		cpi		count, 40		; Make sure count is within range
+00012a f450                      		brsh	LCDWriteByte_3	; Do nothing and exit function
+00012b 3031                      		cpi		line, 1			; If (line == 1)
+00012c f411                      		brne	LCDWriteByte_1	; 
+00012d e830                      		ldi		line, LCDLine1	; Load line 1 base LCD Address
+00012e c003                      		rjmp	LCDWriteByte_2	; Continue on with function
                                  LCDWriteByte_1:					
-000133 3032                      		cpi		line, 2			; If (line == 2)
-000134 f421                      		brne	LCDWriteByte_3	; Do nothing and exit function
-000135 ec30                      		ldi		line, LCDLine2	; Load line 2 base LCD Address
+00012f 3032                      		cpi		line, 2			; If (line == 2)
+000130 f421                      		brne	LCDWriteByte_3	; Do nothing and exit function
+000131 ec30                      		ldi		line, LCDLine2	; Load line 2 base LCD Address
                                  
                                  LCDWriteByte_2:					; Write char to LCD
-000136 0f32                      		add		line, count		; Set the correct LCD address
-000137 d023                      		rcall	LCDSetLine		; Set the line address to LCD
-000138 d042                      		rcall	LCDWriteChar	; Write Char to LCD Display		
+000132 0f32                      		add		line, count		; Set the correct LCD address
+000133 d023                      		rcall	LCDSetLine		; Set the line address to LCD
+000134 d042                      		rcall	LCDWriteChar	; Write Char to LCD Display		
                                  		
                                  LCDWriteByte_3:					; Exit Function
-000139 912f                      		pop		count			; Restore the count
-00013a 913f                      		pop		line			; Restore the line
-00013b 910f                      		pop		mpr				; Restore the mpr
-00013c 9508                      		ret						; Return from function
+000135 912f                      		pop		count			; Restore the count
+000136 913f                      		pop		line			; Restore the line
+000137 910f                      		pop		mpr				; Restore the mpr
+000138 9508                      		ret						; Return from function
                                  		 
                                  ;*******************************************************
                                  ;* Func:	Bin2ASCII
@@ -1824,41 +1821,41 @@ C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.as
                                  ;*				added to the count register
                                  ;*******************************************************
                                  Bin2ASCII:
-00013d 930f                      		push	mpr				; save mpr
-00013e 936f                      		push	r				; save r
-00013f 935f                      		push	q				; save q
-000140 93bf                      		push	XH				; save X-pointer
-000141 93af                      		push	XL				;
+000139 930f                      		push	mpr				; save mpr
+00013a 936f                      		push	r				; save r
+00013b 935f                      		push	q				; save q
+00013c 93bf                      		push	XH				; save X-pointer
+00013d 93af                      		push	XL				;
                                  
                                  		; Determine the range of mpr
-000142 3604                      		cpi		mpr, 100		; is mpr >= 100
-000143 f018                      		brlo	B2A_1			; goto next check
-000144 e023                      		ldi		count, 3		; Three chars are written
-000145 9613                      		adiw	XL, 3			; Increment X 3 address spaces
-000146 c007                      		rjmp	B2A_3			; Continue with program
-000147 300a                      B2A_1:	cpi		mpr, 10			; is mpr >= 10
-000148 f018                      		brlo	B2A_2			; Continue with program
-000149 e022                      		ldi		count, 2		; Two chars are written
-00014a 9612                      		adiw	XL, 2			; Increment X 2 address spaces
-00014b c002                      		rjmp	B2A_3			; Continue with program
-00014c 9611                      B2A_2:	adiw	XL, 1			; Increment X 1 address space
-00014d e021                      		ldi		count, 1 		; One char is written
+00013e 3604                      		cpi		mpr, 100		; is mpr >= 100
+00013f f018                      		brlo	B2A_1			; goto next check
+000140 e023                      		ldi		count, 3		; Three chars are written
+000141 9613                      		adiw	XL, 3			; Increment X 3 address spaces
+000142 c007                      		rjmp	B2A_3			; Continue with program
+000143 300a                      B2A_1:	cpi		mpr, 10			; is mpr >= 10
+000144 f018                      		brlo	B2A_2			; Continue with program
+000145 e022                      		ldi		count, 2		; Two chars are written
+000146 9612                      		adiw	XL, 2			; Increment X 2 address spaces
+000147 c002                      		rjmp	B2A_3			; Continue with program
+000148 9611                      B2A_2:	adiw	XL, 1			; Increment X 1 address space
+000149 e021                      		ldi		count, 1 		; One char is written
                                  
                                  B2A_3:	;Do-While statement that converts Binary to ASCII
-00014e d04a                      		rcall	div10			; Call the div10 function
-00014f e300                      		ldi		mpr, '0'		; Set the base ASCII integer value
-000150 0f06                      		add		mpr, r			; Create the ASCII integer value
-000151 930e                      		st		-X, mpr			; Load ASCII value to memory
-000152 2f05                      		mov		mpr, q			; Set mpr to quotiant value
-000153 3000                      		cpi		mpr, 0			; does mpr == 0
-000154 f7c9                      		brne	B2A_3			; do while (mpr != 0)
+00014a d04a                      		rcall	div10			; Call the div10 function
+00014b e300                      		ldi		mpr, '0'		; Set the base ASCII integer value
+00014c 0f06                      		add		mpr, r			; Create the ASCII integer value
+00014d 930e                      		st		-X, mpr			; Load ASCII value to memory
+00014e 2f05                      		mov		mpr, q			; Set mpr to quotiant value
+00014f 3000                      		cpi		mpr, 0			; does mpr == 0
+000150 f7c9                      		brne	B2A_3			; do while (mpr != 0)
                                  
-000155 91af                      		pop		XL				; restore X-pointer
-000156 91bf                      		pop		XH				;
-000157 915f                      		pop 	q				; restore q
-000158 916f                      		pop		r				; restore r
-000159 910f                      		pop		mpr				; restore mpr
-00015a 9508                      		ret						; return from function
+000151 91af                      		pop		XL				; restore X-pointer
+000152 91bf                      		pop		XH				;
+000153 915f                      		pop 	q				; restore q
+000154 916f                      		pop		r				; restore r
+000155 910f                      		pop		mpr				; restore mpr
+000156 9508                      		ret						; return from function
                                  
                                  ;-------------------------------------------------------
                                  ;*******************************************************
@@ -1873,11 +1870,11 @@ C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.as
                                  ;* Desc:	Change line to be written to 
                                  ;*******************************************************
                                  LCDSetLine:
-00015b 930f                      		push	mpr				; Save mpr
-00015c 2f03                      		mov		mpr,line		; Copy Command Data to mpr
-00015d d00f                      		rcall	LCDWriteCmd		; Write the Command
-00015e 910f                      		pop		mpr				; Restore the mpr
-00015f 9508                      		ret						; Return from function
+000157 930f                      		push	mpr				; Save mpr
+000158 2f03                      		mov		mpr,line		; Copy Command Data to mpr
+000159 d00f                      		rcall	LCDWriteCmd		; Write the Command
+00015a 910f                      		pop		mpr				; Restore the mpr
+00015b 9508                      		ret						; Return from function
                                  
                                  ;*******************************************************
                                  ;* Func:	LCDClrLine
@@ -1889,14 +1886,14 @@ C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.as
                                  ;*			pointing the first element in Data Memory
                                  ;*******************************************************
                                  LCDClrLine:
-000160 e200                      		ldi		mpr, ' '		; The space char to be written
-000161 e120                      		ldi		count, LCDMaxCnt; The character count
+00015c e200                      		ldi		mpr, ' '		; The space char to be written
+00015d e120                      		ldi		count, LCDMaxCnt; The character count
                                  LCDClrLine_1:
-000162 9301                      		st		Z+, mpr			; Clear data memory element
-000163 d017                      		rcall	LCDWriteChar	; Clear LCD memory element
-000164 952a                      		dec		count			; Decrement the count
-000165 f7e1                      		brne	LCDClrLine_1	; Continue untill all elements are cleared
-000166 9508                      		ret						; Return from function
+00015e 9301                      		st		Z+, mpr			; Clear data memory element
+00015f d017                      		rcall	LCDWriteChar	; Clear LCD memory element
+000160 952a                      		dec		count			; Decrement the count
+000161 f7e1                      		brne	LCDClrLine_1	; Continue untill all elements are cleared
+000162 9508                      		ret						; Return from function
                                  
                                  ;*******************************************************
                                  ;* Func:	LCDWriteLine
@@ -1908,66 +1905,66 @@ C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.as
                                  ;*			function call.
                                  ;*******************************************************
                                  LCDWriteLine:
-000167 e120                      		ldi		count, LCDMaxCnt; The character count
+000163 e120                      		ldi		count, LCDMaxCnt; The character count
                                  LCDWriteLine_1:
-000168 9101                      		ld		mpr, Z+			; Get the data element
-000169 d011                      		rcall	LCDWriteChar	; Write element to LCD Display
-00016a 952a                      		dec		count			; Decrement the count
-00016b f7e1                      		brne	LCDWriteLine_1	; Continue untill all elements are written
-00016c 9508                      		ret						; Return from function
+000164 9101                      		ld		mpr, Z+			; Get the data element
+000165 d011                      		rcall	LCDWriteChar	; Write element to LCD Display
+000166 952a                      		dec		count			; Decrement the count
+000167 f7e1                      		brne	LCDWriteLine_1	; Continue untill all elements are written
+000168 9508                      		ret						; Return from function
                                  
                                  ;*******************************************************
                                  ;* Func:	LCDWriteCmd
                                  ;* Desc:	Write command that is in the mpr to LCD 
                                  ;*******************************************************
                                  LCDWriteCmd:
-00016d 934f                      		push	type			; Save type register
-00016e 931f                      		push	wait			; Save wait register
-00016f e040                      		ldi		type, LCDCmd	; Set type to Command data
-000170 d013                      		rcall	LCDWriteData	; Write data to LCD
-000171 930f                      		push	mpr				; Save mpr register
-000172 e002                      		ldi		mpr, 2			; Wait approx. 4.1 ms
+000169 934f                      		push	type			; Save type register
+00016a 931f                      		push	wait			; Save wait register
+00016b e040                      		ldi		type, LCDCmd	; Set type to Command data
+00016c d013                      		rcall	LCDWriteData	; Write data to LCD
+00016d 930f                      		push	mpr				; Save mpr register
+00016e e002                      		ldi		mpr, 2			; Wait approx. 4.1 ms
                                  LCDWC_L1:
-000173 ec1d                      		ldi		wait, 205		; Wait 2050 us
-000174 d01c                      		rcall	LCDWait			;
-000175 950a                      		dec		mpr				; The wait loop cont.
-000176 f7e1                      		brne	LCDWC_L1		;
-000177 910f                      		pop		mpr				; Restore mpr
-000178 911f                      		pop		wait			; Restore wait register
-000179 914f                      		pop		type			; Restore type register
-00017a 9508                      		ret						; Return from function
+00016f ec1d                      		ldi		wait, 205		; Wait 2050 us
+000170 d01c                      		rcall	LCDWait			;
+000171 950a                      		dec		mpr				; The wait loop cont.
+000172 f7e1                      		brne	LCDWC_L1		;
+000173 910f                      		pop		mpr				; Restore mpr
+000174 911f                      		pop		wait			; Restore wait register
+000175 914f                      		pop		type			; Restore type register
+000176 9508                      		ret						; Return from function
                                  
                                  ;*******************************************************
                                  ;* Func:	LCDWriteChar
                                  ;* Desc:	Write character data that is in the mpr
                                  ;*******************************************************
                                  LCDWriteChar:
-00017b 934f                      		push	type			; Save type register
-00017c 931f                      		push	wait			; Save the wait register
-00017d e041                      		ldi		type, LCDTxt	; Set type to Text data
-00017e d005                      		rcall	LCDWriteData	; Write data to LCD
-00017f e110                      		ldi		wait, 16		; Delay 160 us
-000180 d010                      		rcall	LCDWait			;
-000181 911f                      		pop		wait			; Restore wait register
-000182 914f                      		pop		type			; Restore type register
-000183 9508                      		ret						; Return from function
+000177 934f                      		push	type			; Save type register
+000178 931f                      		push	wait			; Save the wait register
+000179 e041                      		ldi		type, LCDTxt	; Set type to Text data
+00017a d005                      		rcall	LCDWriteData	; Write data to LCD
+00017b e110                      		ldi		wait, 16		; Delay 160 us
+00017c d010                      		rcall	LCDWait			;
+00017d 911f                      		pop		wait			; Restore wait register
+00017e 914f                      		pop		type			; Restore type register
+00017f 9508                      		ret						; Return from function
                                  
                                  ;*******************************************************
                                  ;* Func:	LCDWriteData
                                  ;* Desc:	Write data or command to LCD 
                                  ;*******************************************************
                                  LCDWriteData:
-000184 b94f                      		out		SPDR, type		; Send type to SP
-000185 e012                      		ldi		wait, 2			; Wait 2 us
-000186 d00a                      		rcall	LCDWait			; Call Wait function
-000187 b90f                      		out		SPDR,mpr		; Send data to serial port
-000188 e012                      		ldi		wait, 2			; Wait 2 us
-000189 d007                      		rcall	LCDWait			; Call Wait function
-00018a e018                      		ldi		wait, LCDPulse	; Use wait temporarially to 
-00018b 9310 0062                 		sts		PORTF, wait		; to send write pulse to LCD
-00018d e010                      		ldi		wait, $00		;
-00018e 9310 0062                 		sts		PORTF, wait		;
-000190 9508                      		ret						; Return from function
+000180 b94f                      		out		SPDR, type		; Send type to SP
+000181 e012                      		ldi		wait, 2			; Wait 2 us
+000182 d00a                      		rcall	LCDWait			; Call Wait function
+000183 b90f                      		out		SPDR,mpr		; Send data to serial port
+000184 e012                      		ldi		wait, 2			; Wait 2 us
+000185 d007                      		rcall	LCDWait			; Call Wait function
+000186 e018                      		ldi		wait, LCDPulse	; Use wait temporarially to 
+000187 9310 0062                 		sts		PORTF, wait		; to send write pulse to LCD
+000189 e010                      		ldi		wait, $00		;
+00018a 9310 0062                 		sts		PORTF, wait		;
+00018c 9508                      		ret						; Return from function
                                  
                                  ;*******************************************************
                                  ;* Func:	LCDWait
@@ -1976,14 +1973,14 @@ C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.as
                                  ;*			for the specific amount of time in 10us 
                                  ;*			intervals.
                                  ;*******************************************************
-000191 930f                      LCDWait:push	mpr				; Save mpr
-000192 e409                      LCDW_L1:ldi		mpr, $49		; Load with a 10us value
-000193 950a                      LCDW_L2:dec		mpr				; Inner Wait Loop
-000194 f7f1                      		brne	LCDW_L2
-000195 951a                      		dec		wait			; Outer Wait Loop
-000196 f7d9                      		brne	LCDW_L1
-000197 910f                      		pop		mpr				; Restore mpr
-000198 9508                      		ret						; Return from Wait Function
+00018d 930f                      LCDWait:push	mpr				; Save mpr
+00018e e409                      LCDW_L1:ldi		mpr, $49		; Load with a 10us value
+00018f 950a                      LCDW_L2:dec		mpr				; Inner Wait Loop
+000190 f7f1                      		brne	LCDW_L2
+000191 951a                      		dec		wait			; Outer Wait Loop
+000192 f7d9                      		brne	LCDW_L1
+000193 910f                      		pop		mpr				; Restore mpr
+000194 9508                      		ret						; Return from Wait Function
                                  
                                  ;*******************************************************
                                  ;*	Bin2ASCII routines that can be used as a psuedo-
@@ -2000,51 +1997,51 @@ C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab4\Lab4\main.as
                                  ;*	divide by 10 :)  ~DZ		
                                  ;***********************************************************
                                  div10:
-000199 920f                      		push	r0				; Save register
+000195 920f                      		push	r0				; Save register
                                  
                                  		; q = mpr / 10 = mpr * 0.000110011001101b
-00019a 2f50                      		mov		q, mpr			; q = mpr * 1.0b
-00019b 9556                      		lsr		q				; q >> 2
-00019c 9556                      		lsr		q				; q = mpr * 0.01b
-00019d 0f50                      		add		q, mpr			; q = (q + mpr) >> 1
-00019e 9556                      		lsr		q				; q = mpr * 0.101b
-00019f 0f50                      		add		q, mpr			; q = (q + mpr) >> 3
-0001a0 9556                      		lsr		q
-0001a1 9556                      		lsr		q
-0001a2 9556                      		lsr		q				; q = mpr * 0.001101b
-0001a3 0f50                      		add		q, mpr			; q = (q + mpr) >> 1
-0001a4 9556                      		lsr		q				; q = mpr * 0.1001101b
-0001a5 0f50                      		add		q, mpr			; q = (q + mpr) >> 3
-0001a6 9556                      		lsr		q				
-0001a7 9556                      		lsr		q
-0001a8 9556                      		lsr		q				; q = mpr * 0.0011001101b
-0001a9 0f50                      		add		q, mpr			; q = (q + mpr) >> 1
-0001aa 9556                      		lsr		q				; q = mpr * 0.10011001101b
-0001ab 0f50                      		add		q, mpr			; q = (q + mpr) >> 4
-0001ac 9556                      		lsr		q
-0001ad 9556                      		lsr		q
-0001ae 9556                      		lsr		q
-0001af 9556                      		lsr		q				; q = mpr * 0.000110011001101b
+000196 2f50                      		mov		q, mpr			; q = mpr * 1.0b
+000197 9556                      		lsr		q				; q >> 2
+000198 9556                      		lsr		q				; q = mpr * 0.01b
+000199 0f50                      		add		q, mpr			; q = (q + mpr) >> 1
+00019a 9556                      		lsr		q				; q = mpr * 0.101b
+00019b 0f50                      		add		q, mpr			; q = (q + mpr) >> 3
+00019c 9556                      		lsr		q
+00019d 9556                      		lsr		q
+00019e 9556                      		lsr		q				; q = mpr * 0.001101b
+00019f 0f50                      		add		q, mpr			; q = (q + mpr) >> 1
+0001a0 9556                      		lsr		q				; q = mpr * 0.1001101b
+0001a1 0f50                      		add		q, mpr			; q = (q + mpr) >> 3
+0001a2 9556                      		lsr		q				
+0001a3 9556                      		lsr		q
+0001a4 9556                      		lsr		q				; q = mpr * 0.0011001101b
+0001a5 0f50                      		add		q, mpr			; q = (q + mpr) >> 1
+0001a6 9556                      		lsr		q				; q = mpr * 0.10011001101b
+0001a7 0f50                      		add		q, mpr			; q = (q + mpr) >> 4
+0001a8 9556                      		lsr		q
+0001a9 9556                      		lsr		q
+0001aa 9556                      		lsr		q
+0001ab 9556                      		lsr		q				; q = mpr * 0.000110011001101b
                                  
                                  		; compute the remainder as r = i - 10 * q
                                  		; calculate r = q * 10 = q * 1010b
-0001b0 2f65                      		mov		r, q			; r = q * 1
-0001b1 0f66                      		lsl		r				; r << 2
-0001b2 0f66                      		lsl		r				; r = q * 100b
-0001b3 0f65                      		add		r, q			; r = (r + q) << 1
-0001b4 0f66                      		lsl		r				; r = q * 1010b
-0001b5 2e06                      		mov		r0, r			; r0 = 10 * q
-0001b6 2f60                      		mov		r, mpr			; r = mpr
-0001b7 1960                      		sub		r, r0			; r = mpr - 10 * q
+0001ac 2f65                      		mov		r, q			; r = q * 1
+0001ad 0f66                      		lsl		r				; r << 2
+0001ae 0f66                      		lsl		r				; r = q * 100b
+0001af 0f65                      		add		r, q			; r = (r + q) << 1
+0001b0 0f66                      		lsl		r				; r = q * 1010b
+0001b1 2e06                      		mov		r0, r			; r0 = 10 * q
+0001b2 2f60                      		mov		r, mpr			; r = mpr
+0001b3 1960                      		sub		r, r0			; r = mpr - 10 * q
                                  
                                  		; Fix any errors that occur
-0001b8 306a                      div10_1:cpi		r, 10			; Compare with 10
-0001b9 f018                      		brlo	div10_2			; do nothing if r < 10
-0001ba 9553                      		inc		q				; fix qoutient
-0001bb 506a                      		subi	r, 10			; fix remainder
-0001bc cffb                      		rjmp	div10_1			; Continue until error is corrected
+0001b4 306a                      div10_1:cpi		r, 10			; Compare with 10
+0001b5 f018                      		brlo	div10_2			; do nothing if r < 10
+0001b6 9553                      		inc		q				; fix qoutient
+0001b7 506a                      		subi	r, 10			; fix remainder
+0001b8 cffb                      		rjmp	div10_1			; Continue until error is corrected
                                  
-0001bd 900f                      div10_2:pop		r0				; Restore registers
+0001b9 900f                      div10_2:pop		r0				; Restore registers
 
 
 RESOURCE USE INFORMATION
@@ -2064,7 +2061,7 @@ counted separately from r26..r31 here.
 "ATmega128" register use summary:
 x  :   1 y  :   6 z  :   8 r0 :   4 r1 :   0 r2 :   0 r3 :   0 r4 :   0 
 r5 :   0 r6 :   0 r7 :   0 r8 :   0 r9 :   0 r10:   0 r11:   0 r12:   0 
-r13:   0 r14:   0 r15:   0 r16: 109 r17:  16 r18:  31 r19:  20 r20:   9 
+r13:   0 r14:   0 r15:   0 r16: 105 r17:  16 r18:  31 r19:  20 r20:   9 
 r21:  28 r22:  13 r23:   0 r24:   0 r25:   0 r26:   5 r27:   2 r28:   6 
 r29:   6 r30:  18 r31:  18 
 Registers used: 17 out of 35 (48.6%)
@@ -2080,9 +2077,9 @@ clc   :   0 clh   :   0 cli   :   0 cln   :   0 clr   :   0 cls   :   0
 clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   0 cpc   :   0 
 cpi   :  10 cpse  :   0 dec   :  12 elpm  :   0 eor   :   0 fmul  :   0 
 fmuls :   0 fmulsu:   0 icall :   0 ijmp  :   0 in    :   2 inc   :   1 
-jmp   :   0 ld    :   1 ldd   :   0 ldi   :  88 lds   :   0 lpm   :   6 
+jmp   :   0 ld    :   1 ldd   :   0 ldi   :  86 lds   :   0 lpm   :   6 
 lsl   :   3 lsr   :  15 mov   :   6 movw  :   0 mul   :   0 muls  :   0 
-mulsu :   0 neg   :   0 nop   :   0 or    :   0 ori   :   0 out   :  17 
+mulsu :   0 neg   :   0 nop   :   0 or    :   0 ori   :   0 out   :  15 
 pop   :  39 push  :  39 rcall :  37 ret   :  19 reti  :   0 rjmp  :   9 
 rol   :   0 ror   :   0 sbc   :   0 sbci  :   0 sbi   :   0 sbic  :   0 
 sbis  :   0 sbiw  :   0 sbr   :   0 sbrc  :   0 sbrs  :   0 sec   :   0 
@@ -2095,7 +2092,7 @@ Instructions used: 25 out of 114 (21.9%)
 "ATmega128" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x00037e    728     28    756  131072   0.6%
+[.cseg] 0x000000 0x000376    720     28    748  131072   0.6%
 [.dseg] 0x000100 0x000100      0      0      0    4096   0.0%
 [.eseg] 0x000000 0x000000      0      0      0    4096   0.0%
 

@@ -117,7 +117,6 @@ INIT:							; The initialization routine
 		clr	r1
 		clr r2
 
-
 		; Turn on interrupts
 		sei
 			; NOTE: This must be the last thing to do in the INIT function
@@ -156,7 +155,7 @@ HandleRightW:
 	inc		RightCount
 	mov		mpr, RightCount
 	
-	rcall Bin2ASCII
+	rcall	Bin2ASCII
 	rcall	LCDWrln1
 
 	; move backwards for a second
@@ -181,7 +180,6 @@ HandleRightW:
 	pop XL
 	pop mpr
 
-
 	ret
 
 
@@ -202,7 +200,7 @@ HandleLeftW:
 	mov		mpr, LeftCount
 
 	rcall Bin2ASCII
-	rcall	LCDWrln2
+	rcall	LCDWrite
 
 	; move backwards for a second
 	ldi mpr, MovBck

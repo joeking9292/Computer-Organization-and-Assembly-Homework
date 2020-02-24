@@ -1,18 +1,19 @@
 <ASSEMBLER_INFO>
  <VERSION>2.2.7</VERSION>
  <DEVICE>"ATmega128"</DEVICE>
- <WORKING_DIR>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\Debug</WORKING_DIR>
+ <WORKING_DIR>C:\Users\noona\OSU\ECE375\Lab5\Lab5\Debug</WORKING_DIR>
  <INCLUDE_PATH>
-  <DIR>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc</DIR>
-  <DIR>C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avrassembler\Include</DIR>
+  <DIR>H:/ECE375\Atmel\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc</DIR>
+  <DIR>H:\ECE375\Atmel\7.0\toolchain\avr8\avrassembler\Include</DIR>
   <DIR></DIR>
  </INCLUDE_PATH>
- <SOURCE_FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</SOURCE_FILE>
+ <SOURCE_FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</SOURCE_FILE>
  <INCLUDED_FILES>
-  <FILE>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc\m128def.inc</FILE>
+  <FILE>H:/ECE375\Atmel\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc\m128def.inc</FILE>
  </INCLUDED_FILES>
  <OBJECT_FILES>
-  <FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\Debug\Lab5.obj</FILE>
+  <FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\Debug\Lab5.obj</FILE>
+
  </OBJECT_FILES>
  <HEX_FILES>
   <FILE>Lab5.hex</FILE>
@@ -22,41 +23,42 @@
   <FILE>Lab5.lss</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <INIT><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>48</LINE></INIT>
-  <MAIN><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>64</LINE></MAIN>
-  <ADD16><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>121</LINE></ADD16>
-  <SUB16><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>153</LINE></SUB16>
-  <MUL24><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>184</LINE></MUL24>
-  <COMPOUND><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>239</LINE></COMPOUND>
-  <DONE><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>108</LINE></DONE>
-  <ADD16_OP1><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>483</LINE></ADD16_OP1>
-  <ADD16_OP2><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>485</LINE></ADD16_OP2>
-  <ADD16_Result><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>489</LINE></ADD16_Result>
-  <EXITADD><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>145</LINE></EXITADD>
-  <SUB16_OP1><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>493</LINE></SUB16_OP1>
-  <SUB16_OP2><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>495</LINE></SUB16_OP2>
-  <SUB16_Result><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>499</LINE></SUB16_Result>
-  <EXITSUB><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>176</LINE></EXITSUB>
-  <MUL24_OP2><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>505</LINE></MUL24_OP2>
-  <MUL24_RESULT><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>509</LINE></MUL24_RESULT>
-  <MUL24_OLOOP><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>196</LINE></MUL24_OLOOP>
-  <MUL24_OP1><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>503</LINE></MUL24_OP1>
-  <MUL24_ILOOP><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>203</LINE></MUL24_ILOOP>
-  <OperandF><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>462</LINE></OperandF>
-  <OperandG><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>464</LINE></OperandG>
-  <OperandH><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>466</LINE></OperandH>
-  <COMPOUND_RESULT><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>512</LINE></COMPOUND_RESULT>
-  <MUL16><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>355</LINE></MUL16>
-  <addrB><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>476</LINE></addrB>
-  <LAddrP><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>477</LINE></LAddrP>
-  <MUL16_OLOOP><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>382</LINE></MUL16_OLOOP>
-  <addrA><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>475</LINE></addrA>
-  <MUL16_ILOOP><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>389</LINE></MUL16_ILOOP>
-  <FUNC><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>433</LINE></FUNC>
-  <OperandA><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>449</LINE></OperandA>
-  <OperandB><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>451</LINE></OperandB>
-  <OperandC><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>454</LINE></OperandC>
-  <OperandD><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>456</LINE></OperandD>
-  <OperandE><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab5\Lab5\main.asm</FILE><LINE>459</LINE></OperandE>
+  <INIT><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>48</LINE></INIT>
+  <MAIN><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>59</LINE></MAIN>
+  <ADD16><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>116</LINE></ADD16>
+  <SUB16><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>148</LINE></SUB16>
+  <MUL24><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>179</LINE></MUL24>
+  <COMPOUND><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>234</LINE></COMPOUND>
+  <DONE><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>103</LINE></DONE>
+  <ADD16_OP1><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>478</LINE></ADD16_OP1>
+  <ADD16_OP2><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>480</LINE></ADD16_OP2>
+  <ADD16_Result><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>484</LINE></ADD16_Result>
+  <EXITADD><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>140</LINE></EXITADD>
+  <SUB16_OP1><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>488</LINE></SUB16_OP1>
+  <SUB16_OP2><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>490</LINE></SUB16_OP2>
+  <SUB16_Result><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>494</LINE></SUB16_Result>
+  <EXITSUB><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>171</LINE></EXITSUB>
+  <MUL24_OP2><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>500</LINE></MUL24_OP2>
+  <MUL24_RESULT><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>504</LINE></MUL24_RESULT>
+  <MUL24_OLOOP><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>191</LINE></MUL24_OLOOP>
+  <MUL24_OP1><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>498</LINE></MUL24_OP1>
+  <MUL24_ILOOP><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>198</LINE></MUL24_ILOOP>
+  <OperandF><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>457</LINE></OperandF>
+  <OperandG><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>459</LINE></OperandG>
+  <OperandH><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>461</LINE></OperandH>
+  <COMPOUND_RESULT><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>507</LINE></COMPOUND_RESULT>
+  <MUL16><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>350</LINE></MUL16>
+  <addrB><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>471</LINE></addrB>
+  <LAddrP><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>472</LINE></LAddrP>
+  <MUL16_OLOOP><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>377</LINE></MUL16_OLOOP>
+  <addrA><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>470</LINE></addrA>
+  <MUL16_ILOOP><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>384</LINE></MUL16_ILOOP>
+  <FUNC><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>428</LINE></FUNC>
+  <OperandA><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>444</LINE></OperandA>
+  <OperandB><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>446</LINE></OperandB>
+  <OperandC><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>449</LINE></OperandC>
+  <OperandD><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>451</LINE></OperandD>
+  <OperandE><FILE>C:\Users\noona\OSU\ECE375\Lab5\Lab5\main.asm</FILE><LINE>454</LINE></OperandE>
+
  </LABELS>
 </ASSEMBLER_INFO>

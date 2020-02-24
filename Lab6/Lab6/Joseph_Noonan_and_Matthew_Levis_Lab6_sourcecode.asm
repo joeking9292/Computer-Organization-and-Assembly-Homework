@@ -24,7 +24,8 @@
 .def	RightCount = r2		; Right whisker counter
 .def	waitcnt = r25
 .def	ilcnt = r23				; Inner Loop Counter
-.def	olcnt = r24				; Outer Loop Counter
+.def	olcnt = r24				; Outer Loop Counter
+
 .equ	WTime = 100 ; Time to wait in wait loop
 .equ	WskrR = 0 ; Right Whisker Input Bit
 .equ	WskrL = 1 ; Left Whisker Input Bit
@@ -100,8 +101,11 @@ INIT:							; The initialization routine
 
 		
 		ldi mpr, 0b00000000 ; Load Move Forward Command
-		out PINB, mpr ; Send command to motors		ldi mpr, MovFwd ; Load Move Forward Command
-		out PORTB, mpr ; Send command to motors
+		out PINB, mpr ; Send command to motors
+
+		ldi mpr, MovFwd ; Load Move Forward Command
+		out PORTB, mpr ; Send command to motors
+
 
 		; Initialize external interrupts
 			; Set the Interrupt Sense Control to falling edge 
@@ -116,7 +120,6 @@ INIT:							; The initialization routine
 		
 		clr	r1
 		clr r2
-
 
 		; Turn on interrupts
 		sei
@@ -181,7 +184,6 @@ HandleRightW:
 	pop XL
 	pop mpr
 
-
 	ret
 
 
@@ -238,9 +240,8 @@ ClearRightW:
 	push	waitcnt
 	in		mpr, SREG
 	push	mpr
-	
-	cli
 
+	cli
 	clr		RightCount
 	ldi		XL, low(LCDLn1Addr)
 	ldi		XH, high(LCDLn1Addr)
@@ -310,7 +311,8 @@ WaitLoop:
 		brne Mloop ; (2/1) Continue middle-loop
 		dec waitcnt ; (1) Decrement outer-loop count
 		brne OLoop ; (2/1) Continue outer-loop
-		ret ; Return from subroutine
+		ret ; Return from subroutine
+
 
 
 
