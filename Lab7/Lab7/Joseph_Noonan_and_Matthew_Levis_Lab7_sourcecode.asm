@@ -2,14 +2,14 @@
 ;*
 ;*	Joseph_Noonan_and_Matthew_Levis_Lab7_sourcecode.asm
 ;*
-;*	Enter the description of the program here
+;*	This lab deals with increasing and decreasing the bumpbots speed.
 ;*
-;*	This is the skeleton file for Lab 7 of ECE 375
+;*	This is the file for Lab 7 of ECE 375
 ;*
 ;***********************************************************
 ;*
-;*	 Author: Enter your name
-;*	   Date: Enter Date
+;*	 Author: Joseph Noonan and Matthew Levis
+;*	   Date: 2/25/20
 ;*
 ;***********************************************************
 
@@ -46,16 +46,16 @@
 		rjmp	INIT			; reset interrupt
 
 .org	$0002
-		rcall	SPEED_MIN
+		rjmp	SPEED_MIN
 		reti
 .org	$0004
-		rcall	SPEED_MAX
+		rjmp	SPEED_MAX
 		reti
 .org	$0006
-		rcall	SPEED_DOWN
+		rjmp	SPEED_DOWN
 		reti
 .org	$0008
-		rcall	SPEED_UP
+		rjmp	SPEED_UP
 		reti
 		; place instructions in interrupt vectors here, if needed
 
@@ -103,23 +103,23 @@ INIT:
 		ldi		A, 0b01001001
 		out		TCCR2, A
 
-		ldi		mpr, 0b00000000
-		out		OCR0, mpr
-		out		OCR2, mpr
 		
-		ldi mpr, 0b00000101
-		out TCCR1B, mpr
-
-		
+		sei
 
 		ldi	incrementCount, 0b00010001
-			
-		sei
+								; no prescaling
+
+		; Set TekBot to Move Forward (1<<EngDirR|1<<EngDirL)
+
+
+		; Enable global interrupts (if any are used)
 
 ;***********************************************************
 ;*	Main Program
 ;***********************************************************
 MAIN:
+		
+
 		;mov		mpr, MovFwd
 		;out		PORTB, mpr
 		rjmp	MAIN			; return to top of MAIN
@@ -133,11 +133,14 @@ MAIN:
 ; Desc:	Cut and paste this and fill in the info at the 
 ;		beginning of your functions
 ;-----------------------------------------------------------
+FUNC:	; Begin a function with a label
+		rcall Wait
+		ldi mpr, 0xFF				; Clear the interrupt register
+		out EIFR, mpr				; to prevent stacked interrupts
+		sei
+		ret						; End a function with RET
+
 SPEED_UP:
-	
-	push mpr
-	in mpr, SREG
-	push mpr
 
 	cli
 
@@ -146,69 +149,63 @@ SPEED_UP:
 
 	in		mpr, OCR0
 	cpi		mpr, 255
-	breq	MAIN
+	breq	FUNC
 
 	add		curSpeed, incrementCount
 	inc		curSpeedLevel
 
-	;out OCR0, curSpeed
-	;out OCR2, curSpeed
+	out OCR0, curSpeed
+	out OCR2, curSpeed
+	
+	ldi mpr, 0b01100000
+	add mpr, curSpeedLevel
+	
+	out PORTB, mpr
 
-	out PORTB, curSpeedLevel
-
-	ldi mpr, 0x0F				; Clear the interrupt register
+	ldi mpr, 0xFF				; Clear the interrupt register
 	out EIFR, mpr				; to prevent stacked interrupts
 
-	pop mpr
-	out SREG, mpr
-	pop mpr
+
+	sei
 
 	ret
 
 SPEED_DOWN:
-	
-	push mpr
-	in mpr, SREG
-	push mpr
 
 	cli
 
 	ldi mpr, WTime
 	rcall Wait
 
+
 	in		mpr, OCR0
 	cpi		mpr, 0
-	breq	MAIN
+	breq	FUNC
 
 	sub		curSpeed, incrementCount
 	dec		curSpeedLevel
 
-	;out OCR0, curSpeed
-	;out OCR2, curSpeed
+	out OCR0, curSpeed
+	out OCR2, curSpeed
 
 	ldi mpr, 0b01100000
 	add mpr, curSpeedLevel
 
 	out PORTB, mpr	
 
-	ldi mpr, 0x0F				; Clear the interrupt register
+	ldi mpr, 0xFF				; Clear the interrupt register
 	out EIFR, mpr				; to prevent stacked interrupts
 
 
-	pop mpr
-	out SREG, mpr
-	pop mpr
-
+	sei
 
 	ret
 
 SPEED_MAX:
-	
-	push mpr
-	in mpr, SREG
-	push mpr
+	cli 
 
-	cli
+
+	
 
 	ldi mpr, WTime
 	rcall Wait
@@ -218,27 +215,21 @@ SPEED_MAX:
 
 	;in A, OCR0
 	;add A, curSpeed
-	;out	OCR0, curSpeed
-	;out OCR2, curSpeed
+	out	OCR0, curSpeed
+	out OCR2, curSpeed
 
 	ldi mpr, 0b01101111
 	out PORTB, mpr
 
-	ldi mpr, 0x0F				; Clear the interrupt register
+	ldi mpr, 0xFF				; Clear the interrupt register
 	out EIFR, mpr				; to prevent stacked interrupts
 
-	pop mpr
-	out SREG, mpr
-	pop mpr
 
+	sei
 
 	ret
 
 SPEED_MIN:
-
-	push mpr
-	in mpr, SREG
-	push mpr
 
 	cli
 
@@ -250,19 +241,17 @@ SPEED_MIN:
 
 	;in A, OCR0
 	; A, curSpeed
-	;out	OCR0, curSpeed
-	;out OCR2, curSpeed
+	out	OCR0, curSpeed
+	out OCR2, curSpeed
 
 	ldi mpr, 0b11110000
 	out PORTB, mpr
 	
-	ldi mpr, 0x0F				; Clear the interrupt register
+	ldi mpr, 0xFF				; Clear the interrupt register
 	out EIFR, mpr				; to prevent stacked interrupts
 
-	pop mpr
-	out SREG, mpr
-	pop mpr
-	
+
+	sei
 
 	ret
 

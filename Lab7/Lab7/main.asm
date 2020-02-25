@@ -46,16 +46,16 @@
 		rjmp	INIT			; reset interrupt
 
 .org	$0002
-		rcall	SPEED_MIN
+		rjmp	SPEED_MIN
 		reti
 .org	$0004
-		rcall	SPEED_MAX
+		rjmp	SPEED_MAX
 		reti
 .org	$0006
-		rcall	SPEED_DOWN
+		rjmp	SPEED_DOWN
 		reti
 .org	$0008
-		rcall	SPEED_UP
+		rjmp	SPEED_UP
 		reti
 		; place instructions in interrupt vectors here, if needed
 
@@ -104,9 +104,6 @@ INIT:
 		out		TCCR2, A
 
 		
-		ldi mpr, 0b00000101		;WGM13 and WGM12 are both 0's for normal mode, p. 134 of manual
-		OUT TCCR1B, mpr			; Set 16-bit timer/counter1 to normal mode. Starts clock running
-
 		sei
 
 		ldi	incrementCount, 0b00010001
@@ -121,10 +118,7 @@ INIT:
 ;*	Main Program
 ;***********************************************************
 MAIN:
-		; poll Port D pushbuttons (if needed)
-
-								; if pressed, adjust speed
-								; also, adjust speed indication
+		
 
 		;mov		mpr, MovFwd
 		;out		PORTB, mpr
@@ -140,20 +134,13 @@ MAIN:
 ;		beginning of your functions
 ;-----------------------------------------------------------
 FUNC:	; Begin a function with a label
-
-		; If needed, save variables by pushing to the stack
-
-		; Execute the function here
-		
-		; Restore any saved variables by popping from stack
-
+		rcall Wait
+		ldi mpr, 0xFF				; Clear the interrupt register
+		out EIFR, mpr				; to prevent stacked interrupts
+		sei
 		ret						; End a function with RET
 
 SPEED_UP:
-	
-	push mpr
-	in mpr, SREG
-	push mpr
 
 	cli
 
@@ -162,30 +149,28 @@ SPEED_UP:
 
 	in		mpr, OCR0
 	cpi		mpr, 255
-	breq	MAIN
+	breq	FUNC
 
 	add		curSpeed, incrementCount
 	inc		curSpeedLevel
 
 	out OCR0, curSpeed
 	out OCR2, curSpeed
-
-	out PORTB, curSpeedLevel
+	
+	ldi mpr, 0b01100000
+	add mpr, curSpeedLevel
+	
+	out PORTB, mpr
 
 	ldi mpr, 0xFF				; Clear the interrupt register
 	out EIFR, mpr				; to prevent stacked interrupts
 
-	pop mpr
-	out SREG, mpr
-	pop mpr
+
+	sei
 
 	ret
 
 SPEED_DOWN:
-	
-	push mpr
-	in mpr, SREG
-	push mpr
 
 	cli
 
@@ -195,7 +180,7 @@ SPEED_DOWN:
 
 	in		mpr, OCR0
 	cpi		mpr, 0
-	breq	MAIN
+	breq	FUNC
 
 	sub		curSpeed, incrementCount
 	dec		curSpeedLevel
@@ -212,20 +197,15 @@ SPEED_DOWN:
 	out EIFR, mpr				; to prevent stacked interrupts
 
 
-	pop mpr
-	out SREG, mpr
-	pop mpr
-
+	sei
 
 	ret
 
 SPEED_MAX:
-	
-	push mpr
-	in mpr, SREG
-	push mpr
+	cli 
 
-	cli
+
+	
 
 	ldi mpr, WTime
 	rcall Wait
@@ -244,18 +224,12 @@ SPEED_MAX:
 	ldi mpr, 0xFF				; Clear the interrupt register
 	out EIFR, mpr				; to prevent stacked interrupts
 
-	pop mpr
-	out SREG, mpr
-	pop mpr
 
+	sei
 
 	ret
 
 SPEED_MIN:
-
-	push mpr
-	in mpr, SREG
-	push mpr
 
 	cli
 
@@ -276,10 +250,8 @@ SPEED_MIN:
 	ldi mpr, 0xFF				; Clear the interrupt register
 	out EIFR, mpr				; to prevent stacked interrupts
 
-	pop mpr
-	out SREG, mpr
-	pop mpr
-	
+
+	sei
 
 	ret
 
