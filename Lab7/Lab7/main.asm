@@ -25,7 +25,10 @@
 .def	A = r20
 .def	MovFwd = r21
 .def	Halt = r22
+.def	olcnt = r23
+.def	ilcnt = r24
 
+.equ	WTime = 20
 .equ	EngEnR = 4				; right Engine Enable Bit
 .equ	EngEnL = 7				; left Engine Enable Bit
 .equ	EngDirR = 5				; right Engine Direction Bit
@@ -43,16 +46,16 @@
 		rjmp	INIT			; reset interrupt
 
 .org	$0002
-		rjmp	SPEED_MIN
+		rcall	SPEED_MIN
 		reti
 .org	$0004
-		rjmp	SPEED_MAX
+		rcall	SPEED_MAX
 		reti
 .org	$0006
-		rjmp	SPEED_DOWN
+		rcall	SPEED_DOWN
 		reti
 .org	$0008
-		rjmp	SPEED_UP
+		rcall	SPEED_UP
 		reti
 		; place instructions in interrupt vectors here, if needed
 
@@ -94,22 +97,19 @@ INIT:
 
 		
 		; Configure 8-bit Timer/Counters
-		sbi		DDRB, PB4
-		ldi		A, 0b01101001
+		ldi		A, 0b01001001
 		out		TCCR0, A
-		ldi		A, 0b00000010
-		out		TIMSK, A
 
-		sbi		DDRB, PB7
-		ldi		A, 0b01101001
+		ldi		A, 0b01001001
 		out		TCCR2, A
-		ldi		A, 0b00000010
-		out		TIMSK, A
+
+		
+		ldi mpr, 0b00000101		;WGM13 and WGM12 are both 0's for normal mode, p. 134 of manual
+		OUT TCCR1B, mpr			; Set 16-bit timer/counter1 to normal mode. Starts clock running
 
 		sei
 
 		ldi	incrementCount, 0b00010001
-
 								; no prescaling
 
 		; Set TekBot to Move Forward (1<<EngDirR|1<<EngDirL)
@@ -126,8 +126,8 @@ MAIN:
 								; if pressed, adjust speed
 								; also, adjust speed indication
 
-		mov		mpr, MovFwd
-		out		PORTB, mpr
+		;mov		mpr, MovFwd
+		;out		PORTB, mpr
 		rjmp	MAIN			; return to top of MAIN
 
 ;***********************************************************
@@ -157,19 +157,20 @@ SPEED_UP:
 
 	cli
 
-	in		mpr, PORTB
-	cpi		mpr, 0b01101111
+	ldi mpr, WTime
+	rcall Wait
+
+	in		mpr, OCR0
+	cpi		mpr, 255
 	breq	MAIN
 
 	add		curSpeed, incrementCount
 	inc		curSpeedLevel
 
-	in A, OCR0
-	add A, curSpeed
-	out	OCR0, A
+	out OCR0, curSpeed
+	out OCR2, curSpeed
 
-
-
+	out PORTB, curSpeedLevel
 
 	ldi mpr, 0xFF				; Clear the interrupt register
 	out EIFR, mpr				; to prevent stacked interrupts
@@ -178,7 +179,7 @@ SPEED_UP:
 	out SREG, mpr
 	pop mpr
 
-	reti
+	ret
 
 SPEED_DOWN:
 	
@@ -188,26 +189,35 @@ SPEED_DOWN:
 
 	cli
 
-	in		mpr, PORTB
-	cpi		mpr, 0b01100000
+	ldi mpr, WTime
+	rcall Wait
+
+
+	in		mpr, OCR0
+	cpi		mpr, 0
 	breq	MAIN
 
 	sub		curSpeed, incrementCount
 	dec		curSpeedLevel
 
-	in A, OCR0
-	sub A, curSpeed
-	out	OCR0, A
+	out OCR0, curSpeed
+	out OCR2, curSpeed
+
+	ldi mpr, 0b01100000
+	add mpr, curSpeedLevel
+
+	out PORTB, mpr	
 
 	ldi mpr, 0xFF				; Clear the interrupt register
 	out EIFR, mpr				; to prevent stacked interrupts
+
 
 	pop mpr
 	out SREG, mpr
 	pop mpr
 
 
-	reti
+	ret
 
 SPEED_MAX:
 	
@@ -217,13 +227,19 @@ SPEED_MAX:
 
 	cli
 
+	ldi mpr, WTime
+	rcall Wait
+
 	ldi		curSpeed, 0b11111111
 	ldi		curSpeedLevel, 0b00001111
 
 	;in A, OCR0
 	;add A, curSpeed
 	out	OCR0, curSpeed
+	out OCR2, curSpeed
 
+	ldi mpr, 0b01101111
+	out PORTB, mpr
 
 	ldi mpr, 0xFF				; Clear the interrupt register
 	out EIFR, mpr				; to prevent stacked interrupts
@@ -233,7 +249,7 @@ SPEED_MAX:
 	pop mpr
 
 
-	reti
+	ret
 
 SPEED_MIN:
 
@@ -243,13 +259,20 @@ SPEED_MIN:
 
 	cli
 
+	ldi mpr, WTime
+	rcall Wait
+
 	ldi		curSpeed, 0b00000000
 	ldi		curSpeedLevel, 0b00000000
 
 	;in A, OCR0
 	; A, curSpeed
 	out	OCR0, curSpeed
+	out OCR2, curSpeed
 
+	ldi mpr, 0b11110000
+	out PORTB, mpr
+	
 	ldi mpr, 0xFF				; Clear the interrupt register
 	out EIFR, mpr				; to prevent stacked interrupts
 
@@ -258,7 +281,27 @@ SPEED_MIN:
 	pop mpr
 	
 
-	reti
+	ret
+
+
+Wait:
+		push	mpr			; Save wait register
+		push	ilcnt			; Save ilcnt register
+		push	olcnt			; Save olcnt register
+
+Loop:	ldi		olcnt, 224		; load olcnt register
+OLoop:	ldi		ilcnt, 237		; load ilcnt register
+ILoop:	dec		ilcnt			; decrement ilcnt
+		brne	ILoop			; Continue Inner Loop
+		dec		olcnt		; decrement olcnt
+		brne	OLoop			; Continue Outer Loop
+		dec		mpr		; Decrement wait
+		brne	Loop			; Continue Wait loop
+
+		pop		olcnt		; Restore olcnt register
+		pop		ilcnt		; Restore ilcnt register
+		pop		mpr			; Restore wait register
+		ret					; Return from subroutine
 
 
 ;***********************************************************

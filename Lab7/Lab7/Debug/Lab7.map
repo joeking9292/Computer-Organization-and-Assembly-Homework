@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.7  C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab7\Lab7\main.asm Thu Feb 20 13:28:29 2020
+AVRASM ver. 2.2.7  C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab7\Lab7\main.asm Tue Feb 25 00:53:12 2020
 
 
 EQU  SIGNATURE_000 0000001e
@@ -874,14 +874,21 @@ DEF  curSpeedLevel r19
 DEF  A            r20
 DEF  MovFwd       r21
 DEF  Halt         r22
+DEF  olcnt        r23
+DEF  ilcnt        r24
+EQU  WTime        00000014
 EQU  EngEnR       00000004
 EQU  EngEnL       00000007
 EQU  EngDirR      00000005
 EQU  EngDirL      00000006
 CSEG INIT         00000046
-CSEG SPEED_MIN    0000009a
+CSEG SPEED_MIN    0000009f
 CSEG SPEED_MAX    0000008d
-CSEG SPEED_DOWN   0000007b
-CSEG SPEED_UP     00000069
-CSEG MAIN         00000065
-CSEG FUNC         00000068
+CSEG SPEED_DOWN   00000077
+CSEG SPEED_UP     00000063
+CSEG MAIN         00000061
+CSEG FUNC         00000062
+CSEG Wait         000000b1
+CSEG Loop         000000b4
+CSEG OLoop        000000b5
+CSEG ILoop        000000b6
