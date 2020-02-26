@@ -97,31 +97,22 @@ INIT:
 
 		
 		; Configure 8-bit Timer/Counters
-		ldi		A, 0b01001001
+		ldi		A, 0b01111001
 		out		TCCR0, A
 
-		ldi		A, 0b01001001
+		ldi		A, 0b01111001
 		out		TCCR2, A
 
+		ldi	incrementCount, 0b00010001
 		
 		sei
 
-		ldi	incrementCount, 0b00010001
-								; no prescaling
 
-		; Set TekBot to Move Forward (1<<EngDirR|1<<EngDirL)
-
-
-		; Enable global interrupts (if any are used)
 
 ;***********************************************************
 ;*	Main Program
 ;***********************************************************
 MAIN:
-		
-
-		;mov		mpr, MovFwd
-		;out		PORTB, mpr
 		rjmp	MAIN			; return to top of MAIN
 
 ;***********************************************************
@@ -137,7 +128,6 @@ FUNC:	; Begin a function with a label
 		rcall Wait
 		ldi mpr, 0xFF				; Clear the interrupt register
 		out EIFR, mpr				; to prevent stacked interrupts
-		sei
 		ret						; End a function with RET
 
 SPEED_UP:
@@ -166,7 +156,6 @@ SPEED_UP:
 	out EIFR, mpr				; to prevent stacked interrupts
 
 
-	sei
 
 	ret
 
@@ -176,7 +165,6 @@ SPEED_DOWN:
 
 	ldi mpr, WTime
 	rcall Wait
-
 
 	in		mpr, OCR0
 	cpi		mpr, 0
@@ -197,15 +185,12 @@ SPEED_DOWN:
 	out EIFR, mpr				; to prevent stacked interrupts
 
 
-	sei
 
 	ret
 
 SPEED_MAX:
-	cli 
-
-
 	
+	cli 
 
 	ldi mpr, WTime
 	rcall Wait
@@ -225,7 +210,6 @@ SPEED_MAX:
 	out EIFR, mpr				; to prevent stacked interrupts
 
 
-	sei
 
 	ret
 
@@ -251,10 +235,8 @@ SPEED_MIN:
 	out EIFR, mpr				; to prevent stacked interrupts
 
 
-	sei
 
 	ret
-
 
 Wait:
 		push	mpr			; Save wait register

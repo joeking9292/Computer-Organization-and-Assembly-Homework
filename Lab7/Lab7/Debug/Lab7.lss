@@ -1,10 +1,10 @@
 
-AVRASM ver. 2.2.7  C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab7\Lab7\main.asm Tue Feb 25 11:49:41 2020
+AVRASM ver. 2.2.7  C:\Users\noona\OSU\ECE375\Lab7\Lab7\main.asm Wed Feb 26 00:58:13 2020
 
-[builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc\m128def.inc'
-C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab7\Lab7\main.asm(16): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc\m128def.inc'
-[builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc\m128def.inc'
-C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab7\Lab7\main.asm(16): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc\m128def.inc'
+[builtin](2): Including file 'H:/ECE375\Atmel\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc\m128def.inc'
+C:\Users\noona\OSU\ECE375\Lab7\Lab7\main.asm(16): Including file 'H:/ECE375\Atmel\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc\m128def.inc'
+[builtin](2): Including file 'H:/ECE375\Atmel\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc\m128def.inc'
+C:\Users\noona\OSU\ECE375\Lab7\Lab7\main.asm(16): Including file 'H:/ECE375\Atmel\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc\m128def.inc'
                                  
                                  ;***********************************************************
                                  
@@ -1315,16 +1315,16 @@ C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab7\Lab7\main.as
 000000 c045                      		rjmp	INIT			; reset interrupt
                                  
                                  .org	$0002
-000002 c091                      		rjmp	SPEED_MIN
+000002 c08d                      		rjmp	SPEED_MIN
 000003 9518                      		reti
                                  .org	$0004
-000004 c082                      		rjmp	SPEED_MAX
+000004 c07f                      		rjmp	SPEED_MAX
 000005 9518                      		reti
                                  .org	$0006
-000006 c06f                      		rjmp	SPEED_DOWN
+000006 c06d                      		rjmp	SPEED_DOWN
 000007 9518                      		reti
                                  .org	$0008
-000008 c05c                      		rjmp	SPEED_UP
+000008 c05b                      		rjmp	SPEED_UP
 000009 9518                      		reti
                                  		; place instructions in interrupt vectors here, if needed
                                  
@@ -1366,31 +1366,22 @@ C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab7\Lab7\main.as
                                  
                                  		
                                  		; Configure 8-bit Timer/Counters
-000059 e449                      		ldi		A, 0b01001001
+000059 e749                      		ldi		A, 0b01111001
 00005a bf43                      		out		TCCR0, A
                                  
-00005b e449                      		ldi		A, 0b01001001
+00005b e749                      		ldi		A, 0b01111001
 00005c bd45                      		out		TCCR2, A
                                  
+00005d e121                      		ldi	incrementCount, 0b00010001
                                  		
-00005d 9478                      		sei
-                                 
-00005e e121                      		ldi	incrementCount, 0b00010001
-                                 								; no prescaling
-                                 
-                                 		; Set TekBot to Move Forward (1<<EngDirR|1<<EngDirL)
+00005e 9478                      		sei
                                  
                                  
-                                 		; Enable global interrupts (if any are used)
                                  
                                  ;***********************************************************
                                  ;*	Main Program
                                  ;***********************************************************
                                  MAIN:
-                                 		
-                                 
-                                 		;mov		mpr, MovFwd
-                                 		;out		PORTB, mpr
 00005f cfff                      		rjmp	MAIN			; return to top of MAIN
                                  
                                  ;***********************************************************
@@ -1403,146 +1394,137 @@ C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab7\Lab7\main.as
                                  ;		beginning of your functions
                                  ;-----------------------------------------------------------
                                  FUNC:	; Begin a function with a label
-000060 d040                      		rcall Wait
+000060 d03b                      		rcall Wait
 000061 ef0f                      		ldi mpr, 0xFF				; Clear the interrupt register
 000062 bf08                      		out EIFR, mpr				; to prevent stacked interrupts
-000063 9478                      		sei
-000064 9508                      		ret						; End a function with RET
+000063 9508                      		ret						; End a function with RET
                                  
                                  SPEED_UP:
                                  
-000065 94f8                      	cli
+000064 94f8                      	cli
                                  
-000066 e104                      	ldi mpr, WTime
-000067 d039                      	rcall Wait
+000065 e104                      	ldi mpr, WTime
+000066 d035                      	rcall Wait
                                  
-000068 b701                      	in		mpr, OCR0
-000069 3f0f                      	cpi		mpr, 255
-00006a f3a9                      	breq	FUNC
+000067 b701                      	in		mpr, OCR0
+000068 3f0f                      	cpi		mpr, 255
+000069 f3b1                      	breq	FUNC
                                  
-00006b 0f12                      	add		curSpeed, incrementCount
-00006c 9533                      	inc		curSpeedLevel
+00006a 0f12                      	add		curSpeed, incrementCount
+00006b 9533                      	inc		curSpeedLevel
                                  
-00006d bf11                      	out OCR0, curSpeed
-00006e bd13                      	out OCR2, curSpeed
+00006c bf11                      	out OCR0, curSpeed
+00006d bd13                      	out OCR2, curSpeed
                                  	
-00006f e600                      	ldi mpr, 0b01100000
-000070 0f03                      	add mpr, curSpeedLevel
+00006e e600                      	ldi mpr, 0b01100000
+00006f 0f03                      	add mpr, curSpeedLevel
                                  	
-000071 bb08                      	out PORTB, mpr
+000070 bb08                      	out PORTB, mpr
                                  
-000072 ef0f                      	ldi mpr, 0xFF				; Clear the interrupt register
-000073 bf08                      	out EIFR, mpr				; to prevent stacked interrupts
+000071 ef0f                      	ldi mpr, 0xFF				; Clear the interrupt register
+000072 bf08                      	out EIFR, mpr				; to prevent stacked interrupts
                                  
                                  
-000074 9478                      	sei
                                  
-000075 9508                      	ret
+000073 9508                      	ret
                                  
                                  SPEED_DOWN:
                                  
-000076 94f8                      	cli
+000074 94f8                      	cli
                                  
-000077 e104                      	ldi mpr, WTime
-000078 d028                      	rcall Wait
+000075 e104                      	ldi mpr, WTime
+000076 d025                      	rcall Wait
+                                 
+000077 b701                      	in		mpr, OCR0
+000078 3000                      	cpi		mpr, 0
+000079 f331                      	breq	FUNC
+                                 
+00007a 1b12                      	sub		curSpeed, incrementCount
+00007b 953a                      	dec		curSpeedLevel
+                                 
+00007c bf11                      	out OCR0, curSpeed
+00007d bd13                      	out OCR2, curSpeed
+                                 
+00007e e600                      	ldi mpr, 0b01100000
+00007f 0f03                      	add mpr, curSpeedLevel
+                                 
+000080 bb08                      	out PORTB, mpr	
+                                 
+000081 ef0f                      	ldi mpr, 0xFF				; Clear the interrupt register
+000082 bf08                      	out EIFR, mpr				; to prevent stacked interrupts
                                  
                                  
-000079 b701                      	in		mpr, OCR0
-00007a 3000                      	cpi		mpr, 0
-00007b f321                      	breq	FUNC
                                  
-00007c 1b12                      	sub		curSpeed, incrementCount
-00007d 953a                      	dec		curSpeedLevel
-                                 
-00007e bf11                      	out OCR0, curSpeed
-00007f bd13                      	out OCR2, curSpeed
-                                 
-000080 e600                      	ldi mpr, 0b01100000
-000081 0f03                      	add mpr, curSpeedLevel
-                                 
-000082 bb08                      	out PORTB, mpr	
-                                 
-000083 ef0f                      	ldi mpr, 0xFF				; Clear the interrupt register
-000084 bf08                      	out EIFR, mpr				; to prevent stacked interrupts
-                                 
-                                 
-000085 9478                      	sei
-                                 
-000086 9508                      	ret
+000083 9508                      	ret
                                  
                                  SPEED_MAX:
-000087 94f8                      	cli 
-                                 
-                                 
                                  	
+000084 94f8                      	cli 
                                  
-000088 e104                      	ldi mpr, WTime
-000089 d017                      	rcall Wait
+000085 e104                      	ldi mpr, WTime
+000086 d015                      	rcall Wait
                                  
-00008a ef1f                      	ldi		curSpeed, 0b11111111
-00008b e03f                      	ldi		curSpeedLevel, 0b00001111
+000087 ef1f                      	ldi		curSpeed, 0b11111111
+000088 e03f                      	ldi		curSpeedLevel, 0b00001111
                                  
                                  	;in A, OCR0
                                  	;add A, curSpeed
-00008c bf11                      	out	OCR0, curSpeed
-00008d bd13                      	out OCR2, curSpeed
+000089 bf11                      	out	OCR0, curSpeed
+00008a bd13                      	out OCR2, curSpeed
                                  
-00008e e60f                      	ldi mpr, 0b01101111
-00008f bb08                      	out PORTB, mpr
+00008b e60f                      	ldi mpr, 0b01101111
+00008c bb08                      	out PORTB, mpr
                                  
-000090 ef0f                      	ldi mpr, 0xFF				; Clear the interrupt register
-000091 bf08                      	out EIFR, mpr				; to prevent stacked interrupts
+00008d ef0f                      	ldi mpr, 0xFF				; Clear the interrupt register
+00008e bf08                      	out EIFR, mpr				; to prevent stacked interrupts
                                  
                                  
-000092 9478                      	sei
                                  
-000093 9508                      	ret
+00008f 9508                      	ret
                                  
                                  SPEED_MIN:
                                  
-000094 94f8                      	cli
+000090 94f8                      	cli
                                  
-000095 e104                      	ldi mpr, WTime
-000096 d00a                      	rcall Wait
+000091 e104                      	ldi mpr, WTime
+000092 d009                      	rcall Wait
                                  
-000097 e010                      	ldi		curSpeed, 0b00000000
-000098 e030                      	ldi		curSpeedLevel, 0b00000000
+000093 e010                      	ldi		curSpeed, 0b00000000
+000094 e030                      	ldi		curSpeedLevel, 0b00000000
                                  
                                  	;in A, OCR0
                                  	; A, curSpeed
-000099 bf11                      	out	OCR0, curSpeed
-00009a bd13                      	out OCR2, curSpeed
+000095 bf11                      	out	OCR0, curSpeed
+000096 bd13                      	out OCR2, curSpeed
                                  
-00009b ef00                      	ldi mpr, 0b11110000
-00009c bb08                      	out PORTB, mpr
+000097 ef00                      	ldi mpr, 0b11110000
+000098 bb08                      	out PORTB, mpr
                                  	
-00009d ef0f                      	ldi mpr, 0xFF				; Clear the interrupt register
-00009e bf08                      	out EIFR, mpr				; to prevent stacked interrupts
+000099 ef0f                      	ldi mpr, 0xFF				; Clear the interrupt register
+00009a bf08                      	out EIFR, mpr				; to prevent stacked interrupts
                                  
                                  
-00009f 9478                      	sei
                                  
-0000a0 9508                      	ret
-                                 
+00009b 9508                      	ret
                                  
                                  Wait:
-0000a1 930f                      		push	mpr			; Save wait register
-0000a2 938f                      		push	ilcnt			; Save ilcnt register
-0000a3 937f                      		push	olcnt			; Save olcnt register
+00009c 930f                      		push	mpr			; Save wait register
+00009d 938f                      		push	ilcnt			; Save ilcnt register
+00009e 937f                      		push	olcnt			; Save olcnt register
                                  
-0000a4 ee70                      Loop:	ldi		olcnt, 224		; load olcnt register
-0000a5 ee8d                      OLoop:	ldi		ilcnt, 237		; load ilcnt register
-0000a6 958a                      ILoop:	dec		ilcnt			; decrement ilcnt
-0000a7 f7f1                      		brne	ILoop			; Continue Inner Loop
-0000a8 957a                      		dec		olcnt		; decrement olcnt
-0000a9 f7d9                      		brne	OLoop			; Continue Outer Loop
-0000aa 950a                      		dec		mpr		; Decrement wait
-0000ab f7c1                      		brne	Loop			; Continue Wait loop
+00009f ee70                      Loop:	ldi		olcnt, 224		; load olcnt register
+0000a0 ee8d                      OLoop:	ldi		ilcnt, 237		; load ilcnt register
+0000a1 958a                      ILoop:	dec		ilcnt			; decrement ilcnt
+0000a2 f7f1                      		brne	ILoop			; Continue Inner Loop
+0000a3 957a                      		dec		olcnt		; decrement olcnt
+0000a4 f7d9                      		brne	OLoop			; Continue Outer Loop
+0000a5 950a                      		dec		mpr		; Decrement wait
+0000a6 f7c1                      		brne	Loop			; Continue Wait loop
                                  
-0000ac 917f                      		pop		olcnt		; Restore olcnt register
-0000ad 918f                      		pop		ilcnt		; Restore ilcnt register
-0000ae 910f                      		pop		mpr			; Restore wait register
-0000af 9508                      		ret					; Return from subroutine
+0000a7 917f                      		pop		olcnt		; Restore olcnt register
+0000a8 918f                      		pop		ilcnt		; Restore ilcnt register
+0000a9 910f                      		pop		mpr			; Restore wait register
+0000aa 9508                      		ret					; Return from subroutine
                                  
                                  
                                  ;***********************************************************
@@ -1596,7 +1578,7 @@ mulsu :   0 neg   :   0 nop   :   0 or    :   0 ori   :   0 out   :  26
 pop   :   3 push  :   3 rcall :   5 ret   :   6 reti  :   4 rjmp  :   6 
 rol   :   0 ror   :   0 sbc   :   0 sbci  :   0 sbi   :   0 sbic  :   0 
 sbis  :   0 sbiw  :   0 sbr   :   0 sbrc  :   0 sbrs  :   0 sec   :   0 
-seh   :   0 sei   :   6 sen   :   0 ser   :   0 ses   :   0 set   :   0 
+seh   :   0 sei   :   1 sen   :   0 ser   :   0 ses   :   0 set   :   0 
 sev   :   0 sez   :   0 sleep :   0 spm   :   0 st    :   0 std   :   0 
 sts   :   1 sub   :   1 subi  :   0 swap  :   0 tst   :   0 wdr   :   0 
 
@@ -1605,7 +1587,7 @@ Instructions used: 20 out of 114 (17.5%)
 "ATmega128" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x000160    230      0    230  131072   0.2%
+[.cseg] 0x000000 0x000156    220      0    220  131072   0.2%
 [.dseg] 0x000100 0x000100      0      0      0    4096   0.0%
 [.eseg] 0x000000 0x000000      0      0      0    4096   0.0%
 
