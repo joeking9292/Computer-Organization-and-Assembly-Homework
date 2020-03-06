@@ -1,4 +1,4 @@
-;***********************************************************
+***********************************************************
 ;*
 ;* Joseph_Noonan_and_matthew_Lavis_R_sourcecode.asm
 ;*
@@ -20,9 +20,6 @@
 ;***********************************************************
 .def mpr = r16 ; Multi-Purpose Register
 .def freezeCount = r20   ; track how many times robot has been frozen
-.def	waitcnt = r25
-.def	ilcnt = r23				; Inner Loop Counter
-.def	olcnt = r24				; Outer Loop Counter
 
 .equ WskrR = 0 ; Right Whisker Input Bit
 .equ WskrL = 1 ; Left Whisker Input Bit
@@ -85,43 +82,37 @@ INIT:
 	;I/O Ports
 	ldi mpr, $FF
 	out DDRB, mpr ; Set Port B Directional Register for output
-	ldi mpr, MovFwd
+	mov mpr, MovFwd
 	out PORTB, mpr ; Activate pull-up resistors
 
 
 	;USART1
 	ldi mpr, 0b00000010
-	sts UCSR1A, mpr
+	sts USART1A, mpr
 	;Set baudrate at 2400bps
 	ldi mpr, high(832)
 	sts UBRR1H, mpr
 	ldi mpr, low(832)
-	sts UBRR1L, mpr
+	out UBRR1L, mpr
 
 	;Enable receiver and enable receive interrupts
-	;ldi mpr, 0b10001000
-	ldi mpr, 0b11011000
-	sts UCSR1B, mpr
+	ldi mpr, 0b10001000
+	sts USART1B, mpr
 
 	;Set frame format: 8 data bits, 2 stop bits
-	;ldi mpr, 0b00001111
 	ldi mpr, 0b00001111
-	sts UCSR1C, mpr
+	sts USART1C
 	;External Interrupts
 	;Set the External Interrupt Mask
-	ldi mpr, 0b00001111    ;(1<<INT0) | (1<<INT1) | (1<<INT2) | (1<<INT3)
+	ldi mpr, 0b00000111    ;(1<<INT0) | (1<<INT1) | (1<<INT2) | (1<<INT3)
 	out EIMSK, mpr
 
 	;Set the Interrupt Sense Control to falling edge detection
-	ldi mpr, (1<<ISC01)|(0<<ISC00)|(1<<ISC11)|(0<<ISC10)|(0<<ISC20)|(1<<ISC21)|(0<<ISC30)|(1<<ISC31)
+	di mpr, 0b10101010 ;(1<<ISC01) | (0<<ISC00) | (1<<ISC11) | (0<<ISC10) | (1<<ISC21) | (0<<ISC20) | (1<<ISC31) | (0<<ISC30)
 	sts EICRA, mpr ; set INT0-3 to trigger on falling edge
-
-	ldi mpr, MovFwd
-	out PORTB, mpr
 
 	;Other
 	ldi mpr, 0b00000000
-
 
 	sei
 
@@ -193,7 +184,7 @@ USART_Receive:
 
 	cli
 
-	lds r17, UDR1
+	in r17, UDR1
 
 	cpi r17, 0b01010101 ; see if its a freeze signal from another robot first (comes w/out address)
 	breq HANDLE_FREEZE_SIGNAL
@@ -227,7 +218,7 @@ USART_Receive:
 
 ; make sure botaddresses are the same, if not set flag in not equal
 BOT_ADDRESS:
-	cpi r17, BotAddress
+	cpi r18, BotAddress
 	brne NOT_EQUAL
 	ldi mpr, 0b00000000
 
@@ -238,7 +229,7 @@ BOT_ADDRESS:
 	rjmp MAIN
 
 	; set flag indicating not equal addresses between remote and robot
-NOT_EQUAL:
+	NOT_EQUAL:
 	ldi mpr, 0b00000001
 
 	ldi mpr, 0xFF
@@ -249,7 +240,7 @@ NOT_EQUAL:
 
 	; TRANSMIT_FREEZE_SIGNAL transmits the 0b01010101 freeze signal to other robots without
 	; any address first
-TRANSMIT_FREEZE_SIGNAL:
+	TRANSMIT_FREEZE_SIGNAL:
 	; IMMEDIATELY transmit a standalone freeze signal
 	; 0b01010101
 	lds mpr, UCSR1A

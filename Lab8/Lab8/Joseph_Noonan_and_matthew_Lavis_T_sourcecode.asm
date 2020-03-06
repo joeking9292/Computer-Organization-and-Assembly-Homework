@@ -158,7 +158,7 @@ ldi action, freezecmd
 rjmp END
 END:
 rcall USART_BotID_Transmit
-rcall USART_Action_Transmit
+;rcall USART_Action_Transmit
 rjmp MAIN
 
 ;***********************************************************
@@ -174,7 +174,7 @@ rjmp USART_BotID_Transmit
 ; send BotID first
 ldi mpr, BotID
 sts UDR1, mpr
-ret
+;ret
 
 USART_Action_Transmit:
 
@@ -186,7 +186,22 @@ rjmp USART_Action_Transmit
 ; read in action specified
 
 sts UDR1, action
-ret
+;ret
+
+USART_Transmit_Wait_to_Finish:
+	lds	mpr, UCSR1A
+	sbrs	mpr, TXC1
+	rjmp	USART_Transmit_Wait_to_Finish
+
+	lds	mpr, UCSR1A
+	cbr	mpr, TXC1
+	sts	UCSR1A, mpr
+
+	ret
+
+
+
+
 
 
 ;***********************************************************
