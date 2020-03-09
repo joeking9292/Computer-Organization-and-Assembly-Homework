@@ -28,6 +28,7 @@
 ;***********************************************************
 .def mpr = r16 ; Multi-Purpose Register
 .def action = r17
+.def flag = r19
 
 .equ EngEnR = 4 ; Right Engine Enable Bit
 .equ EngEnL = 7 ; Left Engine Enable Bit
@@ -65,49 +66,42 @@ rjmp INIT ; Reset interrupt
 ;* Program Initialization
 ;***********************************************************
 INIT:
-;Stack Pointer (VERY IMPORTANT!!!!)
-; Initialize Stack Pointer
-ldi mpr, low(RAMEND)
-out SPL, mpr ; Load SPL with low byte of RAMEND
-ldi mpr, high(RAMEND)
-out SPH, mpr ; Load SPH with high byte of RAMEND
+	;Stack Pointer (VERY IMPORTANT!!!!)
+	; Initialize Stack Pointer
+	ldi mpr, low(RAMEND)
+	out SPL, mpr ; Load SPL with low byte of RAMEND
+	ldi mpr, high(RAMEND)
+	out SPH, mpr ; Load SPH with high byte of RAMEND
 
-;I/O Ports (PORTD & USART)
-ldi mpr, $00
-out DDRD, mpr ; Set Port D Directional Register for input
-ldi mpr, $FF
-out PORTD, mpr ; Activate pull-up resistors
+	;I/O Ports (PORTD & USART)
+	ldi mpr, $00
+	out DDRD, mpr ; Set Port D Directional Register for input
+	ldi mpr, $FF
+	out PORTD, mpr ; Activate pull-up resistors
 
+	;I/O Ports (PORTD & USART)
+	ldi mpr, $00
+	out DDRB, mpr ; Set Port D Directional Register for input
+	ldi mpr, $FF
+	out PORTB, mpr ; Activate pull-up resistors
 
 ;USART1
-ldi mpr, 0b00000010
-sts UCSR1A, mpr
+	ldi mpr, (1<<U2X1)
+	sts UCSR1A, mpr
 
-;Enable transmitter
-ldi mpr, 0b00001000
-sts UCSR1B, mpr
+	;Set baudrate at 2400bps
+	ldi mpr, $03
+	sts UBRR1H, mpr
+	ldi mpr, $40
+	sts UBRR1L, mpr
 
-;Set frame format: 8 data bits, 2 stop bits
-ldi mpr, 0b00001110
-sts UCSR1C, mpr
+	;Enable transmitter
+	ldi mpr, (1<<TXEN1)
+	sts UCSR1B, mpr
 
-;Set baudrate at 2400bps
-ldi mpr, high(832)
-sts UBRR1H, mpr
-ldi mpr, low(832)
-sts UBRR1L, mpr
-
-
-sei
-
-
-; USARTA: 0b00000010
-; USARTB: 0b00000000
-; USARTC: 0b00001111
-
-
-
-
+	;Set frame format: 8 data bits, 2 stop bits
+	ldi mpr, (1<<UCSZ11) | (1<<UCSZ10) | (1<<USBS1)
+	sts UCSR1C, mpr
 
 ;Other
 
@@ -115,99 +109,88 @@ sei
 ;* Main Program
 ;***********************************************************
 MAIN:
-;TODO: ???
-; continuously poll for buttons pressed corresponding to a given action
-; set action register with action
+	;TODO: ???
+	; continuously poll for buttons pressed corresponding to a given action
+	; set action register with action
 
-in mpr, PIND
+	in mpr, PIND
 
-cpi mpr, 0b00000001; some pin specified action
-breq FORWARD
+	cpi mpr, 0b00000001; some pin specified action
+	breq FORWARD
 
-cpi mpr, 0b00000010 ;some pin specified action
-breq BACKWARD
+	cpi mpr, 0b00000010 ;some pin specified action
+	breq BACKWARD
 
-cpi mpr, 0b00000100 ;some pin specified action
-breq LEFT
+	cpi mpr, 0b00000100 ;some pin specified action
+	breq LEFT
 
-cpi mpr, 0b00001000 ;some pin specified action
-breq RIGHT
+	cpi mpr, 0b00001000 ;some pin specified action
+	breq RIGHT
 
-cpi mpr, 0b00010000 ;some pin specified action
-breq HALT_Routine
+	cpi mpr, 0b00010000 ;some pin specified action
+	breq HALT_Routine
 
-rjmp END
+	cpi mpr, 0b00100000
+	breq FREEZE
 
+	rjmp END
+
+;***********************************************************
+;*	Functions and Subroutines
+;***********************************************************
 FORWARD:
-ldi action, MovFwd
-rjmp END
+	ldi action, MovFwd
+	rjmp END
 BACKWARD:
-ldi action, MovBck
-rjmp END
+	ldi action, MovBck
+	rjmp END
 LEFT:
-ldi action, TurnL
-rjmp END
+	ldi action, TurnL
+	rjmp END
 RIGHT:
-ldi action, TurnR
-rjmp END
+	ldi action, TurnR
+	rjmp END
 HALT_Routine:
-ldi action, Halt
-rjmp END
+	ldi action, Halt
+	rjmp END
 FREEZE:
-ldi action, freezecmd
-rjmp END
+	ldi action, freezecmd
+	rjmp END
 END:
-rcall USART_BotID_Transmit
-;rcall USART_Action_Transmit
-rjmp MAIN
+	rcall USART_BotID_Transmit
+	rcall USART_Action_Transmit
+	rjmp MAIN
 
 ;***********************************************************
 ;* Functions and Subroutines
 ;***********************************************************
 USART_BotID_Transmit:
-lds mpr, UCSR1A
-sbrs mpr, UDRE1
+	lds mpr, UCSR1A
+	sbrs mpr, UDRE1
 
-;sbis UCSR1A, UDRE1
-rjmp USART_BotID_Transmit
+	;sbis UCSR1A, UDRE1
+	rjmp USART_BotID_Transmit
 
-; send BotID first
-ldi mpr, BotID
-sts UDR1, mpr
-;ret
+	; send BotID first
+	ldi mpr, BotID
+	sts UDR1, mpr
+	;ret
 
 USART_Action_Transmit:
 
-lds mpr, UCSR1A
-sbrs mpr, UDRE1
-;sbis UCSR1A, UDRE1
-rjmp USART_Action_Transmit
+	lds mpr, UCSR1A
+	sbrs mpr, UDRE1
+	;sbis UCSR1A, UDRE1
+	rjmp USART_Action_Transmit
 
-; read in action specified
+	; read in action specified
 
-sts UDR1, action
-;ret
+	sts UDR1, action
+	ret
+
 
 USART_Transmit_Wait_to_Finish:
 	lds	mpr, UCSR1A
 	sbrs	mpr, TXC1
 	rjmp	USART_Transmit_Wait_to_Finish
-
-	lds	mpr, UCSR1A
-	cbr	mpr, TXC1
-	sts	UCSR1A, mpr
-
 	ret
-
-
-
-
-
-
-;***********************************************************
-;* Stored Program Data
-;***********************************************************
-
-;***********************************************************
-;* Additional Program Includes
-;*******************************************

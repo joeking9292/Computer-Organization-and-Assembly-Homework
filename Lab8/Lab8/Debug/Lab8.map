@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.7  C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm Fri Mar 06 14:33:07 2020
+AVRASM ver. 2.2.7  C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm Mon Mar 09 00:00:15 2020
 
 
 EQU  SIGNATURE_000 0000001e
@@ -868,27 +868,35 @@ EQU  TWIaddr      00000042
 EQU  SPMRaddr     00000044
 EQU  INT_VECTORS_SIZE 00000046
 DEF  mpr          r16
-DEF  action       r17
+DEF  freezeCount  r20
+DEF  currentCommand r21
+DEF  waitcnt      r25
+DEF  ilcnt        r23
+DEF  olcnt        r24
+EQU  WskrR        00000000
+EQU  WskrL        00000001
 EQU  EngEnR       00000004
 EQU  EngEnL       00000007
 EQU  EngDirR      00000005
 EQU  EngDirL      00000006
-EQU  MovFwd       000000b0
-EQU  MovBck       00000080
-EQU  TurnR        000000a0
-EQU  TurnL        00000090
-EQU  Halt         000000c8
-EQU  freezecmd    000000f8
+EQU  WTime        00000064
+EQU  BotAddress   0000001a
+EQU  MovFwd       00000060
+EQU  MovBck       00000000
+EQU  TurnR        00000040
+EQU  TurnL        00000020
+EQU  Halt         00000090
 EQU  bit5         00000005
-EQU  BotID        0000001a
 CSEG INIT         00000046
-CSEG MAIN         0000005e
-CSEG FORWARD      0000006a
-CSEG BACKWARD     0000006c
-CSEG LEFT         0000006e
-CSEG RIGHT        00000070
-CSEG HALT_Routine 00000072
-CSEG END          00000076
-CSEG FREEZE       00000074
-CSEG USART_BotID_Transmit 00000079
-CSEG USART_Action_Transmit 00000081
+CSEG leftWhisker  0000006d
+CSEG rightWhisker 00000081
+CSEG USART_Receive 00000095
+CSEG MAIN         0000006c
+CSEG Wait         000000db
+CSEG HANDLE_FREEZE_SIGNAL 000000c2
+CSEG BOT_ADDRESS  000000a6
+CSEG TRANSMIT_FREEZE_SIGNAL 000000b0
+CSEG NOT_EQUAL    000000ac
+CSEG Loop         000000de
+CSEG OLoop        000000df
+CSEG ILoop        000000e0
