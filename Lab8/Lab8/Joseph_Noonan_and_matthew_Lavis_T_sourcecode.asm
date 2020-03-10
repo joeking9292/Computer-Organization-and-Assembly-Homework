@@ -47,7 +47,7 @@
 ; FREEZE IS 0b11111000
 .equ	bit5 = 5
 
-.equ	BotID = $1A   ; in binary, this is 0b00011010
+.equ	BotID = $1A  ; in binary, this is 0b00011010
 
 ;***********************************************************
 ;* Start of Code Segment
@@ -84,8 +84,11 @@ INIT:
 	out		DDRB, mpr ; Set Port D Directional Register for input
 	ldi		mpr, $FF
 	out		PORTB, mpr ; Activate pull-up resistors
-
+	
 ;USART1
+	ldi mpr, (1<<PE1)
+	out DDRE, mpr
+
 	ldi		mpr, (1<<U2X1)
 	sts		UCSR1A, mpr
 
@@ -101,7 +104,7 @@ INIT:
 	sts		UCSR1B, mpr
 
 	;Set frame format: 8 data bits, 2 stop bits
-	ldi		mpr, (1<<UCSZ11) | (1<<UCSZ10) | (1<<USBS1)
+	ldi		mpr,  (0<<UMSEL1 | 1<<USBS1 | 1<<UCSZ11 | 1<<UCSZ10)
 	sts		UCSR1C, mpr
 
 ;Other
@@ -114,25 +117,25 @@ MAIN:
 	; continuously poll for buttons pressed corresponding to a given action
 	; set action register with action
 
-	in mpr, PIND
+	;in mpr, PIND
 
-	cpi mpr, 0b00000001; some pin specified action
-	breq FORWARD
+	sbis PIND, 7; some pin specified action
+	rjmp FORWARD
 
-	cpi mpr, 0b00000010 ;some pin specified action
-	breq BACKWARD
+	sbis PIND, 6 ;some pin specified action
+	rjmp BACKWARD
 
-	cpi mpr, 0b00000100 ;some pin specified action
-	breq LEFT
+	sbis PIND, 1 ;some pin specified action
+	rjmp LEFT
 
-	cpi mpr, 0b00001000 ;some pin specified action
-	breq RIGHT
+	sbis PIND, 0 ;some pin specified action
+	rjmp RIGHT
 
-	cpi mpr, 0b00010000 ;some pin specified action
-	breq HALT_Routine
+	sbis PIND, 4 ;some pin specified action
+	rjmp HALT_Routine
 
-	cpi mpr, 0b00100000
-	breq FREEZE
+	sbis PIND, 5
+	rjmp FREEZE
 
 	rjmp END
 
@@ -168,8 +171,6 @@ END:
 USART_BotID_Transmit:
 	lds		mpr, UCSR1A
 	sbrs	mpr, UDRE1
-
-	;sbis UCSR1A, UDRE1
 	rjmp	USART_BotID_Transmit
 
 	; send BotID first
@@ -181,7 +182,6 @@ USART_Action_Transmit:
 
 	lds		mpr, UCSR1A
 	sbrs	mpr, UDRE1
-	;sbis UCSR1A, UDRE1
 	rjmp	USART_Action_Transmit
 
 	; read in action specified

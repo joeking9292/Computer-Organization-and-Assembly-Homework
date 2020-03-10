@@ -46,7 +46,7 @@
 .equ	TurnR =   (1<<EngDirL) ;0b01000000 Turn Right Action Code
 .equ	TurnL =   (1<<EngDirR) ;0b00100000 Turn Left Action Code
 .equ	Halt =    (1<<EngEnR|1<<EngEnL) ;0b10010000 Halt Action Code
-.equ	bit5 = 5
+;.equ	bit5 = 5
 
 ;***********************************************************
 ;* Start of Code Segment
@@ -61,6 +61,8 @@
 
 ;Should have Interrupt vectors for:
 ;- Left whisker
+
+/*
 .org $0002
 	rcall	leftWhisker
 	reti
@@ -68,6 +70,8 @@
 .org $0004
 	rcall	rightWhisker
 	reti
+*/
+
 ;- USART receive
 .org $003C
 	rcall	USART_Receive
@@ -84,23 +88,20 @@ INIT:
 	out		SPH, mpr ; Load SPH with high byte of RAMEND
 	ldi		mpr, low(RAMEND)
 	out		SPL, mpr ; Load SPL with low byte of RAMEND
-	
-	clr		mpr
 
 	;I/O Ports
-	ldi		mpr, (1<<EngEnL)|(1<<EngEnR)|(1<<EngDirR)|(1<<EngDirL)
+	ldi		mpr, $FF
 	out		DDRB, mpr ; Set Port B Directional Register for output
-	ldi		mpr, (0<<EngEnL)|(0<<EngEnR)|(0<<EngDirR)|(0<<EngDirL)
+	ldi		mpr, $00
 	out		PORTB, mpr ; Activate pull-up resistors
 
-	ldi		mpr, (0<<WskrL)|(0<<WskrR)
+	ldi		mpr, $00
 	out		DDRD, mpr ; Set Port B Directional Register for output
-	ldi		mpr, (1<<WskrL)|(1<<WskrR)
+	ldi		mpr, $FF
 	out		PORTD, mpr ; Activate pull-up resistors
 
 	;Set baudrate at 2400bps
-	lds		mpr, UBRR1H      ;Save reserved bits
-	ori		mpr, high(832)
+	ldi		mpr, high(832)
     sts		UBRR1H, mpr
     ldi		mpr, low(832)
     sts		UBRR1L, mpr
@@ -110,32 +111,29 @@ INIT:
 	sts		UCSR1A, mpr
 
 	;Enable reciever
-	ldi		mpr, (1<<RXCIE1) | (1<<RXEN1)
+	ldi		mpr, 0b10011000
 	sts		UCSR1B, mpr
 
 	; Enable asynchronous, no parity, 2 stop bits
-    ldi		mpr, (0<<UMSEL1) | (0<<UPM11) | (0<<UPM10) | (1<<USBS1)
-    ; Set 8 bits of data
-    ori		mpr, (0<<UCSZ12) | (1<<UCSZ11) | (1<<UCSZ10) | (0<<UCPOL1)
+    ;ldi		mpr, (1<<UCSZ11) | (1<<UCSZ10) | (1<<USBS1) | (1<<UMSEL1)
+	ldi		mpr, 0b00001110
     sts		UCSR1C, mpr
 
 	;External Interrupts
 	;Set the Interrupt Sense Control to falling edge detection
-	ldi		mpr, 0b10101010
+	ldi		mpr, 0b00001010
 	sts		EICRA, mpr
 
 	;Set the External Interrupt Mask
-	ldi		mpr, 0b00000011
+	ldi		mpr, 0b00000011 ;(1<<INT0)|(1<<INT1)
 	out		EIMSK, mpr
 
-
+	
 	clr		freezeCount
 	ldi		currentCommand, MovFwd
 	clr		flag
 	ldi		waitcnt, WTime
-
-	ldi		mpr, MovFwd
-	out		PORTB, mpr
+	
 
 	sei
 
@@ -244,16 +242,17 @@ rightWhisker:
 ; Desc: Receiving code for different commands from remote
 ;-----------------------------------------------------------
 USART_Receive:
-	push	mpr
+	cli
 
 	lds		r17, UDR1
-	
+	;out		PORTB, r17
+
+	/*
 	cpi		r17, 0b01010101 ; see if its a freeze signal from another robot first (comes w/out address)
 	breq	HANDLE_FREEZE_SIGNAL
 
 	mov		r18, r17
 	andi    r18, 0b10000000
-
 	breq	BOT_ADDRESS ; handle bot address, make sure same
 
 	; we have an action from a transmitter at this point, need to make sure they are the same
@@ -261,7 +260,7 @@ USART_Receive:
 
 	cpi		flag, 0b00000001
 	breq	MAIN ; GO BACK TO MAIN If the addresses arent equal
-
+	*/
 	; now we can perform action, action stored in r17
 	cpi		r17, 0b10110000
 	breq	MOVE_FORWARD
@@ -279,31 +278,32 @@ USART_Receive:
 	breq	HALT_COMMAND
 
 	; CHECK IF ITS THE FREEZE CMD
-	cpi		r17, 0b11111000
-	breq	TRANSMIT_FREEZE_SIGNAL
+	;cpi		r17, 0b11111000
+	;breq	TRANSMIT_FREEZE_SIGNAL
 
 RECEIVE_END:
 
 	ldi		mpr, 0xFF
 	out		EIFR, mpr
 
-	pop		mpr
 	ret
-
 
 ;-----------------------------------------------------------
 ; Section of different direction
 ; Desc: Used to display the proper commands to LEDs
 ;-----------------------------------------------------------
+
 MOVE_FORWARD:
+	cli
 	ldi		mpr, MovFwd
 	out		PORTB, mpr
 	rjmp	RECEIVE_END
 
 MOVE_BACKWARD:
+	cli
 	ldi		mpr, MovBck
 	out		PORTB, mpr
-	rjmp RECEIVE_END
+	rjmp	RECEIVE_END
 
 TURN_RIGHT:
 	ldi		mpr, TurnR
@@ -319,6 +319,55 @@ HALT_COMMAND:
 	ldi		mpr, Halt
 	out		PORTB, mpr
 	rjmp	RECEIVE_END
+
+;-----------------------------------------------------------
+; Func: Template function header
+; Desc: Cut and paste this and fill in the info at the 
+;		beginning of your functions
+;-----------------------------------------------------------
+; HANDLE_FREEZE_SIGNAL handles when we receive a freeze signal from another robot!
+HANDLE_FREEZE_SIGNAL:
+
+	cpi		freezeCount, 3
+	breq	HANDLE_FREEZE_SIGNAL
+
+	push	mpr
+
+	ldi		mpr, Halt
+	out		PORTB, mpr
+
+	cli
+
+	; wait for 5 seconds
+	rcall	Wait
+	rcall	Wait
+	rcall	Wait
+	rcall	Wait
+	rcall	Wait
+
+	; dont respond to whiskers
+	ldi		mpr, 0xFF
+	out		EIFR, mpr
+
+	; Clear USART interrupts
+	lds		mpr, UCSR1A
+	ori		mpr, 0b11100000
+	sts		UCSR1A, mpr		
+
+
+	; after being frozen 3 times, robot should stop working until its reset
+
+	inc		freezeCount
+	cpi		freezeCount, 3
+	breq	HANDLE_FREEZE_SIGNAL
+
+	out		PORTB, currentCommand
+
+	sei
+
+	pop		mpr
+	ret
+
 
 ;-----------------------------------------------------------
 ; Func: Template function header
@@ -387,55 +436,6 @@ TRANSMIT_FREEZE_SIGNAL:
 
 	pop		mpr
 	
-	ret
-
-
-;-----------------------------------------------------------
-; Func: Template function header
-; Desc: Cut and paste this and fill in the info at the 
-;		beginning of your functions
-;-----------------------------------------------------------
-; HANDLE_FREEZE_SIGNAL handles when we receive a freeze signal from another robot!
-HANDLE_FREEZE_SIGNAL:
-
-	cpi		freezeCount, 3
-	breq	HANDLE_FREEZE_SIGNAL
-
-	push	mpr
-
-	ldi		mpr, Halt
-	out		PORTB, mpr
-
-	cli
-
-	; wait for 5 seconds
-	rcall	Wait
-	rcall	Wait
-	rcall	Wait
-	rcall	Wait
-	rcall	Wait
-
-	; dont respond to whiskers
-	ldi		mpr, 0xFF
-	out		EIFR, mpr
-
-	; Clear USART interrupts
-	lds		mpr, UCSR1A
-	ori		mpr, 0b11100000
-	sts		UCSR1A, mpr		
-
-
-	; after being frozen 3 times, robot should stop working until its reset
-
-	inc		freezeCount
-	cpi		freezeCount, 3
-	breq	HANDLE_FREEZE_SIGNAL
-
-	out		PORTB, currentCommand
-
-	sei
-
-	pop		mpr
 	ret
 
 ;-----------------------------------------------------------

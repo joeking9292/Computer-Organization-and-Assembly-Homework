@@ -1,18 +1,18 @@
 <ASSEMBLER_INFO>
  <VERSION>2.2.7</VERSION>
  <DEVICE>"ATmega128"</DEVICE>
- <WORKING_DIR>C:\Users\noona\OSU\ECE375\Lab8\Lab8\Debug</WORKING_DIR>
+ <WORKING_DIR>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\Debug</WORKING_DIR>
  <INCLUDE_PATH>
-  <DIR>H:/ECE375\Atmel\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc</DIR>
-  <DIR>H:\ECE375\Atmel\7.0\toolchain\avr8\avrassembler\Include</DIR>
+  <DIR>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc</DIR>
+  <DIR>C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avrassembler\Include</DIR>
   <DIR></DIR>
  </INCLUDE_PATH>
- <SOURCE_FILE>C:\Users\noona\OSU\ECE375\Lab8\Lab8\main.asm</SOURCE_FILE>
+ <SOURCE_FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</SOURCE_FILE>
  <INCLUDED_FILES>
-  <FILE>H:/ECE375\Atmel\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc\m128def.inc</FILE>
+  <FILE>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc\m128def.inc</FILE>
  </INCLUDED_FILES>
  <OBJECT_FILES>
-  <FILE>C:\Users\noona\OSU\ECE375\Lab8\Lab8\Debug\Lab8.obj</FILE>
+  <FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\Debug\Lab8.obj</FILE>
  </OBJECT_FILES>
  <HEX_FILES>
   <FILE>Lab8.hex</FILE>
@@ -22,24 +22,17 @@
   <FILE>Lab8.lss</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <INIT><FILE>C:\Users\noona\OSU\ECE375\Lab8\Lab8\main.asm</FILE><LINE>81</LINE></INIT>
-  <leftWhisker><FILE>C:\Users\noona\OSU\ECE375\Lab8\Lab8\main.asm</FILE><LINE>157</LINE></leftWhisker>
-  <rightWhisker><FILE>C:\Users\noona\OSU\ECE375\Lab8\Lab8\main.asm</FILE><LINE>201</LINE></rightWhisker>
-  <USART_Receive><FILE>C:\Users\noona\OSU\ECE375\Lab8\Lab8\main.asm</FILE><LINE>246</LINE></USART_Receive>
-  <MAIN><FILE>C:\Users\noona\OSU\ECE375\Lab8\Lab8\main.asm</FILE><LINE>145</LINE></MAIN>
-  <Wait><FILE>C:\Users\noona\OSU\ECE375\Lab8\Lab8\main.asm</FILE><LINE>447</LINE></Wait>
-  <HANDLE_FREEZE_SIGNAL><FILE>C:\Users\noona\OSU\ECE375\Lab8\Lab8\main.asm</FILE><LINE>399</LINE></HANDLE_FREEZE_SIGNAL>
-  <BOT_ADDRESS><FILE>C:\Users\noona\OSU\ECE375\Lab8\Lab8\main.asm</FILE><LINE>329</LINE></BOT_ADDRESS>
-  <MOVE_FORWARD><FILE>C:\Users\noona\OSU\ECE375\Lab8\Lab8\main.asm</FILE><LINE>298</LINE></MOVE_FORWARD>
-  <MOVE_BACKWARD><FILE>C:\Users\noona\OSU\ECE375\Lab8\Lab8\main.asm</FILE><LINE>303</LINE></MOVE_BACKWARD>
-  <TURN_RIGHT><FILE>C:\Users\noona\OSU\ECE375\Lab8\Lab8\main.asm</FILE><LINE>308</LINE></TURN_RIGHT>
-  <TURN_LEFT><FILE>C:\Users\noona\OSU\ECE375\Lab8\Lab8\main.asm</FILE><LINE>313</LINE></TURN_LEFT>
-  <HALT_COMMAND><FILE>C:\Users\noona\OSU\ECE375\Lab8\Lab8\main.asm</FILE><LINE>318</LINE></HALT_COMMAND>
-  <TRANSMIT_FREEZE_SIGNAL><FILE>C:\Users\noona\OSU\ECE375\Lab8\Lab8\main.asm</FILE><LINE>364</LINE></TRANSMIT_FREEZE_SIGNAL>
-  <RECEIVE_END><FILE>C:\Users\noona\OSU\ECE375\Lab8\Lab8\main.asm</FILE><LINE>285</LINE></RECEIVE_END>
-  <NOT_EQUAL><FILE>C:\Users\noona\OSU\ECE375\Lab8\Lab8\main.asm</FILE><LINE>346</LINE></NOT_EQUAL>
-  <Loop><FILE>C:\Users\noona\OSU\ECE375\Lab8\Lab8\main.asm</FILE><LINE>452</LINE></Loop>
-  <OLoop><FILE>C:\Users\noona\OSU\ECE375\Lab8\Lab8\main.asm</FILE><LINE>453</LINE></OLoop>
-  <ILoop><FILE>C:\Users\noona\OSU\ECE375\Lab8\Lab8\main.asm</FILE><LINE>454</LINE></ILoop>
+  <INIT><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>68</LINE></INIT>
+  <MAIN><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>115</LINE></MAIN>
+  <FORWARD><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>145</LINE></FORWARD>
+  <BACKWARD><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>148</LINE></BACKWARD>
+  <LEFT><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>151</LINE></LEFT>
+  <RIGHT><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>154</LINE></RIGHT>
+  <HALT_Routine><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>157</LINE></HALT_Routine>
+  <FREEZE><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>160</LINE></FREEZE>
+  <END><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>163</LINE></END>
+  <USART_BotID_Transmit><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>171</LINE></USART_BotID_Transmit>
+  <USART_Action_Transmit><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>181</LINE></USART_Action_Transmit>
+  <USART_Transmit_Wait_to_Finish><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>193</LINE></USART_Transmit_Wait_to_Finish>
  </LABELS>
 </ASSEMBLER_INFO>
