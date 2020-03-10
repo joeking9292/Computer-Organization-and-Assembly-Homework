@@ -22,24 +22,24 @@
   <FILE>Lab8.lss</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <INIT><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>85</LINE></INIT>
+  <INIT><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>84</LINE></INIT>
+  <leftWhisker><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>156</LINE></leftWhisker>
+  <rightWhisker><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>200</LINE></rightWhisker>
   <USART_Receive><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>245</LINE></USART_Receive>
   <MAIN><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>144</LINE></MAIN>
-  <leftWhisker><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>156</LINE></leftWhisker>
-  <Wait><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>448</LINE></Wait>
-  <rightWhisker><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>200</LINE></rightWhisker>
-  <MOVE_FORWARD><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>297</LINE></MOVE_FORWARD>
-  <MOVE_BACKWARD><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>303</LINE></MOVE_BACKWARD>
-  <TURN_RIGHT><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>309</LINE></TURN_RIGHT>
-  <TURN_LEFT><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>314</LINE></TURN_LEFT>
-  <HALT_COMMAND><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>319</LINE></HALT_COMMAND>
-  <RECEIVE_END><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>285</LINE></RECEIVE_END>
-  <HANDLE_FREEZE_SIGNAL><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>330</LINE></HANDLE_FREEZE_SIGNAL>
-  <BOT_ADDRESS><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>379</LINE></BOT_ADDRESS>
-  <NOT_EQUAL><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>396</LINE></NOT_EQUAL>
-  <TRANSMIT_FREEZE_SIGNAL><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>414</LINE></TRANSMIT_FREEZE_SIGNAL>
-  <Loop><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>453</LINE></Loop>
-  <OLoop><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>454</LINE></OLoop>
-  <ILoop><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>455</LINE></ILoop>
+  <Wait><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>445</LINE></Wait>
+  <MOVE_FORWARD><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>308</LINE></MOVE_FORWARD>
+  <MOVE_BACKWARD><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>314</LINE></MOVE_BACKWARD>
+  <TURN_RIGHT><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>320</LINE></TURN_RIGHT>
+  <TURN_LEFT><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>325</LINE></TURN_LEFT>
+  <HALT_COMMAND><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>330</LINE></HALT_COMMAND>
+  <TRANSMIT_FREEZE_SIGNAL><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>411</LINE></TRANSMIT_FREEZE_SIGNAL>
+  <RECEIVE_END><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>296</LINE></RECEIVE_END>
+  <HANDLE_FREEZE_SIGNAL><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>341</LINE></HANDLE_FREEZE_SIGNAL>
+  <BOT_ADDRESS><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>386</LINE></BOT_ADDRESS>
+  <NOT_EQUAL><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>399</LINE></NOT_EQUAL>
+  <Loop><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>450</LINE></Loop>
+  <OLoop><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>451</LINE></OLoop>
+  <ILoop><FILE>C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm</FILE><LINE>452</LINE></ILoop>
  </LABELS>
 </ASSEMBLER_INFO>

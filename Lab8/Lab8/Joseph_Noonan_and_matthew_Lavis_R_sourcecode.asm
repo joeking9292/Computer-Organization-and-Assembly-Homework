@@ -20,6 +20,7 @@
 ;***********************************************************
 .def	mpr = r16 ; Multi-Purpose Register
 .def	flag = r19
+.def	addressFlag = r22
 
 .def	freezeCount = r20   ; track how many times robot has been frozen
 .def	currentCommand = r21 ; Holds the current command 
@@ -46,6 +47,7 @@
 .equ	TurnR =   (1<<EngDirL) ;0b01000000 Turn Right Action Code
 .equ	TurnL =   (1<<EngDirR) ;0b00100000 Turn Left Action Code
 .equ	Halt =    (1<<EngEnR|1<<EngEnL) ;0b10010000 Halt Action Code
+.equ	Frozen =  0b11111000
 ;.equ	bit5 = 5
 
 ;***********************************************************
@@ -62,7 +64,6 @@
 ;Should have Interrupt vectors for:
 ;- Left whisker
 
-/*
 .org $0002
 	rcall	leftWhisker
 	reti
@@ -70,8 +71,6 @@
 .org $0004
 	rcall	rightWhisker
 	reti
-*/
-
 ;- USART receive
 .org $003C
 	rcall	USART_Receive
@@ -134,6 +133,7 @@ INIT:
 	clr		flag
 	ldi		waitcnt, WTime
 	clr		mpr
+	clr		addressFlag
 	
 
 	sei
@@ -249,19 +249,30 @@ USART_Receive:
 	;out		PORTB, r17
 
 	/*
-	cpi		r17, 0b01010101 ; see if its a freeze signal from another robot first (comes w/out address)
+	; see if its a freeze signal from another robot first (comes w/out address)
+	cpi		r17, 0b01010101 
 	breq	HANDLE_FREEZE_SIGNAL
-
+	
 	mov		r18, r17
-	andi    r18, 0b10000000
-	breq	BOT_ADDRESS ; handle bot address, make sure same
+	;andi	r18, 0b10000000
+	cpi		addressFlag, 1
+	breq	ACTION ; handle bot address, make sure same
 
+	cpi		r17, BotAddress
+	brne	RECEIVE_END
+	ldi		addressFlag, 1
 	; we have an action from a transmitter at this point, need to make sure they are the same
 	; check flag, make sure bot address matches
 
 	cpi		flag, 0b00000001
 	breq	MAIN ; GO BACK TO MAIN If the addresses arent equal
+	
+ACTION:
+	ldi	addressFlag, 0
+
+
 	*/
+
 	; now we can perform action, action stored in r17
 	cpi		r17, 0b10110000
 	breq	MOVE_FORWARD
@@ -279,8 +290,8 @@ USART_Receive:
 	breq	HALT_COMMAND
 
 	; CHECK IF ITS THE FREEZE CMD
-	;cpi		r17, 0b11111000
-	;breq	TRANSMIT_FREEZE_SIGNAL
+	cpi		r17, 0b11111000
+	breq	TRANSMIT_FREEZE_SIGNAL
 
 RECEIVE_END:
 
@@ -334,7 +345,7 @@ HANDLE_FREEZE_SIGNAL:
 
 	push	mpr
 
-	ldi		mpr, Halt
+	ldi		mpr, Frozen
 	out		PORTB, mpr
 
 	cli
@@ -363,10 +374,6 @@ HANDLE_FREEZE_SIGNAL:
 	breq	HANDLE_FREEZE_SIGNAL
 
 	out		PORTB, currentCommand
-
-	sei
-
-	pop		mpr
 	ret
 
 
@@ -381,10 +388,6 @@ BOT_ADDRESS:
 	brne	NOT_EQUAL
 	ldi		flag, 0b00000000
 
-	ldi		mpr, 0xFF
-	out		EIFR, mpr
-
-
 	rjmp	MAIN
 
 ;-----------------------------------------------------------
@@ -395,13 +398,7 @@ BOT_ADDRESS:
 	; set flag indicating not equal addresses between remote and robot
 NOT_EQUAL:
 	ldi		flag, 0b00000001
-
-	ldi		mpr, 0xFF
-	out		EIFR, mpr
-
 	rjmp	MAIN ; jump back to main because we are waiting for the second 8 bits for the action
-
-
 
 
 ;-----------------------------------------------------------
