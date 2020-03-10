@@ -37,7 +37,7 @@
 
 .equ	WTime = 100 ; Time to wait in wait loop
 
-.equ	BotAddress = $1A ;(Enter your robot's address here (8 bits))
+.equ	BotAddress = $1A;(Enter your robot's address here (8 bits))
 
 ;/////////////////////////////////////////////////////////////
 ;These macros are the values to make the TekBot Move.
@@ -246,14 +246,14 @@ USART_Receive:
 	cli
 
 	lds		r17, UDR1
-	;out		PORTB, r17
 
-	/*
 	; see if its a freeze signal from another robot first (comes w/out address)
 	cpi		r17, 0b01010101 
 	breq	HANDLE_FREEZE_SIGNAL
 	
-	mov		r18, r17
+	;mov		addressFlag, r17
+
+	/*
 	;andi	r18, 0b10000000
 	cpi		addressFlag, 1
 	breq	ACTION ; handle bot address, make sure same
@@ -266,12 +266,12 @@ USART_Receive:
 
 	cpi		flag, 0b00000001
 	breq	MAIN ; GO BACK TO MAIN If the addresses arent equal
-	
-ACTION:
-	ldi	addressFlag, 0
-
-
 	*/
+
+;ACTION:
+	ldi		mpr, BotAddress
+	cpi		mpr, BotAddress
+	brne	RECEIVE_END
 
 	; now we can perform action, action stored in r17
 	cpi		r17, 0b10110000
@@ -342,8 +342,6 @@ HANDLE_FREEZE_SIGNAL:
 
 	cpi		freezeCount, 3
 	breq	HANDLE_FREEZE_SIGNAL
-
-	push	mpr
 
 	ldi		mpr, Frozen
 	out		PORTB, mpr
