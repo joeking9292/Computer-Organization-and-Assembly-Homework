@@ -149,9 +149,8 @@ MAIN:
 ;***********************************************************
 
 ;-----------------------------------------------------------
-; Func: Template function header
-; Desc: Cut and paste this and fill in the info at the 
-;		beginning of your functions
+; Func: leftWhisker
+; Desc: Handles the left whisker being hit
 ;-----------------------------------------------------------
 leftWhisker:
 	; Save variable by pushing them to the stack
@@ -175,6 +174,7 @@ leftWhisker:
 	out		PORTB, mpr ; Send command to port
 	rcall	Wait ; Call wait function
 
+	;Load moving foward command to LEDs
 	ldi		mpr, MovFwd
 	out		PORTB, mpr
 
@@ -193,9 +193,8 @@ leftWhisker:
 	ret
 
 ;-----------------------------------------------------------
-; Func: Template function header
-; Desc: Cut and paste this and fill in the info at the 
-;		beginning of your functions
+; Func: rightWhisker
+; Desc: Handles the right whisker being hit
 ;-----------------------------------------------------------
 rightWhisker:
 	; Save variable by pushing them to the stack
@@ -333,9 +332,8 @@ HALT_COMMAND:
 	rjmp	RECEIVE_END
 
 ;-----------------------------------------------------------
-; Func: Template function header
-; Desc: Cut and paste this and fill in the info at the 
-;		beginning of your functions
+; Func: HANDLES_FREEZE_SIGNAL
+; Desc: Handles recieving a freeze signal from anotehr bot to freeze
 ;-----------------------------------------------------------
 ; HANDLE_FREEZE_SIGNAL handles when we receive a freeze signal from another robot!
 HANDLE_FREEZE_SIGNAL:
@@ -400,12 +398,10 @@ NOT_EQUAL:
 
 
 ;-----------------------------------------------------------
-; Func: Template function header
-; Desc: Cut and paste this and fill in the info at the 
-;		beginning of your functions
+; Func: TRANSMIT_FREEZE_SIGNAL
+; Desc: TRANSMIT_FREEZE_SIGNAL transmits the 0b01010101 freeze signal to other robots without
+;        any address first
 ;-----------------------------------------------------------
-	; TRANSMIT_FREEZE_SIGNAL transmits the 0b01010101 freeze signal to other robots without
-	; any address first
 TRANSMIT_FREEZE_SIGNAL:
 	push	mpr
 	cli
@@ -435,9 +431,8 @@ TRANSMIT_FREEZE_SIGNAL:
 	ret
 
 ;-----------------------------------------------------------
-; Func: Template function header
-; Desc: Cut and paste this and fill in the info at the 
-;		beginning of your functions
+; Func: Wait
+; Desc: Wait subroutine provided by earlier labs
 ;-----------------------------------------------------------
 ; WAIT SUBROUTINE
 Wait:
