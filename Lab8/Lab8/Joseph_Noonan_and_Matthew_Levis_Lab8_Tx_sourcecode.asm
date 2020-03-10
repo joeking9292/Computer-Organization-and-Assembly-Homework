@@ -8,14 +8,6 @@
 ;*
 ;***********************************************************
 ;*
-;* Enter Name of file here
-;*
-;* Enter the description of the program here
-;*
-;* This is the TRANSMIT skeleton file for Lab 8 of ECE 375
-;*
-;***********************************************************
-;*
 ;* Author: Matthew Levis and Joseph Noonan
 ;* Date: 2/27/2020
 ;*
@@ -165,7 +157,8 @@ END:
 	rjmp	MAIN
 
 ;***********************************************************
-;* Functions and Subroutines
+;* Name: USART_BOTID_TRANSMIT & USART_ACTION_TRANSMIT
+;  Description: Code for transmitting the ID and action code to the robot
 ;***********************************************************
 USART_BotID_Transmit:
 	lds		mpr, UCSR1A
