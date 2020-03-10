@@ -107,17 +107,16 @@ INIT:
 	ldi		mpr,  (0<<UMSEL1 | 1<<USBS1 | 1<<UCSZ11 | 1<<UCSZ10)
 	sts		UCSR1C, mpr
 
+	clr		mpr
+
 ;Other
 
 ;***********************************************************
 ;* Main Program
 ;***********************************************************
 MAIN:
-	;TODO: ???
 	; continuously poll for buttons pressed corresponding to a given action
 	; set action register with action
-
-	;in mpr, PIND
 
 	sbis PIND, 7; some pin specified action
 	rjmp FORWARD
@@ -131,10 +130,10 @@ MAIN:
 	sbis PIND, 0 ;some pin specified action
 	rjmp RIGHT
 
-	sbis PIND, 4 ;some pin specified action
+	sbis PIND, 5 ;some pin specified action
 	rjmp HALT_Routine
 
-	sbis PIND, 5
+	sbis PIND, 4
 	rjmp FREEZE
 
 	rjmp END
@@ -176,7 +175,6 @@ USART_BotID_Transmit:
 	; send BotID first
 	ldi		mpr, BotID
 	sts		UDR1, mpr
-	;ret
 
 USART_Action_Transmit:
 
@@ -187,6 +185,8 @@ USART_Action_Transmit:
 	; read in action specified
 
 	sts		UDR1, action
+
+	clr		action
 	ret
 
 

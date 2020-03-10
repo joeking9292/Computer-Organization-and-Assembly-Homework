@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.7  C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm Mon Mar 09 19:27:02 2020
+AVRASM ver. 2.2.7  C:\Users\noona\OSU\Computer-Organization-and-Assembly-Homework\Lab8\Lab8\main.asm Mon Mar 09 19:36:40 2020
 
 
 EQU  SIGNATURE_000 0000001e
@@ -868,29 +868,41 @@ EQU  TWIaddr      00000042
 EQU  SPMRaddr     00000044
 EQU  INT_VECTORS_SIZE 00000046
 DEF  mpr          r16
-DEF  action       r17
 DEF  flag         r19
+DEF  freezeCount  r20
+DEF  currentCommand r21
+DEF  waitcnt      r25
+DEF  ilcnt        r23
+DEF  olcnt        r24
+EQU  WskrR        00000000
+EQU  WskrL        00000001
 EQU  EngEnR       00000004
 EQU  EngEnL       00000007
 EQU  EngDirR      00000005
 EQU  EngDirL      00000006
-EQU  MovFwd       000000b0
-EQU  MovBck       00000080
-EQU  TurnR        000000a0
-EQU  TurnL        00000090
-EQU  Halt         000000c8
-EQU  freezecmd    000000f8
-EQU  bit5         00000005
-EQU  BotID        0000001a
+EQU  WTime        00000064
+EQU  BotAddress   0000001a
+EQU  MovFwd       00000060
+EQU  MovBck       00000000
+EQU  TurnR        00000040
+EQU  TurnL        00000020
+EQU  Halt         00000090
 CSEG INIT         00000046
-CSEG MAIN         00000065
-CSEG FORWARD      00000072
-CSEG BACKWARD     00000074
-CSEG LEFT         00000076
-CSEG RIGHT        00000078
-CSEG HALT_Routine 0000007a
-CSEG FREEZE       0000007c
-CSEG END          0000007e
-CSEG USART_BotID_Transmit 00000081
-CSEG USART_Action_Transmit 00000088
-CSEG USART_Transmit_Wait_to_Finish 0000008f
+CSEG USART_Receive 0000009f
+CSEG MAIN         0000006c
+CSEG leftWhisker  0000006d
+CSEG Wait         000000f5
+CSEG rightWhisker 00000085
+CSEG MOVE_FORWARD 000000af
+CSEG MOVE_BACKWARD 000000b3
+CSEG TURN_RIGHT   000000b7
+CSEG TURN_LEFT    000000ba
+CSEG HALT_COMMAND 000000bd
+CSEG RECEIVE_END  000000ac
+CSEG HANDLE_FREEZE_SIGNAL 000000c0
+CSEG BOT_ADDRESS  000000d9
+CSEG NOT_EQUAL    000000df
+CSEG TRANSMIT_FREEZE_SIGNAL 000000e3
+CSEG Loop         000000f8
+CSEG OLoop        000000f9
+CSEG ILoop        000000fa

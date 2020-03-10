@@ -133,6 +133,7 @@ INIT:
 	ldi		currentCommand, MovFwd
 	clr		flag
 	ldi		waitcnt, WTime
+	clr		mpr
 	
 
 	sei
