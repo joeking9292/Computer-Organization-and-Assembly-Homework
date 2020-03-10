@@ -1,8 +1,8 @@
 ;***********************************************************
 ;*
-;* Joseph_Noonan_and_Matthew_Levis_Lab8_sourcecode.asm
+;* Joseph_Noonan_and_Matthew_Levis_Lab8_Tx_sourcecode.asm
 ;*
-;* Enter the description of the program here
+;* Code for the Transmitter for Lab 8
 ;*
 ;* This is the TRANSMIT skeleton file for Lab 8 of ECE 375
 ;*

@@ -1,15 +1,15 @@
 ;***********************************************************
 ;*
-;* Joseph_Noonan_and_matthew_Lavis_R_sourcecode.asm
+;* Joseph_Noonan_and_Matthew_Levis_Lab8_Rx_sourcecode.asm
 ;*
-;* Enter the description of the program here
+;* This is code for the receiver for Lab8
 ;*
 ;* This is the RECEIVE skeleton file for Lab 8 of ECE 375
 ;*
 ;***********************************************************
 ;*
-;* Author: Enter your name
-;*   Date: Enter Date
+;* Author: Joseph Noonan and Matthew Levis
+;*   Date: 2/27/20
 ;*
 ;***********************************************************
 
