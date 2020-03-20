@@ -1,15 +1,15 @@
 ;***********************************************************
 ;*
-;* Joseph_Noonan_and_matthew_Lavis_R_sourcecode.asm
+;* Joseph_Noonan_and_Matthew_Levis_Lab8_Rx_sourcecode.asm
 ;*
-;* Enter the description of the program here
+;* This is code for the receiver for Lab8
 ;*
 ;* This is the RECEIVE skeleton file for Lab 8 of ECE 375
 ;*
 ;***********************************************************
 ;*
-;* Author: Enter your name
-;*   Date: Enter Date
+;* Author: Joseph Noonan and Matthew Levis
+;*   Date: 2/27/20
 ;*
 ;***********************************************************
 
@@ -20,6 +20,7 @@
 ;***********************************************************
 .def	mpr = r16 ; Multi-Purpose Register
 .def	flag = r19
+.def	addressFlag = r22
 
 .def	freezeCount = r20   ; track how many times robot has been frozen
 .def	currentCommand = r21 ; Holds the current command 
@@ -36,7 +37,7 @@
 
 .equ	WTime = 100 ; Time to wait in wait loop
 
-.equ	BotAddress = $1A ;(Enter your robot's address here (8 bits))
+.equ	BotAddress = $1A;(Enter your robot's address here (8 bits))
 
 ;/////////////////////////////////////////////////////////////
 ;These macros are the values to make the TekBot Move.
@@ -46,7 +47,8 @@
 .equ	TurnR =   (1<<EngDirL) ;0b01000000 Turn Right Action Code
 .equ	TurnL =   (1<<EngDirR) ;0b00100000 Turn Left Action Code
 .equ	Halt =    (1<<EngEnR|1<<EngEnL) ;0b10010000 Halt Action Code
-.equ	bit5 = 5
+.equ	Frozen =  0b11111000
+;.equ	bit5 = 5
 
 ;***********************************************************
 ;* Start of Code Segment
@@ -61,6 +63,7 @@
 
 ;Should have Interrupt vectors for:
 ;- Left whisker
+
 .org $0002
 	rcall	leftWhisker
 	reti
@@ -84,23 +87,20 @@ INIT:
 	out		SPH, mpr ; Load SPH with high byte of RAMEND
 	ldi		mpr, low(RAMEND)
 	out		SPL, mpr ; Load SPL with low byte of RAMEND
-	
-	clr		mpr
 
 	;I/O Ports
-	ldi		mpr, (1<<EngEnL)|(1<<EngEnR)|(1<<EngDirR)|(1<<EngDirL)
+	ldi		mpr, $FF
 	out		DDRB, mpr ; Set Port B Directional Register for output
-	ldi		mpr, (0<<EngEnL)|(0<<EngEnR)|(0<<EngDirR)|(0<<EngDirL)
+	ldi		mpr, $00
 	out		PORTB, mpr ; Activate pull-up resistors
 
-	ldi		mpr, (0<<WskrL)|(0<<WskrR)
+	ldi		mpr, $00
 	out		DDRD, mpr ; Set Port B Directional Register for output
-	ldi		mpr, (1<<WskrL)|(1<<WskrR)
+	ldi		mpr, $FF
 	out		PORTD, mpr ; Activate pull-up resistors
 
 	;Set baudrate at 2400bps
-	lds		mpr, UBRR1H      ;Save reserved bits
-	ori		mpr, high(832)
+	ldi		mpr, high(832)
     sts		UBRR1H, mpr
     ldi		mpr, low(832)
     sts		UBRR1L, mpr
@@ -110,32 +110,31 @@ INIT:
 	sts		UCSR1A, mpr
 
 	;Enable reciever
-	ldi		mpr, (1<<RXCIE1) | (1<<RXEN1)
+	ldi		mpr, 0b10011000
 	sts		UCSR1B, mpr
 
 	; Enable asynchronous, no parity, 2 stop bits
-    ldi		mpr, (0<<UMSEL1) | (0<<UPM11) | (0<<UPM10) | (1<<USBS1)
-    ; Set 8 bits of data
-    ori		mpr, (0<<UCSZ12) | (1<<UCSZ11) | (1<<UCSZ10) | (0<<UCPOL1)
+    ;ldi		mpr, (1<<UCSZ11) | (1<<UCSZ10) | (1<<USBS1) | (1<<UMSEL1)
+	ldi		mpr, 0b00001110
     sts		UCSR1C, mpr
 
 	;External Interrupts
 	;Set the Interrupt Sense Control to falling edge detection
-	ldi		mpr, 0b10101010
+	ldi		mpr, 0b00001010
 	sts		EICRA, mpr
 
 	;Set the External Interrupt Mask
-	ldi		mpr, 0b00000011
+	ldi		mpr, 0b00000011 ;(1<<INT0)|(1<<INT1)
 	out		EIMSK, mpr
 
-
+	
 	clr		freezeCount
 	ldi		currentCommand, MovFwd
 	clr		flag
 	ldi		waitcnt, WTime
-
-	ldi		mpr, MovFwd
-	out		PORTB, mpr
+	clr		mpr
+	clr		addressFlag
+	
 
 	sei
 
@@ -150,9 +149,8 @@ MAIN:
 ;***********************************************************
 
 ;-----------------------------------------------------------
-; Func: Template function header
-; Desc: Cut and paste this and fill in the info at the 
-;		beginning of your functions
+; Func: leftWhisker
+; Desc: Handles the left whisker being hit
 ;-----------------------------------------------------------
 leftWhisker:
 	; Save variable by pushing them to the stack
@@ -176,6 +174,7 @@ leftWhisker:
 	out		PORTB, mpr ; Send command to port
 	rcall	Wait ; Call wait function
 
+	;Load moving foward command to LEDs
 	ldi		mpr, MovFwd
 	out		PORTB, mpr
 
@@ -194,9 +193,8 @@ leftWhisker:
 	ret
 
 ;-----------------------------------------------------------
-; Func: Template function header
-; Desc: Cut and paste this and fill in the info at the 
-;		beginning of your functions
+; Func: rightWhisker
+; Desc: Handles the right whisker being hit
 ;-----------------------------------------------------------
 rightWhisker:
 	; Save variable by pushing them to the stack
@@ -244,23 +242,35 @@ rightWhisker:
 ; Desc: Receiving code for different commands from remote
 ;-----------------------------------------------------------
 USART_Receive:
-	push	mpr
+	cli
 
 	lds		r17, UDR1
-	
-	cpi		r17, 0b01010101 ; see if its a freeze signal from another robot first (comes w/out address)
+
+	; see if its a freeze signal from another robot first (comes w/out address)
+	cpi		r17, 0b01010101 
 	breq	HANDLE_FREEZE_SIGNAL
+	
+	;mov		addressFlag, r17
 
-	mov		r18, r17
-	andi    r18, 0b10000000
+	/*
+	;andi	r18, 0b10000000
+	cpi		addressFlag, 1
+	breq	ACTION ; handle bot address, make sure same
 
-	breq	BOT_ADDRESS ; handle bot address, make sure same
-
+	cpi		r17, BotAddress
+	brne	RECEIVE_END
+	ldi		addressFlag, 1
 	; we have an action from a transmitter at this point, need to make sure they are the same
 	; check flag, make sure bot address matches
 
 	cpi		flag, 0b00000001
 	breq	MAIN ; GO BACK TO MAIN If the addresses arent equal
+	*/
+
+;ACTION:
+	ldi		mpr, BotAddress
+	cpi		mpr, BotAddress
+	brne	RECEIVE_END
 
 	; now we can perform action, action stored in r17
 	cpi		r17, 0b10110000
@@ -287,23 +297,24 @@ RECEIVE_END:
 	ldi		mpr, 0xFF
 	out		EIFR, mpr
 
-	pop		mpr
 	ret
-
 
 ;-----------------------------------------------------------
 ; Section of different direction
 ; Desc: Used to display the proper commands to LEDs
 ;-----------------------------------------------------------
+
 MOVE_FORWARD:
+	cli
 	ldi		mpr, MovFwd
 	out		PORTB, mpr
 	rjmp	RECEIVE_END
 
 MOVE_BACKWARD:
+	cli
 	ldi		mpr, MovBck
 	out		PORTB, mpr
-	rjmp RECEIVE_END
+	rjmp	RECEIVE_END
 
 TURN_RIGHT:
 	ldi		mpr, TurnR
@@ -321,79 +332,8 @@ HALT_COMMAND:
 	rjmp	RECEIVE_END
 
 ;-----------------------------------------------------------
-; Func: Template function header
-; Desc: Cut and paste this and fill in the info at the 
-;		beginning of your functions
-;-----------------------------------------------------------
-; make sure botaddresses are the same, if not set flag in not equal
-BOT_ADDRESS:
-	cpi		r17, BotAddress
-	brne	NOT_EQUAL
-	ldi		flag, 0b00000000
-
-	ldi		mpr, 0xFF
-	out		EIFR, mpr
-
-
-	rjmp	MAIN
-
-;-----------------------------------------------------------
-; Func: Template function header
-; Desc: Cut and paste this and fill in the info at the 
-;		beginning of your functions
-;-----------------------------------------------------------
-	; set flag indicating not equal addresses between remote and robot
-NOT_EQUAL:
-	ldi		flag, 0b00000001
-
-	ldi		mpr, 0xFF
-	out		EIFR, mpr
-
-	rjmp	MAIN ; jump back to main because we are waiting for the second 8 bits for the action
-
-
-
-
-;-----------------------------------------------------------
-; Func: Template function header
-; Desc: Cut and paste this and fill in the info at the 
-;		beginning of your functions
-;-----------------------------------------------------------
-	; TRANSMIT_FREEZE_SIGNAL transmits the 0b01010101 freeze signal to other robots without
-	; any address first
-TRANSMIT_FREEZE_SIGNAL:
-	push	mpr
-	cli
-	; IMMEDIATELY transmit a standalone freeze signal
-	; 0b01010101
-	lds		mpr, UCSR1A
-	sbrs	mpr, UDRE1 ; make sure data register is empty
-
-	rjmp	TRANSMIT_FREEZE_SIGNAL
-
-	; SEND FREEZE SIGNAL
-	ldi		mpr, 0b01010101
-	sts		UDR1, mpr
-	
-	rcall	Wait
-
-	; Clear USART interrupts
-	lds		mpr, UCSR1A
-	ori		mpr, 0b11100000
-	sts		UCSR1A, mpr
-
-	; Enable interrupts globally
-	sei
-
-	pop		mpr
-	
-	ret
-
-
-;-----------------------------------------------------------
-; Func: Template function header
-; Desc: Cut and paste this and fill in the info at the 
-;		beginning of your functions
+; Func: HANDLES_FREEZE_SIGNAL
+; Desc: Handles recieving a freeze signal from anotehr bot to freeze
 ;-----------------------------------------------------------
 ; HANDLE_FREEZE_SIGNAL handles when we receive a freeze signal from another robot!
 HANDLE_FREEZE_SIGNAL:
@@ -401,9 +341,7 @@ HANDLE_FREEZE_SIGNAL:
 	cpi		freezeCount, 3
 	breq	HANDLE_FREEZE_SIGNAL
 
-	push	mpr
-
-	ldi		mpr, Halt
+	ldi		mpr, Frozen
 	out		PORTB, mpr
 
 	cli
@@ -432,16 +370,69 @@ HANDLE_FREEZE_SIGNAL:
 	breq	HANDLE_FREEZE_SIGNAL
 
 	out		PORTB, currentCommand
-
-	sei
-
-	pop		mpr
 	ret
+
 
 ;-----------------------------------------------------------
 ; Func: Template function header
 ; Desc: Cut and paste this and fill in the info at the 
 ;		beginning of your functions
+;-----------------------------------------------------------
+; make sure botaddresses are the same, if not set flag in not equal
+BOT_ADDRESS:
+	cpi		r17, BotAddress
+	brne	NOT_EQUAL
+	ldi		flag, 0b00000000
+
+	rjmp	MAIN
+
+;-----------------------------------------------------------
+; Func: Template function header
+; Desc: Cut and paste this and fill in the info at the 
+;		beginning of your functions
+;-----------------------------------------------------------
+	; set flag indicating not equal addresses between remote and robot
+NOT_EQUAL:
+	ldi		flag, 0b00000001
+	rjmp	MAIN ; jump back to main because we are waiting for the second 8 bits for the action
+
+
+;-----------------------------------------------------------
+; Func: TRANSMIT_FREEZE_SIGNAL
+; Desc: TRANSMIT_FREEZE_SIGNAL transmits the 0b01010101 freeze signal to other robots without
+;        any address first
+;-----------------------------------------------------------
+TRANSMIT_FREEZE_SIGNAL:
+	push	mpr
+	cli
+	; IMMEDIATELY transmit a standalone freeze signal
+	; 0b01010101
+	lds		mpr, UCSR1A
+	sbrs	mpr, UDRE1 ; make sure data register is empty
+
+	rjmp	TRANSMIT_FREEZE_SIGNAL
+
+	; SEND FREEZE SIGNAL
+	ldi		mpr, 0b01010101
+	sts		UDR1, mpr
+	
+	rcall	Wait
+
+	; Clear USART interrupts
+	lds		mpr, UCSR1A
+	ori		mpr, 0b11100000
+	sts		UCSR1A, mpr
+
+	; Enable interrupts globally
+	sei
+
+	pop		mpr
+	
+	ret
+
+;-----------------------------------------------------------
+; Func: Wait
+; Desc: Wait subroutine provided by earlier labs
 ;-----------------------------------------------------------
 ; WAIT SUBROUTINE
 Wait:

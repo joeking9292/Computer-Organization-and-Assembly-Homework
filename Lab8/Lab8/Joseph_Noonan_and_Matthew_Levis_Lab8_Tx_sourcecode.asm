@@ -1,16 +1,8 @@
 ;***********************************************************
 ;*
-;* Joseph_Noonan_and_Matthew_Levis_Lab8_sourcecode.asm
+;* Joseph_Noonan_and_Matthew_Levis_Lab8_Tx_sourcecode.asm
 ;*
-;* Enter the description of the program here
-;*
-;* This is the TRANSMIT skeleton file for Lab 8 of ECE 375
-;*
-;***********************************************************
-;*
-;* Enter Name of file here
-;*
-;* Enter the description of the program here
+;* Code for the Transmitter for Lab 8
 ;*
 ;* This is the TRANSMIT skeleton file for Lab 8 of ECE 375
 ;*
@@ -47,7 +39,7 @@
 ; FREEZE IS 0b11111000
 .equ	bit5 = 5
 
-.equ	BotID = $1A   ; in binary, this is 0b00011010
+.equ	BotID = $1A  ; in binary, this is 0b00011010
 
 ;***********************************************************
 ;* Start of Code Segment
@@ -84,8 +76,11 @@ INIT:
 	out		DDRB, mpr ; Set Port D Directional Register for input
 	ldi		mpr, $FF
 	out		PORTB, mpr ; Activate pull-up resistors
-
+	
 ;USART1
+	ldi mpr, (1<<PE1)
+	out DDRE, mpr
+
 	ldi		mpr, (1<<U2X1)
 	sts		UCSR1A, mpr
 
@@ -101,8 +96,10 @@ INIT:
 	sts		UCSR1B, mpr
 
 	;Set frame format: 8 data bits, 2 stop bits
-	ldi		mpr, (1<<UCSZ11) | (1<<UCSZ10) | (1<<USBS1)
+	ldi		mpr,  (0<<UMSEL1 | 1<<USBS1 | 1<<UCSZ11 | 1<<UCSZ10)
 	sts		UCSR1C, mpr
+
+	clr		mpr
 
 ;Other
 
@@ -110,29 +107,26 @@ INIT:
 ;* Main Program
 ;***********************************************************
 MAIN:
-	;TODO: ???
 	; continuously poll for buttons pressed corresponding to a given action
 	; set action register with action
 
-	in mpr, PIND
+	sbis PIND, 7; some pin specified action
+	rjmp FORWARD
 
-	cpi mpr, 0b00000001; some pin specified action
-	breq FORWARD
+	sbis PIND, 6 ;some pin specified action
+	rjmp BACKWARD
 
-	cpi mpr, 0b00000010 ;some pin specified action
-	breq BACKWARD
+	sbis PIND, 1 ;some pin specified action
+	rjmp LEFT
 
-	cpi mpr, 0b00000100 ;some pin specified action
-	breq LEFT
+	sbis PIND, 0 ;some pin specified action
+	rjmp RIGHT
 
-	cpi mpr, 0b00001000 ;some pin specified action
-	breq RIGHT
+	sbis PIND, 5 ;some pin specified action
+	rjmp HALT_Routine
 
-	cpi mpr, 0b00010000 ;some pin specified action
-	breq HALT_Routine
-
-	cpi mpr, 0b00100000
-	breq FREEZE
+	sbis PIND, 4
+	rjmp FREEZE
 
 	rjmp END
 
@@ -163,30 +157,29 @@ END:
 	rjmp	MAIN
 
 ;***********************************************************
-;* Functions and Subroutines
+;* Name: USART_BOTID_TRANSMIT & USART_ACTION_TRANSMIT
+;  Description: Code for transmitting the ID and action code to the robot
 ;***********************************************************
 USART_BotID_Transmit:
 	lds		mpr, UCSR1A
 	sbrs	mpr, UDRE1
-
-	;sbis UCSR1A, UDRE1
 	rjmp	USART_BotID_Transmit
 
 	; send BotID first
 	ldi		mpr, BotID
 	sts		UDR1, mpr
-	;ret
 
 USART_Action_Transmit:
 
 	lds		mpr, UCSR1A
 	sbrs	mpr, UDRE1
-	;sbis UCSR1A, UDRE1
 	rjmp	USART_Action_Transmit
 
 	; read in action specified
 
 	sts		UDR1, action
+
+	clr		action
 	ret
 
 
