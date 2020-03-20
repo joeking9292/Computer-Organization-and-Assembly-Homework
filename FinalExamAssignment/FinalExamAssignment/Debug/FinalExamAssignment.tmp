@@ -1,0 +1,58 @@
+<ASSEMBLER_INFO>
+ <VERSION>2.2.7</VERSION>
+ <DEVICE>"ATmega128"</DEVICE>
+ <WORKING_DIR>c:\users\noona\Documents\Atmel Studio\7.0\FinalExamAssignment\FinalExamAssignment\Debug</WORKING_DIR>
+ <INCLUDE_PATH>
+  <DIR>H:/ECE375\Atmel\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc</DIR>
+  <DIR>H:\ECE375\Atmel\7.0\toolchain\avr8\avrassembler\Include</DIR>
+  <DIR></DIR>
+ </INCLUDE_PATH>
+ <SOURCE_FILE>c:\users\noona\Documents\Atmel Studio\7.0\FinalExamAssignment\FinalExamAssignment\main.asm</SOURCE_FILE>
+ <INCLUDED_FILES>
+  <FILE>H:/ECE375\Atmel\7.0\Packs\atmel\ATmega_DFP\1.3.300\avrasm\inc\m128def.inc</FILE>
+ </INCLUDED_FILES>
+ <OBJECT_FILES>
+  <FILE>c:\users\noona\Documents\Atmel Studio\7.0\FinalExamAssignment\FinalExamAssignment\Debug\FinalExamAssignment.obj</FILE>
+ </OBJECT_FILES>
+ <HEX_FILES>
+  <FILE>FinalExamAssignment.hex</FILE>
+ </HEX_FILES>
+ <OUTPUT_FILES>
+  <FILE>FinalExamAssignment.map</FILE>
+  <FILE>FinalExamAssignment.lss</FILE>
+ </OUTPUT_FILES>
+ <LABELS>
+  <operand1><FILE>c:\users\noona\Documents\Atmel Studio\7.0\FinalExamAssignment\FinalExamAssignment\main.asm</FILE><LINE>33</LINE></operand1>
+  <ADD16_OP1><FILE>c:\users\noona\Documents\Atmel Studio\7.0\FinalExamAssignment\FinalExamAssignment\main.asm</FILE><LINE>34</LINE></ADD16_OP1>
+  <ADD16_OP2><FILE>c:\users\noona\Documents\Atmel Studio\7.0\FinalExamAssignment\FinalExamAssignment\main.asm</FILE><LINE>35</LINE></ADD16_OP2>
+  <INIT><FILE>c:\users\noona\Documents\Atmel Studio\7.0\FinalExamAssignment\FinalExamAssignment\main.asm</FILE><LINE>51</LINE></INIT>
+  <Treasure1><FILE>c:\users\noona\Documents\Atmel Studio\7.0\FinalExamAssignment\FinalExamAssignment\main.asm</FILE><LINE>279</LINE></Treasure1>
+  <Result1><FILE>c:\users\noona\Documents\Atmel Studio\7.0\FinalExamAssignment\FinalExamAssignment\main.asm</FILE><LINE>288</LINE></Result1>
+  <MAIN><FILE>c:\users\noona\Documents\Atmel Studio\7.0\FinalExamAssignment\FinalExamAssignment\main.asm</FILE><LINE>72</LINE></MAIN>
+  <SQUARE><FILE>c:\users\noona\Documents\Atmel Studio\7.0\FinalExamAssignment\FinalExamAssignment\main.asm</FILE><LINE>112</LINE></SQUARE>
+  <ADD16><FILE>c:\users\noona\Documents\Atmel Studio\7.0\FinalExamAssignment\FinalExamAssignment\main.asm</FILE><LINE>218</LINE></ADD16>
+  <SQUARE_ROOT><FILE>c:\users\noona\Documents\Atmel Studio\7.0\FinalExamAssignment\FinalExamAssignment\main.asm</FILE><LINE>131</LINE></SQUARE_ROOT>
+  <DISTANCE><FILE>c:\users\noona\Documents\Atmel Studio\7.0\FinalExamAssignment\FinalExamAssignment\main.asm</FILE><LINE>162</LINE></DISTANCE>
+  <Treasure2><FILE>c:\users\noona\Documents\Atmel Studio\7.0\FinalExamAssignment\FinalExamAssignment\main.asm</FILE><LINE>280</LINE></Treasure2>
+  <Treasure3><FILE>c:\users\noona\Documents\Atmel Studio\7.0\FinalExamAssignment\FinalExamAssignment\main.asm</FILE><LINE>281</LINE></Treasure3>
+  <DISTANCE_AVG><FILE>c:\users\noona\Documents\Atmel Studio\7.0\FinalExamAssignment\FinalExamAssignment\main.asm</FILE><LINE>183</LINE></DISTANCE_AVG>
+  <Grading><FILE>c:\users\noona\Documents\Atmel Studio\7.0\FinalExamAssignment\FinalExamAssignment\main.asm</FILE><LINE>268</LINE></Grading>
+  <LOOP1><FILE>c:\users\noona\Documents\Atmel Studio\7.0\FinalExamAssignment\FinalExamAssignment\main.asm</FILE><LINE>135</LINE></LOOP1>
+  <LOOP2><FILE>c:\users\noona\Documents\Atmel Studio\7.0\FinalExamAssignment\FinalExamAssignment\main.asm</FILE><LINE>144</LINE></LOOP2>
+  <DONE><FILE>c:\users\noona\Documents\Atmel Studio\7.0\FinalExamAssignment\FinalExamAssignment\main.asm</FILE><LINE>158</LINE></DONE>
+  <LOOP3><FILE>c:\users\noona\Documents\Atmel Studio\7.0\FinalExamAssignment\FinalExamAssignment\main.asm</FILE><LINE>152</LINE></LOOP3>
+  <EQUALTO><FILE>c:\users\noona\Documents\Atmel Studio\7.0\FinalExamAssignment\FinalExamAssignment\main.asm</FILE><LINE>168</LINE></EQUALTO>
+  <LESSTHAN><FILE>c:\users\noona\Documents\Atmel Studio\7.0\FinalExamAssignment\FinalExamAssignment\main.asm</FILE><LINE>179</LINE></LESSTHAN>
+  <ALLTREASUREEQUAL><FILE>c:\users\noona\Documents\Atmel Studio\7.0\FinalExamAssignment\FinalExamAssignment\main.asm</FILE><LINE>174</LINE></ALLTREASUREEQUAL>
+  <ONETREASUREEQUAL><FILE>c:\users\noona\Documents\Atmel Studio\7.0\FinalExamAssignment\FinalExamAssignment\main.asm</FILE><LINE>176</LINE></ONETREASUREEQUAL>
+  <AVG_LOOP><FILE>c:\users\noona\Documents\Atmel Studio\7.0\FinalExamAssignment\FinalExamAssignment\main.asm</FILE><LINE>189</LINE></AVG_LOOP>
+  <AVG_LOOP2><FILE>c:\users\noona\Documents\Atmel Studio\7.0\FinalExamAssignment\FinalExamAssignment\main.asm</FILE><LINE>197</LINE></AVG_LOOP2>
+  <AVG_LOOP3><FILE>c:\users\noona\Documents\Atmel Studio\7.0\FinalExamAssignment\FinalExamAssignment\main.asm</FILE><LINE>203</LINE></AVG_LOOP3>
+  <DONE2><FILE>c:\users\noona\Documents\Atmel Studio\7.0\FinalExamAssignment\FinalExamAssignment\main.asm</FILE><LINE>206</LINE></DONE2>
+  <EXITADD><FILE>c:\users\noona\Documents\Atmel Studio\7.0\FinalExamAssignment\FinalExamAssignment\main.asm</FILE><LINE>250</LINE></EXITADD>
+  <Result2><FILE>c:\users\noona\Documents\Atmel Studio\7.0\FinalExamAssignment\FinalExamAssignment\main.asm</FILE><LINE>289</LINE></Result2>
+  <Result3><FILE>c:\users\noona\Documents\Atmel Studio\7.0\FinalExamAssignment\FinalExamAssignment\main.asm</FILE><LINE>290</LINE></Result3>
+  <BestChoice><FILE>c:\users\noona\Documents\Atmel Studio\7.0\FinalExamAssignment\FinalExamAssignment\main.asm</FILE><LINE>291</LINE></BestChoice>
+  <AvgDistance><FILE>c:\users\noona\Documents\Atmel Studio\7.0\FinalExamAssignment\FinalExamAssignment\main.asm</FILE><LINE>294</LINE></AvgDistance>
+ </LABELS>
+</ASSEMBLER_INFO>
